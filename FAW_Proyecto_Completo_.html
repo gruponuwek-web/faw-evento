@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELAM FAW — Proyecto EVA+ Completo</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f0ec; color: #1a1a1a; min-height: 100vh; }
+
+/* ── NAV PRINCIPAL ── */
+.main-nav { background: #1B3A6B; padding: 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+.nav-inner { max-width: 960px; margin: 0 auto; display: flex; align-items: center; gap: 0; }
+.nav-brand { padding: 14px 24px; display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.1); min-width: 200px; }
+.nav-brand .nb-sub { font-size: 10px; font-weight: 700; color: #E8611A; letter-spacing: 0.1em; text-transform: uppercase; }
+.nav-brand .nb-name { font-size: 15px; font-weight: 700; color: #fff; }
+.nav-tabs { display: flex; flex: 1; }
+.nav-tab { padding: 16px 24px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.6); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.15s; white-space: nowrap; }
+.nav-tab:hover { color: #fff; }
+.nav-tab.active { color: #fff; border-bottom-color: #E8611A; }
+
+/* ── PÁGINAS ── */
+.page { display: none; max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
+.page.active { display: block; }
+
+/* ── PORTADA ── */
+.cover { text-align: center; padding: 3rem 1rem; }
+.cover .c-logo { font-size: 13px; font-weight: 700; color: #E8611A; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1rem; }
+.cover h1 { font-size: 38px; font-weight: 800; color: #1B3A6B; margin-bottom: 0.5rem; line-height: 1.1; }
+.cover .c-sub { font-size: 18px; color: #E8611A; font-weight: 600; margin-bottom: 1.5rem; }
+.cover .c-desc { font-size: 15px; color: #666; max-width: 600px; margin: 0 auto 2.5rem; line-height: 1.7; }
+.cover-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 2.5rem; }
+.cov-card { background: #fff; border: 1px solid #e0e0d8; border-radius: 14px; padding: 1.5rem 1.25rem; text-align: center; cursor: pointer; transition: all 0.15s; }
+.cov-card:hover { border-color: #1B3A6B; transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.1); }
+.cov-card .cc-icon { font-size: 36px; margin-bottom: 12px; display: block; }
+.cov-card .cc-title { font-size: 15px; font-weight: 700; color: #1B3A6B; margin-bottom: 6px; }
+.cov-card .cc-desc { font-size: 12px; color: #888; line-height: 1.5; }
+.cov-card .cc-btn { display: inline-block; margin-top: 12px; padding: 6px 16px; background: #EEF1F7; color: #1B3A6B; border-radius: 20px; font-size: 11px; font-weight: 700; }
+.cover-meta { display: flex; justify-content: center; gap: 2rem; color: #aaa; font-size: 13px; }
+.cover-meta span strong { color: #666; }
+
+/* ── TALLER ── */
+.taller-tabs { display: flex; background: #fff; border-radius: 12px; border: 1px solid #e0e0d8; padding: 4px; margin-bottom: 1.5rem; gap: 4px; }
+.taller-tab { flex: 1; padding: 11px; text-align: center; font-size: 13px; font-weight: 700; color: #888; cursor: pointer; border-radius: 8px; transition: all 0.15s; }
+.taller-tab.active { background: #1B3A6B; color: #fff; }
+
+.day-intro { background: #fff; border-radius: 12px; border: 1px solid #e0e0d8; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; display: flex; gap: 1rem; align-items: flex-start; }
+.tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
+.tag-retro { background: #FEF3E2; color: #B45309; }
+.tag-cap { background: #EEF1F7; color: #1B3A6B; }
+.day-intro h2 { font-size: 16px; font-weight: 700; color: #1B3A6B; margin-bottom: 4px; }
+.day-intro p { font-size: 13px; color: #666; line-height: 1.6; }
+
+.timeline { position: relative; }
+.timeline::before { content:''; position:absolute; left:94px; top:0; bottom:0; width:2px; background:#e0e0d8; }
+.tl-item { display:flex; gap:0; margin-bottom:1rem; position:relative; }
+.tl-time { width:90px; flex-shrink:0; padding-top:14px; text-align:right; padding-right:12px; }
+.tl-time span { font-size:11px; font-weight:700; color:#999; }
+.tl-dot { width:10px; height:10px; border-radius:50%; background:#E8611A; flex-shrink:0; margin-top:18px; position:relative; z-index:1; margin-left:-4px; margin-right:14px; }
+.tl-dot.br { background:#ccc; }
+.tl-content { flex:1; }
+
+.block { background:#fff; border:1px solid #e0e0d8; border-radius:12px; overflow:hidden; cursor:pointer; transition:box-shadow 0.15s; }
+.block:hover { box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+.block-header { display:flex; align-items:center; gap:12px; padding:14px 16px; }
+.block-icon { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.block-info { flex:1; }
+.block-title { font-size:14px; font-weight:700; color:#1a1a1a; }
+.block-sub { font-size:12px; color:#888; margin-top:2px; }
+.block-dur { font-size:11px; font-weight:700; color:#E8611A; background:#FEF0E8; padding:3px 8px; border-radius:20px; flex-shrink:0; }
+.block-arr { color:#ccc; font-size:18px; transition:transform 0.2s; flex-shrink:0; }
+.block-arr.open { transform:rotate(180deg); }
+.block-detail { display:none; padding:0 16px 16px; border-top:1px solid #f0f0e8; }
+.block-detail.open { display:block; }
+.detail-list { margin-top:12px; display:flex; flex-direction:column; gap:8px; }
+.detail-item { display:flex; gap:10px; align-items:flex-start; font-size:13px; color:#555; line-height:1.5; }
+.detail-dot { width:6px; height:6px; border-radius:50%; background:#E8611A; flex-shrink:0; margin-top:6px; }
+.detail-note { margin-top:12px; background:#EEF1F7; border-left:3px solid #1B3A6B; border-radius:0 6px 6px 0; padding:10px 14px; font-size:12px; color:#1B3A6B; line-height:1.6; }
+.break-item { display:flex; align-items:center; gap:12px; padding:6px 0; }
+.break-line { flex:1; border-bottom:1px dashed #ccc; }
+.break-label { font-size:12px; color:#aaa; white-space:nowrap; font-style:italic; }
+
+.summary-bar { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:2rem; }
+.scard { background:#1B3A6B; border-radius:12px; padding:1.25rem; text-align:center; }
+.scard .s-num { font-size:28px; font-weight:800; color:#F2C94C; }
+.scard .s-lbl { font-size:12px; color:rgba(255,255,255,0.7); margin-top:4px; }
+
+.taller-footer { text-align:center; margin-top:2rem; padding-top:1.5rem; border-top:1px solid #e0e0d8; font-size:12px; color:#aaa; }
+
+/* ── PROGRESO DEL DÍA ── */
+.day-progress { background:#fff; border:1px solid #e0e0d8; border-radius:12px; padding:0.9rem 1.25rem; margin-bottom:1.5rem; }
+.dp-bar { height:8px; background:#f0f0e8; border-radius:20px; overflow:hidden; margin-bottom:8px; }
+.dp-fill { height:100%; background:#2E8B57; border-radius:20px; transition:width 0.3s; }
+.dp-text { font-size:12px; color:#666; font-weight:600; }
+
+/* ── ACCIONES DE BLOQUE (Iniciar / estatus) ── */
+.block-actions { display:flex; align-items:center; gap:12px; margin-top:12px; cursor:default; }
+.btn-iniciar { background:#1B3A6B; color:#fff; border:none; border-radius:8px; padding:9px 18px; font-size:12px; font-weight:700; cursor:pointer; transition:background 0.15s; }
+.btn-iniciar:hover { background:#14294d; }
+.btn-iniciar.done { background:#EAF4EE; color:#2E8B57; }
+.btn-iniciar.progress { background:#FEF0E8; color:#E8611A; }
+.block-status { font-size:12px; font-weight:600; color:#2E8B57; }
+
+/* ── OVERLAY DE PRESENTACIÓN ── */
+.pres-overlay { display:none; position:fixed; inset:0; background:#1B3A6B; z-index:1000; flex-direction:column; }
+.pres-overlay.open { display:flex; }
+.pres-top { display:flex; align-items:center; gap:1.5rem; padding:1rem 1.5rem; border-bottom:1px solid rgba(255,255,255,0.12); }
+.pres-top-left { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.pres-top-eyebrow { font-size:11px; font-weight:700; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.05em; }
+.pres-top-heading { font-size:17px; font-weight:700; color:#fff; }
+.pres-top-right { display:flex; align-items:center; gap:22px; flex-shrink:0; }
+.pres-close { background:none; border:none; color:rgba(255,255,255,0.6); font-size:20px; cursor:pointer; line-height:1; padding:4px 8px; flex-shrink:0; }
+.pres-close:hover { color:#fff; }
+
+.pres-timer { display:flex; align-items:center; gap:8px; }
+.pres-timer-dot { width:11px; height:11px; border-radius:50%; }
+.tg-green .pres-timer-dot { background:#2ECC71; box-shadow:0 0 10px #2ECC71; }
+.tg-yellow .pres-timer-dot { background:#F2C94C; box-shadow:0 0 10px #F2C94C; }
+.tg-red .pres-timer-dot { background:#EB5757; box-shadow:0 0 10px #EB5757; }
+.tg-gray .pres-timer-dot { background:#888; }
+.pres-timer-num { font-size:24px; font-weight:800; color:#fff; font-variant-numeric:tabular-nums; letter-spacing:0.02em; line-height:1; }
+.pres-timer-lbl { font-size:10px; font-weight:700; color:rgba(255,255,255,0.55); text-transform:uppercase; letter-spacing:0.06em; margin-top:2px; }
+.pres-planned { font-size:12px; color:rgba(255,255,255,0.7); white-space:nowrap; }
+.pres-planned strong { color:#fff; }
+
+.pres-next { font-size:12px; color:rgba(255,255,255,0.7); margin-top:2px; }
+.pres-next strong { color:#F2C94C; }
+
+.pres-body { flex:1; display:flex; align-items:center; justify-content:center; padding:2rem; }
+.pres-slide { max-width:640px; text-align:center; }
+.pres-slide-eyebrow { font-size:12px; font-weight:700; color:#E8611A; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.75rem; }
+.pres-slide-title { font-size:30px; font-weight:800; color:#fff; margin-bottom:1rem; line-height:1.25; }
+.pres-slide-text { font-size:15px; color:rgba(255,255,255,0.65); line-height:1.7; }
+
+.pres-dots { display:flex; justify-content:center; gap:8px; padding-bottom:0.5rem; }
+.pres-dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.25); cursor:pointer; }
+.pres-dot.active { background:#F2C94C; }
+
+.pres-bottom { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:1.25rem 1.5rem; border-top:1px solid rgba(255,255,255,0.12); }
+.pres-nav-group { display:flex; gap:12px; justify-self:center; }
+.pres-bottom-right { justify-self:end; }
+.pres-nav-btn { background:rgba(255,255,255,0.1); color:#fff; border:none; border-radius:8px; padding:10px 20px; font-size:13px; font-weight:700; cursor:pointer; }
+.pres-nav-btn:disabled { opacity:0.3; cursor:default; }
+.pres-nav-btn:not(:disabled):hover { background:rgba(255,255,255,0.18); }
+.btn-finalizar { background:#2E8B57; color:#fff; border:none; border-radius:8px; padding:10px 24px; font-size:13px; font-weight:700; cursor:pointer; }
+.btn-finalizar:hover { background:#257048; }
+
+/* ── SIMULADOR ── */
+.sim-tabs { display:flex; background:#fff; border-radius:12px; border:1px solid #e0e0d8; padding:4px; margin-bottom:1.5rem; gap:4px; }
+.sim-tab { flex:1; padding:10px; text-align:center; font-size:13px; font-weight:700; color:#888; cursor:pointer; border-radius:8px; transition:all 0.15s; }
+.sim-tab.active { background:#1B3A6B; color:#fff; }
+
+.role-section { margin-bottom:1.5rem; }
+.role-section h3 { font-size:12px; font-weight:700; color:#999; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; }
+.role-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+.rcard { background:#fff; border:2px solid #e0e0d8; border-radius:12px; padding:1rem; cursor:pointer; transition:all 0.15s; text-align:center; }
+.rcard:hover { border-color:#1B3A6B; }
+.rcard.sel { border-color:#1B3A6B; background:#EEF1F7; }
+.rcard .r-emoji { font-size:24px; margin-bottom:6px; display:block; }
+.rcard .r-name { font-size:13px; font-weight:700; color:#1B3A6B; margin-bottom:4px; }
+.rcard .r-desc { font-size:11px; color:#888; line-height:1.4; }
+
+.sel-hint { background:#EEF1F7; border-radius:10px; padding:12px 16px; font-size:13px; color:#1B3A6B; line-height:1.6; margin-bottom:1.25rem; border-left:3px solid #1B3A6B; }
+.prof-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:1.5rem; }
+.pcard { background:#fff; border:2px solid #e0e0d8; border-radius:12px; padding:1.25rem; cursor:pointer; transition:all 0.15s; }
+.pcard:hover { border-color:#1B3A6B; transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.08); }
+.pcard .pemoji { font-size:30px; margin-bottom:8px; display:block; }
+.pcard .pname { font-size:14px; font-weight:700; color:#1B3A6B; margin-bottom:5px; }
+.pcard .pdesc { font-size:12px; color:#666; line-height:1.5; margin-bottom:8px; }
+.pcard .pobj { display:inline-block; font-size:11px; font-weight:600; padding:3px 10px; border-radius:20px; }
+.obj-srm { background:#EEF1F7; color:#1B3A6B; }
+.obj-setter { background:#FEF3E2; color:#B45309; }
+.obj-asesor { background:#EAF4EE; color:#1A6B3A; }
+
+.pipe-wrap { background:#fff; border:1px solid #e0e0d8; border-radius:12px; padding:14px 16px; margin-bottom:12px; }
+.pipe-title { font-size:11px; font-weight:700; color:#999; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:12px; }
+.pipe-steps { display:flex; align-items:center; }
+.pstep { flex:1; text-align:center; }
+.pstep-circle { width:30px; height:30px; border-radius:50%; border:2px solid #e0e0d8; background:#f5f5f3; display:flex; align-items:center; justify-content:center; margin:0 auto 5px; font-size:12px; font-weight:700; color:#aaa; transition:all 0.3s; }
+.pstep.done .pstep-circle { background:#1B3A6B; border-color:#1B3A6B; color:#fff; }
+.pstep.active .pstep-circle { background:#EEF1F7; border-color:#1B3A6B; color:#1B3A6B; box-shadow:0 0 0 3px #EEF1F7; }
+.pstep-lbl { font-size:10px; color:#bbb; line-height:1.2; }
+.pstep.active .pstep-lbl { color:#1B3A6B; font-weight:700; }
+.pstep.done .pstep-lbl { color:#888; }
+.pconn { flex:0 0 14px; height:2px; background:#e0e0d8; margin-bottom:16px; transition:background 0.3s; }
+.pconn.done { background:#1B3A6B; }
+
+.role-badge { display:inline-block; font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; margin-bottom:12px; }
+.rb-srm { background:#EEF1F7; color:#1B3A6B; }
+.rb-setter { background:#FEF3E2; color:#B45309; }
+.rb-asesor { background:#EAF4EE; color:#1A6B3A; }
+
+.instr { border-radius:0 8px 8px 0; padding:10px 14px; font-size:12px; line-height:1.6; margin-bottom:12px; border-left:3px solid; }
+.instr-srm { background:#EEF1F7; border-color:#1B3A6B; color:#1B3A6B; }
+.instr-setter { background:#FEF3E2; border-color:#B45309; color:#B45309; }
+.instr-asesor { background:#EAF4EE; border-color:#1A6B3A; color:#1A6B3A; }
+
+.chat-box { background:#fff; border:1px solid #e0e0d8; border-radius:12px; overflow:hidden; margin-bottom:10px; }
+.chat-head { padding:12px 16px; display:flex; align-items:center; gap:12px; }
+.ch-avatar { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.ch-name { font-size:14px; font-weight:700; }
+.ch-status { font-size:11px; color:#888; }
+.ch-turns { margin-left:auto; font-size:11px; }
+.head-srm { background:#1B3A6B; }
+.head-srm .ch-name,.head-setter .ch-name,.head-asesor .ch-name { color:#fff; }
+.head-srm .ch-avatar,.head-setter .ch-avatar,.head-asesor .ch-avatar { background:rgba(255,255,255,0.15); }
+.head-srm .ch-turns,.head-setter .ch-turns,.head-asesor .ch-turns { color:rgba(255,255,255,0.5); }
+.head-setter { background:#B45309; }
+.head-asesor { background:#1A6B3A; }
+
+.messages { padding:16px; min-height:260px; max-height:340px; overflow-y:auto; display:flex; flex-direction:column; gap:12px; background:#fafaf8; }
+.msg { max-width:80%; }
+.msg.prospect { align-self:flex-start; }
+.msg.user { align-self:flex-end; }
+.bubble { padding:10px 14px; font-size:13px; line-height:1.6; }
+.msg.prospect .bubble { background:#fff; border:1px solid #e8e8e0; color:#1a1a1a; border-radius:4px 14px 14px 14px; }
+.msg.user .bubble { color:#fff; border-radius:14px 4px 14px 14px; }
+.bubble-srm { background:#1B3A6B!important; }
+.bubble-setter { background:#B45309!important; }
+.bubble-asesor { background:#1A6B3A!important; }
+.mtime { font-size:10px; color:#bbb; margin-top:4px; padding:0 4px; }
+.msg.user .mtime { text-align:right; }
+.typing { align-self:flex-start; }
+.tdots { display:flex; gap:4px; padding:10px 14px; background:#fff; border:1px solid #e8e8e0; border-radius:4px 14px 14px 14px; }
+.dot { width:7px; height:7px; border-radius:50%; background:#ccc; animation:bop 1.2s infinite; }
+.dot:nth-child(2) { animation-delay:0.2s; }
+.dot:nth-child(3) { animation-delay:0.4s; }
+@keyframes bop { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+.inp-row { display:flex; gap:8px; margin-bottom:6px; }
+.inp-row textarea { flex:1; padding:10px 14px; border:1.5px solid #e0e0d8; border-radius:10px; background:#fff; color:#1a1a1a; font-size:13px; font-family:inherit; resize:none; height:46px; line-height:1.4; transition:border-color 0.15s; }
+.inp-row textarea:focus { outline:none; border-color:#1B3A6B; }
+.inp-row textarea:disabled { background:#f5f5f3; }
+.send-btn { padding:10px 20px; color:#fff; border:none; border-radius:10px; cursor:pointer; font-size:13px; font-weight:700; white-space:nowrap; }
+.sbtn-srm { background:#1B3A6B; }
+.sbtn-setter { background:#B45309; }
+.sbtn-asesor { background:#1A6B3A; }
+.send-btn:disabled { opacity:0.4; cursor:not-allowed; }
+.hint-txt { font-size:11px; color:#aaa; margin-bottom:8px; }
+.end-btn { width:100%; padding:10px; border:1.5px solid #999; color:#666; background:transparent; border-radius:10px; cursor:pointer; font-size:13px; font-weight:600; }
+.end-btn:hover { background:#f5f5f3; }
+
+.eval-wrap { background:#fff; border:1px solid #e0e0d8; border-radius:12px; padding:1.5rem; margin-bottom:12px; }
+.score-circle { width:96px; height:96px; border-radius:50%; border:5px solid; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0 auto 1.25rem; }
+.score-n { font-size:30px; font-weight:800; }
+.score-l { font-size:11px; font-weight:700; margin-top:1px; }
+.ev-section { margin-bottom:1.25rem; }
+.ev-section h4 { font-size:11px; font-weight:700; color:#999; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; border-bottom:1px solid #f0f0e8; padding-bottom:6px; }
+.ev-row { display:flex; gap:8px; align-items:flex-start; margin-bottom:8px; font-size:13px; color:#555; line-height:1.5; }
+.crit-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.crit-item { display:flex; gap:8px; align-items:flex-start; font-size:12px; line-height:1.4; }
+.tip-box { background:#EEF1F7; border-radius:10px; padding:12px 16px; font-size:13px; color:#1B3A6B; line-height:1.6; border-left:3px solid #1B3A6B; }
+
+.btn-row { display:flex; gap:10px; }
+.btn-p { padding:11px 22px; background:#1B3A6B; color:#fff; border:none; border-radius:10px; cursor:pointer; font-size:13px; font-weight:700; }
+.btn-s { padding:11px 22px; background:#fff; color:#1a1a1a; border:1.5px solid #e0e0d8; border-radius:10px; cursor:pointer; font-size:13px; font-weight:600; }
+
+.hist-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:1.5rem; }
+.hcard { background:#fff; border:1px solid #e0e0d8; border-radius:10px; padding:1rem; text-align:center; }
+.hcard-n { font-size:26px; font-weight:800; color:#1B3A6B; }
+.hcard-l { font-size:11px; color:#999; margin-top:3px; }
+.hitem { background:#fff; border:1px solid #e0e0d8; border-radius:10px; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.hitem-name { font-size:13px; font-weight:600; color:#1a1a1a; }
+.hitem-meta { font-size:11px; color:#aaa; margin-top:2px; }
+.hitem-score { font-size:22px; font-weight:800; }
+.empty { text-align:center; padding:2.5rem; color:#aaa; font-size:14px; }
+
+@media (max-width:600px) {
+  .cover-cards,.role-grid { grid-template-columns:1fr; }
+  .prof-grid,.crit-grid,.hist-stats,.summary-bar { grid-template-columns:1fr; }
+  .nav-brand { display:none; }
+  .nav-tab { padding:14px 12px; font-size:12px; }
+  .timeline::before { left:0; }
+  .tl-time { display:none; }
+  .tl-dot { margin-left:8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="main-nav">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <span class="nb-sub">Grupo Nuwek · EVA+</span>
+      <span class="nb-name">ELAM FAW</span>
+    </div>
+    <div class="nav-tabs">
+      <div class="nav-tab active" onclick="showPage('portada')">Inicio</div>
+      <div class="nav-tab" onclick="showPage('taller')">Taller Elite</div>
+      <div class="nav-tab" onclick="showPage('simulador')">Simulador</div>
+    </div>
+  </div>
+</nav>
+
+<!-- PORTADA -->
+<div id="page-portada" class="page active">
+  <div class="cover">
+    <div class="c-logo">Grupo Nuwek — Programa EVA+</div>
+    <h1>ELAM FAW</h1>
+    <div class="c-sub">Transformación Comercial 2026</div>
+    <p class="c-desc">Sistema completo de ventas consultivas para la red nacional de distribuidores. Incluye el temario del taller de vendedores elite y el simulador de conversaciones por etapa del pipeline.</p>
+    <div class="cover-cards">
+      <div class="cov-card" onclick="showPage('taller')">
+        <span class="cc-icon">📅</span>
+        <div class="cc-title">Taller Elite — 2 días</div>
+        <div class="cc-desc">Retroalimentación del playbook con vendedores elite y capacitación con simulador en vivo.</div>
+        <span class="cc-btn">Ver temario →</span>
+      </div>
+      <div class="cov-card" onclick="showPage('simulador')">
+        <span class="cc-icon">🤖</span>
+        <div class="cc-title">Simulador de ventas</div>
+        <div class="cc-desc">Practica los 3 roles del pipeline: SRM, Setter y Asesor con prospectos reales del mercado FAW.</div>
+        <span class="cc-btn">Practicar →</span>
+      </div>
+      <div class="cov-card" onclick="window.open('https://docs.google.com/document/d/1-fjVkXpdZldO7y5HNpuTiuoSsI7BHsr0lfLZXjovowM/edit?usp=sharing','_blank')">
+        <span class="cc-icon">📚</span>
+        <div class="cc-title">Sales Playbook</div>
+        <div class="cc-desc">Manual de operación comercial con 7 secciones: pipelines, scripts, objeciones, CEL y rituales.</div>
+        <span class="cc-btn">Ver documento →</span>
+      </div>
+    </div>
+    <div class="cover-meta">
+      <span><strong>3 roles</strong> del pipeline</span>
+      <span><strong>12 perfiles</strong> de prospecto</span>
+      <span><strong>2 días</strong> de taller</span>
+      <span><strong>Julio 2026</strong></span>
+    </div>
+  </div>
+</div>
+
+<!-- TALLER -->
+<div id="page-taller" class="page">
+  <div class="taller-tabs">
+    <div class="taller-tab active" onclick="showDay(0)">Día 1 — Arranque</div>
+    <div class="taller-tab" onclick="showDay(1)">Día 2 — Co-construcción</div>
+  </div>
+
+  <!-- DÍA 1 -->
+  <div id="day-0">
+    <div class="day-intro">
+      <span class="tag tag-retro" style="flex-shrink:0">Arranque oficial</span>
+      <div>
+        <h2>Día 1 — Arranque del proyecto</h2>
+        <p>Dirección de FAW presenta el respaldo al proyecto, se comparte el playbook y los principios del pipeline, y se recorre el proceso de ventas junto con la herramienta de seguimiento.</p>
+      </div>
+    </div>
+    <div class="day-progress">
+      <div class="dp-bar"><div class="dp-fill" id="day1-progress-fill" style="width:0%"></div></div>
+      <div class="dp-text" id="day1-progress-text">0/9 bloques completados</div>
+    </div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-time"><span>10:00</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-registro" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EEF1F7">📝</div><div class="block-info"><div class="block-title">Registro</div><div class="block-sub">Bienvenida y acomodo</div></div><span class="block-dur">15 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Registro de asistencia y gafete</span></div><div class="detail-item"><div class="detail-dot"></div><span>Acomodo en sala, café de bienvenida</span></div></div><div class="detail-note">Arrancar puntual da el tono del día — a las 10:15 dirección ya está en el podio.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-registro" onclick="openPresentation('registro')">▶ Iniciar</button><span class="block-status" id="status-registro"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>10:15</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-bienvenida" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#FEF0E8">🎤</div><div class="block-info"><div class="block-title">Bienvenida de dirección FAW</div><div class="block-sub">Ing. Raúl Baños — Director General</div></div><span class="block-dur">15 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Raúl abre el evento y comunica el respaldo de dirección al proyecto</span></div><div class="detail-item"><div class="detail-dot"></div><span>Contexto de negocio: por qué FAW invierte en este cambio comercial ahora</span></div></div><div class="detail-note">Que la voz de arranque venga de dirección le da peso e innegociabilidad al proyecto frente al equipo.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-bienvenida" onclick="openPresentation('bienvenida')">▶ Iniciar</button><span class="block-status" id="status-bienvenida"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>10:30</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-proyecto" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EAF4EE">🚀</div><div class="block-info"><div class="block-title">"De 1% a 5%: el arranque"</div><div class="block-sub">Presentación del proyecto · Carlos</div></div><span class="block-dur">15 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Por qué el cierre está hoy por debajo del 1% y qué significa llegar a 5%</span></div><div class="detail-item"><div class="detail-dot"></div><span>Qué es EVA+ y qué van a vivir en las próximas semanas</span></div><div class="detail-item"><div class="detail-dot"></div><span>Qué se espera de cada rol: SRM, Setter, Asesor</span></div></div><div class="detail-note">Aterrizar la meta de negocio desde el arranque — no es una capacitación más, es el sistema que va a cambiar los resultados.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-proyecto" onclick="openPresentation('proyecto')">▶ Iniciar</button><span class="block-status" id="status-proyecto"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>10:45</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-playbook" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#FEF3E2">📚</div><div class="block-info"><div class="block-title">Presentación del Playbook</div><div class="block-sub">Carlos</div></div><span class="block-dur">15 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Recorrido rápido de las 7 secciones del playbook</span></div><div class="detail-item"><div class="detail-dot"></div><span>Dónde encontrar scripts, objeciones y criterios de clasificación (CEL)</span></div></div><div class="detail-note">Que sepan que existe, dónde vive y cómo se usa en el día a día — el detalle fino se trabaja después.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-playbook" onclick="openPresentation('playbook')">▶ Iniciar</button><span class="block-status" id="status-playbook"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>11:00</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-principios" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EEF1F7">⚙️</div><div class="block-info"><div class="block-title">Principios entre Filtrar, Settear y Cerrar</div><div class="block-sub">Los 3 roles del pipeline</div></div><span class="block-dur">15 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Qué hace cada rol y dónde termina su responsabilidad</span></div><div class="detail-item"><div class="detail-dot"></div><span>Por qué el Asesor no repite el diagnóstico que ya hizo el Setter</span></div></div><div class="detail-note">La confusión de roles es una de las causas estructurales del cierre bajo — este bloque la corrige desde el día uno.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-principios" onclick="openPresentation('principios')">▶ Iniciar</button><span class="block-status" id="status-principios"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>11:15</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-pipeline" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#FEF0E8">🗺</div><div class="block-info"><div class="block-title">El proceso de ventas — Pipeline</div><div class="block-sub">Carlos presenta · Recorrido completo</div></div><span class="block-dur">1h 15 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Recorrido de las etapas del pipeline de principio a fin, con ejemplos reales</span></div><div class="detail-item"><div class="detail-dot"></div><span>Qué información se entrega en cada handoff entre roles</span></div><div class="detail-item"><div class="detail-dot"></div><span>Preguntas y casos del equipo</span></div></div><div class="detail-note">Es el bloque más largo del día — el pipeline es la columna vertebral del sistema, vale la pena el tiempo.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-pipeline" onclick="openPresentation('pipeline')">▶ Iniciar</button><span class="block-status" id="status-pipeline"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>12:30</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-crm" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EAF4EE">💻</div><div class="block-info"><div class="block-title">Herramienta de seguimiento — CRM</div><div class="block-sub">GHL — Go High Level</div></div><span class="block-dur">1h 30 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Qué es GHL y cómo se usa para dar seguimiento a cada lead</span></div><div class="detail-item"><div class="detail-dot"></div><span>Qué debe registrar cada rol y cuándo</span></div></div><div class="detail-note">El CRM es el registro de todo lo visto en el bloque de Pipeline — dan continuidad natural uno al otro.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-crm" onclick="openPresentation('crm')">▶ Iniciar</button><span class="block-status" id="status-crm"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>14:00</span></div><div class="tl-dot br"></div><div class="tl-content"><div class="break-item"><div class="break-line"></div><span class="break-label">Receso de comida — 45 min</span><div class="break-line"></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>14:45</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-acuerdos" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EEF1F7">🤝</div><div class="block-info"><div class="block-title">Acuerdos y presentación del Día 2</div><div class="block-sub">Julio + Carlos</div></div><span class="block-dur">15 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Compromisos concretos de cada rol antes de la siguiente sesión</span></div><div class="detail-item"><div class="detail-dot"></div><span>Qué van a vivir el Día 2: validación del pipeline, perfiles, objeciones y mesas de trabajo</span></div></div><div class="detail-note">Cerrar con compromisos claros y anticipación por lo que viene.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-acuerdos" onclick="openPresentation('acuerdos')">▶ Iniciar</button><span class="block-status" id="status-acuerdos"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>15:00</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-cierre" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#FEF3E2">🎓</div><div class="block-info"><div class="block-title">Cierre</div><div class="block-sub">Fin de la sesión</div></div><span class="block-dur">—</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Fin del arranque — el equipo sale con el proyecto, el playbook y el CRM presentados</span></div></div><div class="detail-note">Todo listo para el Día 2 de co-construcción con el equipo elite.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-cierre" onclick="openPresentation('cierre')">▶ Iniciar</button><span class="block-status" id="status-cierre"></span></div></div></div></div></div>
+    </div>
+    <div class="summary-bar">
+      <div class="scard"><div class="s-num">5h</div><div class="s-lbl">Duración total</div></div>
+      <div class="scard"><div class="s-num">8</div><div class="s-lbl">Bloques de trabajo</div></div>
+      <div class="scard"><div class="s-num">1</div><div class="s-lbl">Proyecto lanzado</div></div>
+    </div>
+  </div>
+
+  <!-- OVERLAY DE PRESENTACIÓN EN VIVO -->
+  <div class="pres-overlay" id="pres-overlay">
+    <div class="pres-top">
+      <div class="pres-top-left">
+        <span class="pres-top-eyebrow" id="pres-eyebrow-top">Bloque</span>
+        <span class="pres-top-heading" id="pres-title-top"></span>
+        <div class="pres-next" id="pres-next">Siguiente: —</div>
+      </div>
+      <div class="pres-top-right">
+        <div class="pres-timer" id="pres-timer-wrap">
+          <div class="pres-timer-dot"></div>
+          <div><div class="pres-timer-num" id="pres-timer-num">00:00</div><div class="pres-timer-lbl" id="pres-timer-lbl">En vivo</div></div>
+        </div>
+        <div class="pres-planned" id="pres-planned">Planeado: <strong>—</strong></div>
+      </div>
+      <button class="pres-close" onclick="closePresentation()" title="Cerrar (el tiempo sigue corriendo)">✕</button>
+    </div>
+    <div class="pres-body">
+      <div class="pres-slide">
+        <div class="pres-slide-eyebrow" id="pres-slide-eyebrow">Punto 1 de 3</div>
+        <div class="pres-slide-title" id="pres-slide-title">Título</div>
+        <div class="pres-slide-text" id="pres-slide-text">Texto</div>
+      </div>
+    </div>
+    <div class="pres-dots" id="pres-dots"></div>
+    <div class="pres-bottom">
+      <div class="pres-bottom-spacer"></div>
+      <div class="pres-nav-group">
+        <button class="pres-nav-btn" id="pres-prev" onclick="presSlide(-1)">← Anterior</button>
+        <button class="pres-nav-btn" id="pres-next-btn" onclick="presSlide(1)">Siguiente →</button>
+      </div>
+      <div class="pres-bottom-right"><button class="btn-finalizar" id="pres-finalizar" onclick="finalizePresentation()">✓ Finalizar</button></div>
+    </div>
+  </div>
+
+  <!-- DÍA 2 -->
+  <div id="day-1" style="display:none">
+    <div class="day-intro">
+      <span class="tag tag-cap" style="flex-shrink:0">Ellos enseñan</span>
+      <div>
+        <h2>Día 2 — Co-construcción</h2>
+        <p>Los vendedores elite validan el pipeline, construyen los perfiles de prospecto y las objeciones más frecuentes con su experiencia de campo, y practican en mesas de trabajo por rol.</p>
+      </div>
+    </div>
+    <div class="day-progress">
+      <div class="dp-bar"><div class="dp-fill" id="day2-progress-fill" style="width:0%"></div></div>
+      <div class="dp-text" id="day2-progress-text">0/11 bloques completados</div>
+    </div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-time"><span>10:00</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_recepcion" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EEF1F7">📝</div><div class="block-info"><div class="block-title">Recepción</div><div class="block-sub">Bienvenida y acomodo</div></div><span class="block-dur">10 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Registro de asistencia y acomodo en sala</span></div></div><div class="detail-note">Grupo reducido de vendedores elite — arranca rápido, sin protocolo largo.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_recepcion" onclick="openPresentation('d2_recepcion')">▶ Iniciar</button><span class="block-status" id="status-d2_recepcion"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>10:10</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_pipeline" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EAF4EE">🗺</div><div class="block-info"><div class="block-title">Validación del pipeline</div><div class="block-sub">Carlos presenta · Vendedores cuestionan</div></div><span class="block-dur">20 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Carlos presenta el pipeline visto en el Día 1 y pregunta: "¿qué falta? ¿qué no refleja su día a día?"</span></div><div class="detail-item"><div class="detail-dot"></div><span>Ajustes capturados en vivo</span></div></div><div class="detail-note">Output: pipeline validado o corregido con el conocimiento de campo del equipo elite.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_pipeline" onclick="openPresentation('d2_pipeline')">▶ Iniciar</button><span class="block-status" id="status-d2_pipeline"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>10:30</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_perfiles6" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#FEF3E2">👤</div><div class="block-info"><div class="block-title">Mesa de trabajo — Crear 6 perfiles de prospecto</div><div class="block-sub">Dinámica en equipos</div></div><span class="block-dur">40 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Equipos construyen 6 perfiles de prospecto con frases reales, comportamientos y matices de campo</span></div><div class="detail-item"><div class="detail-dot"></div><span>Carlos documenta los perfiles para incorporarlos al simulador</span></div></div><div class="detail-note">Output: 6 perfiles de prospecto listos para el simulador — construidos por quienes los viven a diario.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_perfiles6" onclick="openPresentation('d2_perfiles6')">▶ Iniciar</button><span class="block-status" id="status-d2_perfiles6"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>11:10</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_objeciones" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#FEF0E8">💬</div><div class="block-info"><div class="block-title">Mesa de trabajo — Las objeciones más frecuentes</div><div class="block-sub">Dinámica en equipos</div></div><span class="block-dur">30 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Equipos listan y priorizan las objeciones que más se repiten en su distribuidora</span></div><div class="detail-item"><div class="detail-dot"></div><span>Carlos documenta las versiones mejoradas en el manual de ventas</span></div></div><div class="detail-note">Output: guía de objeciones validada por vendedores que las viven — no por consultores que las teorizan.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_objeciones" onclick="openPresentation('d2_objeciones')">▶ Iniciar</button><span class="block-status" id="status-d2_objeciones"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>11:40</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_perfiladores" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EEF1F7">🔍</div><div class="block-info"><div class="block-title">Perfiladores</div><div class="block-sub">El rol y su criterio de clasificación</div></div><span class="block-dur">20 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Qué hace el Perfilador y dónde termina su responsabilidad en el pipeline</span></div><div class="detail-item"><div class="detail-dot"></div><span>Criterio de clasificación (CEL) aplicado a los 6 perfiles recién construidos</span></div></div><div class="detail-note">Conecta el perfil recién creado con el rol que lo va a usar en campo.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_perfiladores" onclick="openPresentation('d2_perfiladores')">▶ Iniciar</button><span class="block-status" id="status-d2_perfiladores"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>12:00</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_setters" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EAF4EE">🔧</div><div class="block-info"><div class="block-title">Setters</div><div class="block-sub">El rol y el proceso de setteo</div></div><span class="block-dur">20 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Qué información necesita recibir el Asesor del Setter para arrancar bien la conversación</span></div><div class="detail-item"><div class="detail-dot"></div><span>¿En qué momento del proceso se pierden más leads hoy y por qué?</span></div></div><div class="detail-note">Output: ajustes al manual de ventas con la experiencia real del equipo.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_setters" onclick="openPresentation('d2_setters')">▶ Iniciar</button><span class="block-status" id="status-d2_setters"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>12:20</span></div><div class="tl-dot br"></div><div class="tl-content"><div class="break-item"><div class="break-line"></div><span class="break-label">Receso — 40 min</span><div class="break-line"></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>13:00</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_ej_perfiladores" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#FEF3E2">🎯</div><div class="block-info"><div class="block-title">Ejercicios de Perfiladores</div><div class="block-sub">Práctica en parejas</div></div><span class="block-dur">30 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Práctica de clasificación con los 6 perfiles construidos en la mañana</span></div><div class="detail-item"><div class="detail-dot"></div><span>Feedback cruzado entre pares</span></div></div><div class="detail-note">Aterrizar el criterio CEL con casos reales del propio equipo.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_ej_perfiladores" onclick="openPresentation('d2_ej_perfiladores')">▶ Iniciar</button><span class="block-status" id="status-d2_ej_perfiladores"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>13:30</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_ej_setters" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EEF1F7">🔧</div><div class="block-info"><div class="block-title">Ejercicios de Setters</div><div class="block-sub">Práctica en parejas</div></div><span class="block-dur">30 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Práctica del handoff Setter → Asesor con la información mínima necesaria</span></div><div class="detail-item"><div class="detail-dot"></div><span>Feedback cruzado entre pares</span></div></div><div class="detail-note">El handoff es donde más se pierden leads — se practica hasta que sea automático.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_ej_setters" onclick="openPresentation('d2_ej_setters')">▶ Iniciar</button><span class="block-status" id="status-d2_ej_setters"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>14:00</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_ej_objeciones" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#FEF0E8">🥊</div><div class="block-info"><div class="block-title">Ejercicios de Objeciones</div><div class="block-sub">Roleplay en vivo</div></div><span class="block-dur">30 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Roleplay con las objeciones priorizadas en la mesa de trabajo de la mañana</span></div><div class="detail-item"><div class="detail-dot"></div><span>Foco especial en el Elefante Rosa</span></div></div><div class="detail-note">Competencia sana entre pares genera aprendizaje acelerado.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_ej_objeciones" onclick="openPresentation('d2_ej_objeciones')">▶ Iniciar</button><span class="block-status" id="status-d2_ej_objeciones"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>14:30</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_wbr" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EAF4EE">📊</div><div class="block-info"><div class="block-title">La WBR — La disciplina del éxito</div><div class="block-sub">Carlos</div></div><span class="block-dur">30 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Qué es la Weekly Business Review y por qué sostiene todo lo demás</span></div><div class="detail-item"><div class="detail-dot"></div><span>Cómo se prepara, quién participa, qué se revisa cada semana</span></div></div><div class="detail-note">Todo lo construido hoy se pierde sin la disciplina semanal que lo sostiene.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_wbr" onclick="openPresentation('d2_wbr')">▶ Iniciar</button><span class="block-status" id="status-d2_wbr"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>15:00</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_cierre" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#FEF3E2">🎓</div><div class="block-info"><div class="block-title">Cierre — El siguiente paso</div><div class="block-sub">Julio + Carlos</div></div><span class="block-dur">—</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Julio agradece y reconoce la aportación de cada vendedor — con nombre y distribuidora</span></div><div class="detail-item"><div class="detail-dot"></div><span>Compromisos concretos de cada rol antes de la implementación</span></div></div><div class="detail-note">Cerrar con compromisos claros y medibles rumbo a la implementación.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_cierre" onclick="openPresentation('d2_cierre')">▶ Iniciar</button><span class="block-status" id="status-d2_cierre"></span></div></div></div></div></div>
+    </div>
+    <div class="summary-bar">
+      <div class="scard"><div class="s-num">5h</div><div class="s-lbl">Duración total</div></div>
+      <div class="scard"><div class="s-num">12</div><div class="s-lbl">Bloques de trabajo</div></div>
+      <div class="scard"><div class="s-num">6</div><div class="s-lbl">Perfiles construidos</div></div>
+    </div>
+  </div>
+  <div class="taller-footer">Elaborado con <strong style="color:#E8611A">Grupo Nuwek</strong> — Programa EVA+ · ELAM FAW · Julio 2026</div>
+</div>
+
+<!-- SIMULADOR -->
+<div id="page-simulador" class="page">
+  <div class="sim-tabs">
+    <div class="sim-tab active" onclick="simTab('prac')">Práctica</div>
+    <div class="sim-tab" onclick="simTab('hist')">Mi historial</div>
+  </div>
+
+  <div id="sim-prac">
+    <div id="sim-select">
+      <div class="role-section">
+        <h3>Paso 1 — Elige tu rol en el pipeline</h3>
+        <div class="role-grid">
+          <div class="rcard sel" id="rc-srm" onclick="setRole('srm')"><span class="r-emoji">📞</span><div class="r-name">SRM — Filtrador</div><div class="r-desc">Primer contacto. Determina si el lead es Apto o No Apto según los 4 criterios de perfilado.</div></div>
+          <div class="rcard" id="rc-setter" onclick="setRole('setter')"><span class="r-emoji">🔍</span><div class="r-name">Setter — Calificador</div><div class="r-desc">Diagnóstico técnico. Identifica dolor, especificaciones y pre-cotización antes de escalar.</div></div>
+          <div class="rcard" id="rc-asesor" onclick="setRole('asesor')"><span class="r-emoji">🤝</span><div class="r-name">Asesor — Cerrador</div><div class="r-desc">Confirma diagnóstico, despierta objeciones y agenda la visita o prueba de manejo.</div></div>
+        </div>
+      </div>
+      <div class="role-section">
+        <h3>Paso 2 — Elige el prospecto</h3>
+        <div class="sel-hint" id="sel-hint">SRM: tu objetivo es PERFILAR — no vender. Levanta el formulario básico con 4 preguntas: ¿qué tipo de unidad busca? ¿tiene operación activa? ¿cuántas unidades necesita? ¿es el decisor? Clasifica: Apto, No Apto o Apto con reserva.</div>
+        <div class="prof-grid" id="prof-grid"></div>
+      </div>
+    </div>
+
+    <div id="sim-chat" style="display:none">
+      <div style="margin-bottom:10px"><span class="role-badge" id="role-badge"></span></div>
+      <div class="pipe-wrap"><div class="pipe-title">Pipeline — etapa actual de la conversación</div><div class="pipe-steps" id="pipe"></div></div>
+      <div class="instr" id="instr"></div>
+      <div class="chat-box">
+        <div class="chat-head" id="chat-head">
+          <div class="ch-avatar" id="c-av"></div>
+          <div><div class="ch-name" id="c-nm"></div><div class="ch-status" id="c-st"></div></div>
+          <div class="ch-turns" id="c-tr">0 mensajes</div>
+        </div>
+        <div class="messages" id="msgs"></div>
+      </div>
+      <div class="inp-row">
+        <textarea id="inp" placeholder="Escribe tu mensaje y presiona Enviar o Enter..." onkeydown="onKey(event)"></textarea>
+        <button class="send-btn" id="sbtn" onclick="doSend()">Enviar</button>
+      </div>
+      <div class="hint-txt">Enter para enviar &nbsp;·&nbsp; Shift+Enter para nueva línea</div>
+      <button class="end-btn" onclick="endSession()">Terminar sesión y ver evaluación →</button>
+    </div>
+
+    <div id="sim-eval" style="display:none">
+      <div class="eval-wrap" id="ev-body"><div class="empty">⏳ Analizando tu conversación...</div></div>
+      <div class="btn-row">
+        <button class="btn-p" onclick="simReset()">Practicar de nuevo</button>
+        <button class="btn-s" onclick="simTab('hist')">Ver historial</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="sim-hist" style="display:none"><div id="hist-body"></div></div>
+</div>
+
+<script>
+// ── NAVIGATION ───────────────────────────────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach((t,i)=>t.classList.toggle('active',['portada','taller','simulador'][i]===id));
+}
+
+// ── TALLER ───────────────────────────────────────────────────────────────────
+function showDay(idx) {
+  document.querySelectorAll('.taller-tab').forEach((t,i)=>t.classList.toggle('active',i===idx));
+  document.getElementById('day-0').style.display=idx===0?'block':'none';
+  document.getElementById('day-1').style.display=idx===1?'block':'none';
+}
+function tog(block) {
+  const d=block.querySelector('.block-detail');
+  const a=block.querySelector('.block-arr');
+  const o=d.classList.contains('open');
+  d.classList.toggle('open',!o);
+  a.classList.toggle('open',!o);
+}
+
+// ── MODO FACILITACIÓN EN VIVO — DÍA 1 Y DÍA 2 ─────────────────────────────────
+// Orden real de cada día (incluye recesos, para calcular "siguiente sección" correctamente).
+const DAY1_ITEMS = [
+  { id:'registro',   title:'Registro',                                 planned:15, type:'block' },
+  { id:'bienvenida', title:'Bienvenida de dirección FAW',               planned:15, type:'block' },
+  { id:'proyecto',   title:'"De 1% a 5%: el arranque"',                 planned:15, type:'block' },
+  { id:'playbook',   title:'Presentación del Playbook',                 planned:15, type:'block' },
+  { id:'principios', title:'Principios entre Filtrar, Settear y Cerrar',planned:15, type:'block' },
+  { id:'pipeline',   title:'El proceso de ventas — Pipeline',           planned:75, type:'block' },
+  { id:'crm',        title:'Herramienta de seguimiento — CRM',          planned:90, type:'block' },
+  { id:'_comida',    title:'Receso de comida',                         planned:45, type:'break' },
+  { id:'acuerdos',   title:'Acuerdos y presentación del Día 2',         planned:15, type:'block' },
+  { id:'cierre',     title:'Cierre',                                    planned:0,  type:'block' },
+];
+const DAY2_ITEMS = [
+  { id:'d2_recepcion',       title:'Recepción',                                       planned:10, type:'block' },
+  { id:'d2_pipeline',        title:'Validación del pipeline',                         planned:20, type:'block' },
+  { id:'d2_perfiles6',       title:'Mesa de trabajo — Crear 6 perfiles de prospecto', planned:40, type:'block' },
+  { id:'d2_objeciones',      title:'Mesa de trabajo — Las objeciones más frecuentes', planned:30, type:'block' },
+  { id:'d2_perfiladores',    title:'Perfiladores',                                    planned:20, type:'block' },
+  { id:'d2_setters',         title:'Setters',                                         planned:20, type:'block' },
+  { id:'d2_receso',          title:'Receso',                                          planned:40, type:'break' },
+  { id:'d2_ej_perfiladores', title:'Ejercicios de Perfiladores',                      planned:30, type:'block' },
+  { id:'d2_ej_setters',      title:'Ejercicios de Setters',                           planned:30, type:'block' },
+  { id:'d2_ej_objeciones',   title:'Ejercicios de Objeciones',                        planned:30, type:'block' },
+  { id:'d2_wbr',             title:'La WBR — La disciplina del éxito',                planned:30, type:'block' },
+  { id:'d2_cierre',          title:'Cierre — El siguiente paso',                      planned:0,  type:'block' },
+];
+const DAYS = {
+  day1: { items: DAY1_ITEMS, logKey:'faw_taller_log_day1', progressFillId:'day1-progress-fill', progressTextId:'day1-progress-text', endLabel:'Fin del Día 1' },
+  day2: { items: DAY2_ITEMS, logKey:'faw_taller_log_day2', progressFillId:'day2-progress-fill', progressTextId:'day2-progress-text', endLabel:'Fin del Día 2' },
+};
+// Índice global bid → dayKey, para no tener que pasar el día en cada llamada de los onclick.
+const BID_TO_DAY = {};
+Object.keys(DAYS).forEach(dayKey => {
+  DAYS[dayKey].items.forEach(item => { BID_TO_DAY[item.id] = dayKey; });
+});
+
+function loadLog(dayKey) {
+  try { return JSON.parse(localStorage.getItem(DAYS[dayKey].logKey)) || {}; }
+  catch(e) { return {}; }
+}
+function saveLog(dayKey, log) {
+  try { localStorage.setItem(DAYS[dayKey].logKey, JSON.stringify(log)); } catch(e) {}
+}
+
+let presState = { bid:null, dayKey:null, slide:0, timerHandle:null, viewOnly:false };
+
+function findBlock(bid) {
+  const dayKey = BID_TO_DAY[bid];
+  if (!dayKey) return null;
+  return DAYS[dayKey].items.find(b=>b.id===bid && b.type==='block');
+}
+function nextSectionTitle(bid) {
+  const dayKey = BID_TO_DAY[bid];
+  const items = DAYS[dayKey].items;
+  const idx = items.findIndex(i=>i.id===bid);
+  if (idx === -1 || idx === items.length-1) return DAYS[dayKey].endLabel;
+  return items[idx+1].title;
+}
+function fmtDuration(mins) {
+  if (mins <= 0) return 'sin límite';
+  const h = Math.floor(mins/60), m = mins%60;
+  return h>0 ? `${h}h ${m>0?m+'m':''}`.trim() : `${m} min`;
+}
+function fmtClock(ms) {
+  const totalSec = Math.max(0, Math.floor(ms/1000));
+  const h = Math.floor(totalSec/3600), m = Math.floor((totalSec%3600)/60), s = totalSec%60;
+  const pad = n => String(n).padStart(2,'0');
+  return h>0 ? `${h}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
+}
+
+function openPresentation(bid) {
+  const dayKey = BID_TO_DAY[bid];
+  const meta = findBlock(bid);
+  if (!meta || !dayKey) return;
+  const log = loadLog(dayKey);
+  let entry = log[bid];
+
+  presState.bid = bid;
+  presState.dayKey = dayKey;
+  presState.slide = 0;
+  presState.viewOnly = !!(entry && entry.finishedAt);
+
+  if (!entry) {
+    entry = { startedAt: Date.now(), finishedAt: null, realMs: null };
+    log[bid] = entry;
+    saveLog(dayKey, log);
+  } else if (!entry.finishedAt && !entry.startedAt) {
+    entry.startedAt = Date.now();
+    saveLog(dayKey, log);
+  }
+
+  document.getElementById('pres-eyebrow-top').textContent = presState.viewOnly ? 'Bloque completado' : 'En curso';
+  document.getElementById('pres-title-top').textContent = meta.title;
+  document.getElementById('pres-planned').innerHTML = 'Planeado: <strong>' + fmtDuration(meta.planned) + '</strong>';
+  document.getElementById('pres-next').innerHTML = 'Siguiente: <strong>' + nextSectionTitle(bid) + '</strong>';
+  document.getElementById('pres-finalizar').style.display = presState.viewOnly ? 'none' : 'inline-block';
+
+  renderDots();
+  renderSlide();
+  document.getElementById('pres-overlay').classList.add('open');
+
+  if (presState.timerHandle) clearInterval(presState.timerHandle);
+  if (presState.viewOnly) {
+    document.getElementById('pres-timer-num').textContent = fmtClock(entry.realMs);
+    document.getElementById('pres-timer-lbl').textContent = 'Tiempo real registrado';
+    setTimerColor('tg-gray');
+  } else {
+    tickTimer();
+    presState.timerHandle = setInterval(tickTimer, 1000);
+  }
+}
+
+function tickTimer() {
+  const log = loadLog(presState.dayKey);
+  const entry = log[presState.bid];
+  const meta = findBlock(presState.bid);
+  if (!entry || !entry.startedAt) return;
+  const elapsed = Date.now() - entry.startedAt;
+  document.getElementById('pres-timer-num').textContent = fmtClock(elapsed);
+  document.getElementById('pres-timer-lbl').textContent = 'En vivo';
+  if (meta.planned <= 0) { setTimerColor('tg-gray'); return; }
+  const plannedMs = meta.planned*60000;
+  if (elapsed <= plannedMs*0.8) setTimerColor('tg-green');
+  else if (elapsed <= plannedMs) setTimerColor('tg-yellow');
+  else setTimerColor('tg-red');
+}
+function setTimerColor(cls) {
+  const el = document.getElementById('pres-timer-wrap');
+  el.classList.remove('tg-green','tg-yellow','tg-red','tg-gray');
+  el.classList.add(cls);
+}
+
+const SLIDE_EYEBROWS = ['Punto 1 de 3','Punto 2 de 3','Punto 3 de 3'];
+function renderSlide() {
+  const meta = findBlock(presState.bid);
+  document.getElementById('pres-slide-eyebrow').textContent = SLIDE_EYEBROWS[presState.slide];
+  document.getElementById('pres-slide-title').textContent = meta.title;
+  document.getElementById('pres-slide-text').textContent = 'Contenido de este punto — completar con el material real de este bloque.';
+  document.getElementById('pres-prev').disabled = presState.slide===0;
+  document.getElementById('pres-next-btn').disabled = presState.slide===2;
+  document.querySelectorAll('.pres-dot').forEach((d,i)=>d.classList.toggle('active', i===presState.slide));
+}
+function renderDots() {
+  const wrap = document.getElementById('pres-dots');
+  wrap.innerHTML = '';
+  for (let i=0;i<3;i++) {
+    const d = document.createElement('div');
+    d.className = 'pres-dot' + (i===0?' active':'');
+    d.onclick = () => { presState.slide = i; renderSlide(); };
+    wrap.appendChild(d);
+  }
+}
+function presSlide(dir) {
+  const next = presState.slide + dir;
+  if (next < 0 || next > 2) return;
+  presState.slide = next;
+  renderSlide();
+}
+
+function closePresentation() {
+  if (presState.timerHandle) clearInterval(presState.timerHandle);
+  presState.timerHandle = null;
+  document.getElementById('pres-overlay').classList.remove('open');
+}
+
+function finalizePresentation() {
+  const bid = presState.bid;
+  const dayKey = presState.dayKey;
+  const log = loadLog(dayKey);
+  const entry = log[bid];
+  if (!entry) return;
+  entry.finishedAt = Date.now();
+  entry.realMs = entry.finishedAt - entry.startedAt;
+  saveLog(dayKey, log);
+  closePresentation();
+  updateBlockStatus(bid);
+  updateDayProgress(dayKey);
+}
+
+function updateBlockStatus(bid) {
+  const dayKey = BID_TO_DAY[bid];
+  const log = loadLog(dayKey);
+  const entry = log[bid];
+  const btn = document.getElementById('btn-'+bid);
+  const status = document.getElementById('status-'+bid);
+  const blockEl = document.getElementById('blk-'+bid);
+  if (!btn || !status) return;
+  btn.classList.remove('done','progress');
+  if (entry && entry.finishedAt) {
+    btn.textContent = '↻ Ver de nuevo';
+    btn.classList.add('done');
+    const mins = Math.round(entry.realMs/60000);
+    status.textContent = '✓ Completado — ' + (mins<1?'<1 min':mins+' min');
+    if (blockEl) blockEl.style.background = '#F7FBF8';
+  } else if (entry && entry.startedAt) {
+    btn.textContent = '▶ Continuar';
+    btn.classList.add('progress');
+    status.textContent = '● En curso';
+  } else {
+    btn.textContent = '▶ Iniciar';
+    status.textContent = '';
+    if (blockEl) blockEl.style.background = '';
+  }
+}
+
+function updateDayProgress(dayKey) {
+  const cfg = DAYS[dayKey];
+  const blocks = cfg.items.filter(i=>i.type==='block');
+  const log = loadLog(dayKey);
+  let done = 0, realMs = 0;
+  blocks.forEach(b=>{
+    const e = log[b.id];
+    if (e && e.finishedAt) { done++; realMs += e.realMs; }
+  });
+  const total = blocks.length;
+  const plannedTotal = blocks.reduce((s,b)=>s+b.planned,0);
+  const fill = document.getElementById(cfg.progressFillId);
+  const text = document.getElementById(cfg.progressTextId);
+  if (fill) fill.style.width = Math.round(done/total*100) + '%';
+  if (text) {
+    const realMins = Math.round(realMs/60000);
+    text.textContent = `${done}/${total} bloques completados · Tiempo real acumulado: ${fmtDuration(realMins)} (planeado: ${fmtDuration(plannedTotal)})`;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  Object.keys(DAYS).forEach(dayKey => {
+    DAYS[dayKey].items.filter(i=>i.type==='block').forEach(b => updateBlockStatus(b.id));
+    updateDayProgress(dayKey);
+  });
+});
+
+// ── SIMULADOR ────────────────────────────────────────────────────────────────
+const PROFS = {
+  srm:[
+    {name:"Miguel — Lead frío",emoji:"📱",full:"Miguel Torres — Lead entrante campaña digital",status:"Formulario recibido hace 2 horas · Sin contacto previo",obj:"No sabe bien qué quiere",system:`Eres Miguel Torres, 34 años. Llenaste un formulario de ELAM FAW por un anuncio en Facebook de "camiones a buen precio". Tienes una empresa de repartos con 2 camionetas propias. No sabes exactamente qué tipos de camión venden. Dirás que tienes 2 camionetas y quieres saber si pueden ofrecerte algo mejor. Si preguntan cuántas unidades necesitas, dirás que solo una más. Eres el dueño. Hablas casual, con algo de prisa. Responde SOLO como Miguel. Máximo 3 oraciones. Español informal. Nunca rompas el personaje.`,criteria:['preguntó_tipo_unidad','preguntó_necesidad_real','preguntó_num_unidades','verificó_decisor','no_intentó_vender','documentó_resultado'],steps:['Contacto','Tipo de unidad','Necesidad real','Num. unidades','Decisor','Apto/No Apto'],intro:"Sí, bueno, hola. Sí llené algo en Facebook. ¿Qué tienen?"},
+    {name:"Sofía — Fuera de perfil",emoji:"🚗",full:"Sofía Mendoza — Lead desde campaña digital",status:"Formulario recibido · Posible fuera de mercado",obj:"Busca vehículo de pasajeros",system:`Eres Sofía Mendoza, 28 años, empresa de turismo en Cancún. Llenaste un formulario porque buscas una van o minibús para tours. No sabes que ELAM FAW vende camiones de carga. Cuando te pregunten dirás que necesitas transportar pasajeros y grupos de turistas. Eres amable y colaboradora. Responde SOLO como Sofía. Máximo 3 oraciones. Español amable. Nunca rompas el personaje.`,criteria:['preguntó_tipo_unidad','preguntó_necesidad_real','preguntó_num_unidades','verificó_decisor','no_intentó_vender','clasificó_no_apto'],steps:['Contacto','Tipo de unidad','Necesidad real','Decisor','No Apto','Referido'],intro:"¡Hola! Sí, llené el formulario. Estoy buscando vans para mi empresa de turismo. ¿Tienen algo así?"},
+    {name:"Don Roberto — No decide solo",emoji:"🏭",full:"Roberto Salinas — Gerente de compras",status:"Lead entrante · Empresa grande · Decisor incierto",obj:"No es el decisor final",system:`Eres Roberto Salinas, 50 años, Gerente de Compras de empresa manufacturera en Monterrey. Tu empresa tiene 15 camiones. Tu jefe (Director General) te pidió que cotizaras camiones nuevos para renovar 5 unidades. Tú comparas opciones pero la decisión la toma el Director. Si preguntan si eres quien decide, dirás que recopilas información y la presentas. Hablas formal y metódico. Responde SOLO como Roberto. Máximo 3 oraciones. Español formal. Nunca rompas el personaje.`,criteria:['preguntó_tipo_unidad','preguntó_necesidad_real','preguntó_num_unidades','verificó_decisor','no_intentó_vender','documentó_resultado'],steps:['Contacto','Tipo de unidad','Num. unidades','Decisor','Apto con reserva','Documentado'],intro:"Buenos días. Me pidieron que cotizara algunas opciones de camiones para la empresa. ¿Me puede orientar?"},
+    {name:"Lupita — Solo 1 unidad",emoji:"🚚",full:"Guadalupe Rivas — Transportista independiente",status:"1 camión propio · Querétaro · sin banco",obj:"Solo necesita 1 unidad",system:`Eres Guadalupe Rivas, 42 años, transportista independiente de Querétaro. Tienes 1 camión propio de 6 años que ya empieza a fallar. Quieres reemplazarlo con 1 camión nuevo. No tienes acceso a crédito bancario. Cuando pregunten cuántas unidades necesitas dirás que solo 1 por ahora. Eres directa y práctica. Responde SOLO como Guadalupe. Máximo 3 oraciones. Español directo. Nunca rompas el personaje.`,criteria:['preguntó_tipo_unidad','preguntó_necesidad_real','preguntó_num_unidades','verificó_decisor','no_intentó_vender','documentó_resultado'],steps:['Contacto','Tipo de unidad','Necesidad real','Num. unidades','Financiamiento','Documentado'],intro:"Sí, hola. Llené el formulario porque necesito cambiar mi camión. Ya tiene muchos años."}
+  ],
+  setter:[
+    {name:"Don Héctor — El camionero",emoji:"🚛",full:"Don Héctor Morales — Operador independiente",status:"Tractocamión propio · Monterrey · 8 años de uso",obj:"'Es chino'",system:`Eres Don Héctor, 52 años, camionero independiente de Monterrey. Tienes un tractocamión de 8 años que ya falla: 2 paros en 3 meses, $45,000 en reparaciones. Llevas carga seca de Monterrey a CDMX 3 veces por semana. Tienes dinero de contado pero no lo dices fácil. Hablas directo, usas "mano", "cuate", "pos". Desconfías de marcas chinas. Si preguntan bien sobre tu operación te abres. Objeción: "Es chino, eso es pura chatarra." Responde SOLO como Don Héctor. Máximo 3 oraciones. Español mexicano informal. Nunca rompas el personaje.`,criteria:['diagnosticó_antes','preguntó_tipo_carga','identificó_dolor','exploró_objeción','pre_cotizó','cerró_paso'],steps:['Apertura','Operación','Dolor','Diferenciadores','Pre-cotización','Escalamiento'],intro:"Bueno... sí, me pasaron con usted. A ver qué me van a decir."},
+    {name:"Ing. Ramírez — Director Ops",emoji:"📋",full:"Ing. Roberto Ramírez — Director de Operaciones",status:"Constructora · 12 unidades · Guadalajara",obj:"'Lo consulto con dirección'",system:`Eres el Ing. Ramírez, 45 años, Director de Operaciones de Constructora Ramírez e Hijos, Guadalajara. Tienes 12 unidades. Quieres renovar 4 medianos con 7+ años. Mayor problema: consumo de 4 km/l cuando deberían hacer 6+. Hablas formal. Pides datos técnicos. No decides solo — el Director General aprueba. Objeción: "Lo voy a consultar con dirección." Responde SOLO como el Ing. Ramírez. Máximo 3 oraciones. Español formal. Nunca rompas el personaje.`,criteria:['diagnosticó_antes','preguntó_tipo_carga','identificó_dolor','identificó_decisor','pre_cotizó','cerró_paso'],steps:['Apertura','Operación','Dolor','Autoridad','Pre-cotización','Escalamiento'],intro:"Sí, buenas tardes. Me pasaron con usted. Evaluamos renovar parte de la flotilla."},
+    {name:"Carlos — El fantasma",emoji:"❄️",full:"Carlos Vega — Propietario distribuidora abarrotes",status:"2 camionetas · Querétaro · 5 días sin responder",obj:"'Estoy muy ocupado'",system:`Eres Carlos Vega, 38 años, dueño de distribuidora de abarrotes con 2 camionetas. Llenaste un formulario hace 5 días. Perdiste una ruta nueva con un competidor por no tener unidad disponible. Hablas rápido y cortante. Si el setter abre con "¿sigues interesado?" te cierras de inmediato. Si da un dato útil en los primeros 2 mensajes, te quedas. Objeción: "Estoy muy ocupado." Responde SOLO como Carlos. Máximo 2-3 oraciones. Español directo. Nunca rompas el personaje.`,criteria:['no_preguntó_interés','dio_valor_apertura','encontró_dolor','preguntó_operación','pre_cotizó','cerró_fecha'],steps:['Reactivación','Enganche','Operación','Dolor','Pre-cotización','Siguiente paso'],intro:"Ajá... sí, qué pasó. Ando muy ocupado en la bodega."},
+    {name:"Doña Lupita — Sin crédito",emoji:"🏦",full:"Guadalupe Torres — Propietaria flotilla",status:"4 camionetas · banco rechazado · Puebla",obj:"'No tengo financiamiento'",system:`Eres Guadalupe Torres, 48 años, dueña de empresa de reparto en Puebla con 4 camionetas. El banco te rechazó por un crédito pendiente. Necesitas una camioneta más por contrato con OXXO. Si asumen que es imposible, te cierras. Si preguntan sobre tu negocio, te abres. Objeción: "Ya fui al banco y me dijeron que no." Responde SOLO como Doña Lupita. Máximo 3 oraciones. Español informal práctico. Nunca rompas el personaje.`,criteria:['no_asumió_imposible','exploró_banco','entendió_operación','mencionó_FAW_financ','pre_cotizó','cerró_paso'],steps:['Apertura','Exploración banco','Operación','Financiamiento FAW','Pre-cotización','Escalamiento'],intro:"Sí, hola. Me pasaron con usted. Pero ya fui al banco y me dijeron que no."}
+  ],
+  asesor:[
+    {name:"Don Héctor — Post diagnóstico",emoji:"🚛",full:"Don Héctor Morales — Lead caliente",status:"Diagnóstico completo · listo para cita",obj:"Duda sobre soporte post-venta",system:`Eres Don Héctor, 52 años, camionero de Monterrey. Ya hablaste con el Setter que te hizo buenas preguntas. Tu dolor: $45,000 en reparaciones en 3 meses y 2 paros. Tienes dinero de contado. Ya escuchaste sobre FAW. Ahora tu duda: ¿qué pasa si el camión falla en carretera? Si el asesor repite las preguntas del diagnóstico, te molestas. Responde SOLO como Don Héctor. Máximo 3 oraciones. Español informal. Nunca rompas el personaje.`,criteria:['no_repitió_diagnóstico','confirmó_necesidad','despertó_objeciones','presentó_diferenciadores','agendó_visita','cerró_fecha'],steps:['Confirmación','Objeciones pre-cita','Propuesta','Prueba de manejo','Cierre','Fecha acordada'],intro:"Sí, me dijeron que me llamaría un asesor. ¿Qué tiene para mí?"},
+    {name:"Ing. Ramírez — Decisor pendiente",emoji:"📋",full:"Ing. Ramírez — Lead tibio, Director General sin involucrar",status:"Diagnóstico hecho · presupuesto aprobado · decisor pendiente",obj:"Necesita involucrar al Director General",system:`Eres el Ing. Ramírez. Ya hablaste con el Setter y recibiste información técnica con pre-cotización de 4 medianos. Consumo actual: 4 km/l vs. 6+ esperado. Presupuesto aprobado. El Director General (tu hermano Ricardo) tiene que estar en la conversación final. Te molesta que te repitan lo que ya dijiste. Responde SOLO como el Ing. Ramírez. Máximo 3 oraciones. Español formal. Nunca rompas el personaje.`,criteria:['no_repitió_diagnóstico','confirmó_necesidad','identificó_ruta_decisor','despertó_objeciones','agendó_visita','cerró_fecha'],steps:['Confirmación','Director General','Objeciones','Propuesta','Visita conjunta','Fecha acordada'],intro:"Buenas tardes. Ya hablé con su compañero. Tiene la información que compartí, supongo."},
+    {name:"Doña Lupita — Financiamiento OK",emoji:"🏦",full:"Guadalupe Torres — Financiamiento viable, cita pendiente",status:"Financiamiento FAW viable · 4 unidades califican",obj:"Duda sobre tiempos de entrega",system:`Eres Guadalupe Torres. El Setter te explicó el financiamiento propio de FAW para flotillas de 3+ unidades. Tú tienes 4, calificas. Ya no tienes la objeción del banco. Tu nueva duda: ¿cuánto tiempo tarda la entrega? Necesitas la camioneta pronto por el contrato de OXXO. Si el asesor menciona el banco de nuevo, te molesta. Responde SOLO como Doña Lupita. Máximo 3 oraciones. Español informal. Nunca rompas el personaje.`,criteria:['no_repitió_diagnóstico','confirmó_necesidad','despertó_objeciones','presentó_diferenciadores','agendó_visita','cerró_fecha'],steps:['Confirmación','Entrega y docs','Objeciones','Propuesta','Visita agencia','Fecha acordada'],intro:"Sí, hola. El muchacho anterior me explicó lo del financiamiento. Me interesa, pero ¿cuándo me pueden entregar?"},
+    {name:"Carlos — Reactivado",emoji:"❄️",full:"Carlos Vega — Lead reactivado, listo para avanzar",status:"Dolor identificado · ruta perdida · quiere actuar",obj:"Necesita certeza de precio y entrega",system:`Eres Carlos Vega. El Setter te enganchó hablando de la ruta que perdiste. Ya le contaste todo. Ahora hablas con el asesor. Eres más receptivo pero sigues siendo rápido y directo. Tu miedo: comprometerte con algo que no puedas pagar o que tarde mucho. Si el asesor da certeza sobre precio y tiempo de entrega, avanzas. Si se pone vago, te cierras. Responde SOLO como Carlos. Máximo 2-3 oraciones. Español directo. Nunca rompas el personaje.`,criteria:['no_repitió_diagnóstico','confirmó_necesidad','despertó_objeciones','aclaró_precio_entrega','agendó_visita','cerró_fecha'],steps:['Confirmación','Precio y entrega','Objeciones','Propuesta concreta','Visita','Fecha acordada'],intro:"Sí. El otro cuate me habló de la ruta que perdí. Sí me interesa pero necesito saber qué tanto voy a pagar y cuándo me lo entregan."}
+  ]
+};
+
+const CL = {
+  preguntó_tipo_unidad:'Preguntó qué tipo de unidad o vehículo busca',
+  preguntó_necesidad_real:'Preguntó si tiene operación activa con necesidad real',
+  preguntó_num_unidades:'Verificó cuántas unidades necesita (mín. 3 para financiamiento FAW)',
+  verificó_decisor:'Verificó si el contacto es el decisor o tiene acceso a él',
+  no_intentó_vender:'No intentó vender ni cotizar — solo perfiló',
+  documentó_resultado:'Clasificó al lead: Apto, No Apto o Apto con reserva',
+  clasificó_no_apto:'Identificó correctamente que el lead no es mercado FAW',
+  diagnosticó_antes:'Diagnosticó la operación antes de presentar el producto',
+  preguntó_tipo_carga:'Preguntó qué tipo de carga maneja y en qué rutas',
+  identificó_dolor:'Identificó el dolor principal del prospecto',
+  exploró_objeción:'Exploró la objeción con preguntas, no con argumentos',
+  identificó_decisor:'Identificó quién toma la decisión real de compra',
+  pre_cotizó:'Presentó referencia de precio orientativa',
+  cerró_paso:'Cerró con siguiente paso concreto y fecha',
+  no_preguntó_interés:'No abrió preguntando si "sigue interesado"',
+  dio_valor_apertura:'Dio un dato útil en los primeros mensajes',
+  encontró_dolor:'Encontró el dolor real detrás de la evasión',
+  preguntó_operación:'Preguntó sobre el tipo y tamaño de la operación',
+  cerró_fecha:'Agendó siguiente contacto con fecha específica',
+  no_asumió_imposible:'No asumió que era imposible por el banco',
+  exploró_banco:'Preguntó qué pasó específicamente con el banco',
+  entendió_operación:'Entendió la operación antes de hablar de solución',
+  mencionó_FAW_financ:'Mencionó el financiamiento propio FAW como alternativa',
+  no_repitió_diagnóstico:'No repitió preguntas que el Setter ya hizo',
+  confirmó_necesidad:'Confirmó el diagnóstico del Setter en lugar de rehacerlo',
+  despertó_objeciones:'Preguntó activamente qué dudas o frenos tiene el prospecto',
+  presentó_diferenciadores:'Conectó diferenciadores FAW con el dolor del prospecto',
+  agendó_visita:'Logró agendar visita presencial o prueba de manejo',
+  identificó_ruta_decisor:'Propuso cómo involucrar al decisor real',
+  aclaró_precio_entrega:'Dio certeza concreta sobre precio y tiempo de entrega'
+};
+
+const HINTS = {
+  srm:'SRM: tu objetivo es PERFILAR, no vender. Levanta el formulario básico con 4 preguntas: ¿qué tipo de unidad busca? ¿tiene operación activa? ¿cuántas unidades necesita? ¿es el decisor? Al terminar clasifica: Apto, No Apto o Apto con reserva.',
+  setter:'Setter: diagnostica antes de presentar. Entiende la operación, el dolor y el timing. Pre-cotiza solo si el prospecto está listo. Cierra con escalamiento al Asesor.',
+  asesor:'Asesor: el diagnóstico ya lo hizo el Setter — no lo repitas. Confirma, despierta objeciones antes de la cita, y agenda la visita presencial o prueba de manejo.'
+};
+
+const RNAMES = {srm:'SRM — Filtrador',setter:'Setter — Calificador',asesor:'Asesor — Cerrador'};
+const RCOLORS = {srm:'#1B3A6B',setter:'#B45309',asesor:'#1A6B3A'};
+
+let role='srm', prof=null, msgs=[], turns=0, waiting=false, convHist=[];
+let hist=[];
+try{hist=JSON.parse(localStorage.getItem('faw_v5')||'[]');}catch(e){}
+
+function simTab(t) {
+  document.querySelectorAll('.sim-tab').forEach((tab,i)=>tab.classList.toggle('active',['prac','hist'][i]===t));
+  document.getElementById('sim-prac').style.display=t==='prac'?'block':'none';
+  document.getElementById('sim-hist').style.display=t==='hist'?'block':'none';
+  if(t==='hist') renderHist();
+}
+
+function setRole(r) {
+  role=r;
+  ['srm','setter','asesor'].forEach(id=>document.getElementById('rc-'+id).classList.toggle('sel',id===r));
+  document.getElementById('sel-hint').textContent=HINTS[r];
+  buildProfs();
+}
+
+function buildProfs() {
+  const g=document.getElementById('prof-grid');
+  g.innerHTML='';
+  PROFS[role].forEach((p,i)=>{
+    const d=document.createElement('div');
+    d.className='pcard';
+    d.onclick=()=>pickProf(i);
+    d.innerHTML=`<span class="pemoji">${p.emoji}</span><div class="pname">${p.name}</div><div class="pdesc">${p.full}<br><small style="color:#999">${p.status}</small></div><span class="pobj obj-${role}">${p.obj}</span>`;
+    g.appendChild(d);
+  });
+}
+
+function pickProf(idx) {
+  prof=PROFS[role][idx]; msgs=[]; turns=0; convHist=[];
+  showSim('chat');
+
+  document.getElementById('role-badge').textContent=RNAMES[role];
+  document.getElementById('role-badge').className=`role-badge rb-${role}`;
+  document.getElementById('chat-head').className=`chat-head head-${role}`;
+  document.getElementById('c-av').textContent=prof.emoji;
+  document.getElementById('c-nm').textContent=prof.full;
+  document.getElementById('c-st').textContent=prof.status;
+  document.getElementById('c-tr').textContent='0 mensajes';
+  document.getElementById('instr').textContent=HINTS[role];
+  document.getElementById('instr').className=`instr instr-${role}`;
+  document.getElementById('sbtn').className=`send-btn sbtn-${role}`;
+  document.getElementById('msgs').innerHTML='';
+
+  renderPipe(prof.steps,0);
+  addMsg('prospect',prof.intro);
+  convHist.push({role:'assistant',content:prof.intro});
+}
+
+function renderPipe(steps,active) {
+  const c=document.getElementById('pipe'); c.innerHTML='';
+  steps.forEach((s,i)=>{
+    const d=document.createElement('div');
+    d.className='pstep'+(i<active?' done':i===active?' active':'');
+    d.innerHTML=`<div class="pstep-circle">${i<active?'✓':i+1}</div><div class="pstep-lbl">${s}</div>`;
+    c.appendChild(d);
+    if(i<steps.length-1){const cn=document.createElement('div');cn.className='pconn'+(i<active?' done':'');c.appendChild(cn);}
+  });
+}
+
+function addMsg(r,text) {
+  const d=document.getElementById('msgs');
+  const div=document.createElement('div');
+  div.className='msg '+r;
+  const now=new Date();
+  const t=now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+  const bc=r==='user'?`bubble bubble-${role}`:'bubble';
+  div.innerHTML=`<div class="${bc}">${text}</div><div class="mtime">${t}</div>`;
+  d.appendChild(div); d.scrollTop=d.scrollHeight;
+  msgs.push({role:r,text});
+}
+
+function showTyping() {
+  const d=document.getElementById('msgs');
+  const div=document.createElement('div');
+  div.className='typing'; div.id='typ';
+  div.innerHTML='<div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  d.appendChild(div); d.scrollTop=d.scrollHeight;
+}
+function hideTyping(){const t=document.getElementById('typ');if(t)t.remove();}
+
+function onKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();doSend();}}
+
+async function doSend() {
+  if(waiting)return;
+  const inp=document.getElementById('inp');
+  const txt=inp.value.trim();
+  if(!txt)return;
+  inp.value='';
+  addMsg('user',txt);
+  convHist.push({role:'user',content:txt});
+  turns++;
+  renderPipe(prof.steps,Math.min(Math.floor(turns/2),prof.steps.length-1));
+  document.getElementById('c-tr').textContent=turns+' mensaje'+(turns!==1?'s':'');
+  waiting=true;
+  document.getElementById('sbtn').disabled=true;
+  document.getElementById('inp').disabled=true;
+  showTyping();
+  try {
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:300,system:prof.system,messages:convHist})});
+    if(!res.ok)throw new Error();
+    const data=await res.json();
+    hideTyping();
+    const reply=data.content?.[0]?.text||'...';
+    addMsg('prospect',reply);
+    convHist.push({role:'assistant',content:reply});
+  } catch(e) {
+    hideTyping();
+    addMsg('prospect','[Error de conexión — recarga la página e intenta de nuevo]');
+  }
+  waiting=false;
+  document.getElementById('sbtn').disabled=false;
+  document.getElementById('inp').disabled=false;
+  document.getElementById('inp').focus();
+}
+
+async function endSession() {
+  if(msgs.length<5){alert('Practica un poco más — necesitas al menos 4 intercambios.');return;}
+  showSim('eval');
+  renderPipe(prof.steps,prof.steps.length);
+  const conv=msgs.map(m=>`${m.role==='user'?'AGENTE':'PROSPECTO'}: ${m.text}`).join('\n');
+  const crits=prof.criteria.map(c=>`- ${c}: ${CL[c]||c}`).join('\n');
+  const rdesc={srm:'SRM: su objetivo es PERFILAR (no vender) — levantar formulario básico y clasificar al lead como Apto, No Apto o Apto con reserva según los 4 criterios.',setter:'Setter: diagnosticar la operación, identificar el dolor, y hacer pre-cotización orientativa antes de escalar al Asesor.',asesor:'Asesor: confirmar el diagnóstico del Setter sin repetirlo, despertar objeciones, y agendar la visita presencial o prueba de manejo.'};
+  try {
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1200,system:"Eres coach de ventas consultivas para ELAM FAW México. Evalúas conversaciones de práctica. Responde SOLO con JSON válido sin texto adicional ni markdown.",messages:[{role:"user",content:`Evalúa esta conversación.\n\nROL: ${rdesc[role]}\nPROSPECTO: ${prof.full}\nSITUACIÓN: ${prof.obj}\n\nCONVERSACIÓN:\n${conv}\n\nCRITERIOS:\n${crits}\n\nJSON exacto:\n{"score":0-100,"label":"Excelente|Muy bien|En progreso|Necesita práctica","logros":["logro 1","logro 2","logro 3"],"mejoras":["mejora 1","mejora 2"],"cumplidos":["id1","id2"],"tip":"tip accionable máx 2 oraciones"}`}]})});
+    if(!res.ok)throw new Error();
+    const data=await res.json();
+    const raw=data.content?.[0]?.text||'{}';
+    const ev=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    const sc=ev.score||0;
+    const col=sc>=80?'#1A6B3A':sc>=60?'#B45309':'#C0392B';
+    const bgc=sc>=80?'#EAF4EE':sc>=60?'#FEF3E2':'#FDEAEA';
+    const entry={profile:prof.name,role:RNAMES[role],score:sc,date:new Date().toLocaleDateString('es-MX'),turns};
+    hist.unshift(entry); if(hist.length>40)hist=hist.slice(0,40);
+    try{localStorage.setItem('faw_v5',JSON.stringify(hist));}catch(e){}
+    document.getElementById('ev-body').innerHTML=`
+      <div class="score-circle" style="border-color:${col};background:${bgc}">
+        <span class="score-n" style="color:${col}">${sc}</span>
+        <span class="score-l" style="color:${col}">${ev.label||''}</span>
+      </div>
+      <div style="text-align:center;font-size:12px;color:#999;margin-bottom:1.5rem">${prof.name} &nbsp;·&nbsp; ${RNAMES[role]} &nbsp;·&nbsp; ${turns} mensajes</div>
+      <div class="ev-section"><h4>Lo que hiciste bien</h4>${(ev.logros||[]).map(l=>`<div class="ev-row"><span style="color:#1A6B3A;flex-shrink:0;font-size:15px">✓</span><span>${l}</span></div>`).join('')}</div>
+      <div class="ev-section"><h4>Áreas de mejora</h4>${(ev.mejoras||[]).map(m=>`<div class="ev-row"><span style="color:#B45309;flex-shrink:0;font-size:15px">↑</span><span>${m}</span></div>`).join('')}</div>
+      <div class="ev-section"><h4>Criterios — ${(ev.cumplidos||[]).length} de ${prof.criteria.length}</h4><div class="crit-grid">${prof.criteria.map(c=>{const ok=(ev.cumplidos||[]).includes(c);return `<div class="crit-item"><span style="color:${ok?'#1A6B3A':'#ccc'};flex-shrink:0;font-size:14px;margin-top:1px">${ok?'✓':'✗'}</span><span style="color:${ok?'#333':'#bbb'}">${CL[c]||c}</span></div>`;}).join('')}</div></div>
+      <div class="ev-section"><h4>Etapas recorridas</h4><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">${prof.steps.map(s=>`<span style="font-size:11px;background:#EEF1F7;color:#1B3A6B;padding:3px 10px;border-radius:20px;font-weight:600">✓ ${s}</span>`).join('')}</div></div>
+      <div class="tip-box"><strong>Tip:</strong> ${ev.tip||''}</div>`;
+  }catch(e){document.getElementById('ev-body').innerHTML='<div style="color:#C0392B;padding:1rem;font-size:13px">Error al evaluar. Intenta de nuevo.</div>';}
+}
+
+function simReset(){showSim('select');}
+
+function showSim(s) {
+  document.getElementById('sim-select').style.display=s==='select'?'block':'none';
+  document.getElementById('sim-chat').style.display=s==='chat'?'block':'none';
+  document.getElementById('sim-eval').style.display=s==='eval'?'block':'none';
+}
+
+function renderHist() {
+  const c=document.getElementById('hist-body');
+  if(!hist.length){c.innerHTML='<div class="empty">Aún no tienes sesiones registradas.<br>Practica tu primera conversación.</div>';return;}
+  const avg=Math.round(hist.reduce((a,b)=>a+b.score,0)/hist.length);
+  const best=Math.max(...hist.map(h=>h.score));
+  c.innerHTML=`<div class="hist-stats"><div class="hcard"><div class="hcard-n">${hist.length}</div><div class="hcard-l">Sesiones</div></div><div class="hcard"><div class="hcard-n">${avg}</div><div class="hcard-l">Promedio</div></div><div class="hcard"><div class="hcard-n" style="color:#1A6B3A">${best}</div><div class="hcard-l">Mejor puntaje</div></div></div>${hist.map(h=>{const col=h.score>=80?'#1A6B3A':h.score>=60?'#B45309':'#C0392B';return`<div class="hitem"><div><div class="hitem-name">${h.profile}</div><div class="hitem-meta">${h.role} · ${h.date} · ${h.turns} mensajes</div></div><div class="hitem-score" style="color:${col}">${h.score}</div></div>`;}).join('')}<button onclick="if(confirm('¿Borrar historial?')){hist=[];localStorage.removeItem('faw_v5');renderHist();}" style="width:100%;margin-top:10px;padding:9px;border:1.5px solid #e0e0d8;border-radius:10px;background:transparent;color:#aaa;font-size:12px;cursor:pointer">Borrar historial</button>`;
+}
+
+buildProfs();
+</script>
+</body>
+</html>
