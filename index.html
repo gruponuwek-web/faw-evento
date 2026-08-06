@@ -172,6 +172,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .pres-hero-qr img { width:288px; height:288px; object-fit:contain; border-radius:10px; }
 .pres-hero-qr span { font-size:14px; font-weight:700; color:#1B3A6B; text-transform:uppercase; letter-spacing:0.05em; }
 
+.pres-closing-layout { position:absolute; inset:0; z-index:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; padding:3rem 2.5rem; box-sizing:border-box; }
+.pres-closing-text { max-width:680px; margin-bottom:2.5rem; text-align:center; }
+.pres-closing-cta { display:flex; flex-direction:column; align-items:center; gap:12px; align-self:center; }
+.pres-closing-btn { background:#E5484D; color:#fff; border:none; border-radius:100px; padding:18px 52px; font-size:18px; font-weight:800; cursor:pointer; box-shadow:0 16px 44px rgba(229,72,77,0.5); transition:transform 0.15s, background 0.15s; }
+.pres-closing-btn:hover { background:#C93A3E; transform:translateY(-2px); }
+.pres-closing-counter { font-size:14px; color:rgba(255,255,255,0.75); font-weight:600; font-variant-numeric:tabular-nums; }
+
 .org-box.clickable, .org-top-box.clickable { cursor:pointer; transition:transform 0.15s, box-shadow 0.15s; }
 .org-box.clickable:hover { transform:translateY(-3px); box-shadow:0 10px 24px rgba(27,58,107,0.18); }
 .org-top-box.clickable:hover { transform:translateY(-3px); }
@@ -955,6 +962,9 @@ const SLIDE_CONTENT = {
       { text:'En una palabra: ¿cómo describirían el día de hoy?', emph:true },
     ]},
   ],
+  cierre: [
+    { type:'closing', image: WELCOME_IMG, eyebrow:'Cierre del Día 1', title:'El nuevo motor ya arrancó.', sub:'Gracias por un gran Día 1, FAW — nos vemos mañana.' },
+  ],
 };
 
 const SLIDE_EYEBROWS = ['Punto 1 de 3','Punto 2 de 3','Punto 3 de 3'];
@@ -979,7 +989,7 @@ function renderSlide() {
       <div class="pres-slide-text">Contenido de este punto — completar con el material real de este bloque.</div>`;
   }
 
-  const fullMode = presState.theme === 'light' || presState.theme === 'srm' || !!(slide && slide.type==='hero' && slide.full);
+  const fullMode = presState.theme === 'light' || presState.theme === 'srm' || !!(slide && slide.type==='hero' && slide.full) || !!(slide && slide.type==='closing');
   document.getElementById('pres-body').classList.toggle('pb-flush', fullMode);
   el.classList.toggle('ps-full', fullMode);
 
@@ -989,6 +999,26 @@ function renderSlide() {
   document.querySelector('.pres-nav-group').style.display = singleSlide ? 'none' : 'flex';
   document.getElementById('pres-dots').style.display = singleSlide ? 'none' : 'flex';
   document.querySelectorAll('.pres-dot').forEach((d,i)=>d.classList.toggle('active', i===presState.slide));
+
+  // La diapositiva de cierre trae su propio botón Finalizar (rojo, centrado) — se oculta la barra genérica.
+  const isClosing = !!(slide && slide.type === 'closing');
+  document.querySelector('.pres-bottom').style.display = isClosing ? 'none' : '';
+  if (closingCounterHandle) { clearInterval(closingCounterHandle); closingCounterHandle = null; }
+  if (isClosing) {
+    tickClosingCounter();
+    closingCounterHandle = setInterval(tickClosingCounter, 1000);
+  }
+}
+let closingCounterHandle = null;
+function tickClosingCounter() {
+  const el = document.getElementById('day-session-counter');
+  if (!el) return;
+  const log = loadLog(presState.dayKey);
+  const starts = Object.keys(log).map(k => log[k].startedAt).filter(Boolean);
+  if (!starts.length) { el.textContent = 'Duración de la sesión: --:--'; return; }
+  const earliest = Math.min.apply(null, starts);
+  const elapsed = Date.now() - earliest;
+  el.textContent = 'Duración de la sesión: ' + fmtClock(elapsed);
 }
 function buildSlideHTML(s, theme) {
   const eyebrow = s.eyebrow ? `<div class="pres-slide-eyebrow">${s.eyebrow}</div>` : '';
@@ -1086,6 +1116,22 @@ function buildSlideHTML(s, theme) {
         <div class="pres-srm-title">${s.title||''}</div>
         <div class="pres-srm-sub">${s.sub||''}</div>
         <div class="pres-srm-badge">Presenta: <strong>${s.presenter||''}</strong></div>
+      </div>
+    </div>`;
+  }
+  if (s.type === 'closing') {
+    return `<div class="pres-hero pres-hero-full" style="background-image:url('${s.image}')">
+      <div class="pres-hero-overlay"></div>
+      <div class="pres-closing-layout">
+        <div class="pres-closing-text">
+          ${s.eyebrow?`<div class="pres-hero-eyebrow">${s.eyebrow}</div>`:''}
+          <div class="pres-hero-title">${s.title||''}</div>
+          ${s.sub?`<div class="pres-hero-sub">${s.sub}</div>`:''}
+        </div>
+        <div class="pres-closing-cta">
+          <button class="pres-closing-btn" onclick="finalizePresentation()">✓ Finalizar el día</button>
+          <div class="pres-closing-counter" id="day-session-counter">Duración de la sesión: --:--</div>
+        </div>
       </div>
     </div>`;
   }
@@ -1248,6 +1294,7 @@ function closeBreakTimer() {
 function closePresentation() {
   if (presState.timerHandle) clearInterval(presState.timerHandle);
   presState.timerHandle = null;
+  if (closingCounterHandle) { clearInterval(closingCounterHandle); closingCounterHandle = null; }
   document.getElementById('pres-overlay').classList.remove('open');
 }
 
@@ -1279,15 +1326,19 @@ function updateBlockStatus(bid) {
     btn.classList.add('done');
     const mins = Math.round(entry.realMs/60000);
     status.textContent = '✓ Completado — ' + (mins<1?'<1 min':mins+' min');
-    if (blockEl) blockEl.style.background = '#F7FBF8';
+    if (blockEl) {
+      blockEl.style.background = '#E3F5EA';
+      blockEl.style.borderLeft = '5px solid #2E8B57';
+    }
   } else if (entry && entry.startedAt) {
     btn.textContent = '▶ Continuar';
     btn.classList.add('progress');
     status.textContent = '● En curso';
+    if (blockEl) { blockEl.style.background = ''; blockEl.style.borderLeft = ''; }
   } else {
     btn.textContent = '▶ Iniciar';
     status.textContent = '';
-    if (blockEl) blockEl.style.background = '';
+    if (blockEl) { blockEl.style.background = ''; blockEl.style.borderLeft = ''; }
   }
 }
 
