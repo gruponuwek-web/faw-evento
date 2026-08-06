@@ -79,6 +79,23 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .break-item { display:flex; align-items:center; gap:12px; padding:6px 0; }
 .break-line { flex:1; border-bottom:1px dashed #ccc; }
 .break-label { font-size:12px; color:#aaa; white-space:nowrap; font-style:italic; }
+.btn-iniciar-receso { background:#1B3A6B; color:#fff; border:none; border-radius:8px; padding:7px 16px; font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap; }
+.btn-iniciar-receso:hover { background:#14294d; }
+
+/* ── RELOJ GIGANTE DE RECESO (pantalla completa) ── */
+.break-overlay { display:none; position:fixed; inset:0; z-index:1000; }
+.break-overlay.open { display:block; }
+.break-bg { position:absolute; inset:0; background-size:cover; background-position:center; }
+.break-dim { position:absolute; inset:0; background:linear-gradient(180deg, rgba(11,22,43,0.5) 0%, rgba(11,22,43,0.72) 100%); }
+.break-close { position:absolute; top:1.5rem; right:1.5rem; z-index:2; background:rgba(255,255,255,0.14); border:none; color:#fff; font-size:20px; width:44px; height:44px; border-radius:50%; cursor:pointer; }
+.break-close:hover { background:rgba(255,255,255,0.24); }
+.break-reset { position:absolute; top:1.9rem; right:5.5rem; z-index:2; background:none; border:none; color:rgba(255,255,255,0.5); font-size:12px; font-weight:700; cursor:pointer; }
+.break-reset:hover { color:#fff; }
+.break-content { position:relative; z-index:1; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem; }
+.break-eyebrow { font-size:22px; font-weight:800; color:#8FC1E8; text-transform:uppercase; letter-spacing:0.15em; margin-bottom:1.5rem; }
+.break-clock { font-size:min(16vw,180px); font-weight:900; color:#fff; font-variant-numeric:tabular-nums; line-height:1; text-shadow:0 12px 50px rgba(0,0,0,0.5); }
+.break-clock.warn { color:#EB5757; }
+.break-sub { margin-top:1.75rem; font-size:22px; color:rgba(255,255,255,0.85); font-weight:600; }
 
 .summary-bar { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:2rem; }
 .scard { background:#1B3A6B; border-radius:12px; padding:1.25rem; text-align:center; }
@@ -509,7 +526,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
       <div class="tl-item"><div class="tl-time"><span>11:00</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-principios" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EEF1F7">⚙️</div><div class="block-info"><div class="block-title">Principios entre Filtrar, Settear y Cerrar</div><div class="block-sub">Los 3 roles del pipeline</div></div><span class="block-dur">15 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Qué hace cada rol y dónde termina su responsabilidad</span></div><div class="detail-item"><div class="detail-dot"></div><span>Por qué el Asesor no repite el diagnóstico que ya hizo el Setter</span></div></div><div class="detail-note">La confusión de roles es una de las causas estructurales del cierre bajo — este bloque la corrige desde el día uno.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-principios" onclick="openPresentation('principios')">▶ Iniciar</button><span class="block-status" id="status-principios"></span></div></div></div></div></div>
       <div class="tl-item"><div class="tl-time"><span>11:15</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-pipeline" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#FEF0E8">🗺</div><div class="block-info"><div class="block-title">El proceso de ventas — Pipeline</div><div class="block-sub">Carlos presenta · Recorrido completo</div></div><span class="block-dur">1h 15 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Recorrido de las etapas del pipeline de principio a fin, con ejemplos reales</span></div><div class="detail-item"><div class="detail-dot"></div><span>Qué información se entrega en cada handoff entre roles</span></div><div class="detail-item"><div class="detail-dot"></div><span>Preguntas y casos del equipo</span></div></div><div class="detail-note">Es el bloque más largo del día — el pipeline es la columna vertebral del sistema, vale la pena el tiempo.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-pipeline" onclick="openPresentation('pipeline')">▶ Iniciar</button><span class="block-status" id="status-pipeline"></span></div></div></div></div></div>
       <div class="tl-item"><div class="tl-time"><span>12:30</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-crm" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EAF4EE">💻</div><div class="block-info"><div class="block-title">Herramienta de seguimiento — CRM</div><div class="block-sub">GHL — Go High Level</div></div><span class="block-dur">1h 30 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Qué es GHL y cómo se usa para dar seguimiento a cada lead</span></div><div class="detail-item"><div class="detail-dot"></div><span>Qué debe registrar cada rol y cuándo</span></div></div><div class="detail-note">El CRM es el registro de todo lo visto en el bloque de Pipeline — dan continuidad natural uno al otro.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-crm" onclick="openPresentation('crm')">▶ Iniciar</button><span class="block-status" id="status-crm"></span></div></div></div></div></div>
-      <div class="tl-item"><div class="tl-time"><span>14:00</span></div><div class="tl-dot br"></div><div class="tl-content"><div class="break-item"><div class="break-line"></div><span class="break-label">Receso de comida — 45 min</span><div class="break-line"></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>14:00</span></div><div class="tl-dot br"></div><div class="tl-content"><div class="break-item"><div class="break-line"></div><span class="break-label">Receso de comida — 45 min</span><button class="btn-iniciar-receso" onclick="openBreakTimer()">▶ Iniciar receso</button><div class="break-line"></div></div></div></div>
       <div class="tl-item"><div class="tl-time"><span>14:45</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-acuerdos" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EEF1F7">🤝</div><div class="block-info"><div class="block-title">Acuerdos y presentación del Día 2</div><div class="block-sub">Julio + Carlos</div></div><span class="block-dur">15 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Compromisos concretos de cada rol antes de la siguiente sesión</span></div><div class="detail-item"><div class="detail-dot"></div><span>Qué van a vivir el Día 2: validación del pipeline, perfiles, objeciones y mesas de trabajo</span></div></div><div class="detail-note">Cerrar con compromisos claros y anticipación por lo que viene.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-acuerdos" onclick="openPresentation('acuerdos')">▶ Iniciar</button><span class="block-status" id="status-acuerdos"></span></div></div></div></div></div>
       <div class="tl-item"><div class="tl-time"><span>15:00</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-cierre" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#FEF3E2">🎓</div><div class="block-info"><div class="block-title">Cierre</div><div class="block-sub">Fin de la sesión</div></div><span class="block-dur">—</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Fin del arranque — el equipo sale con el proyecto, el playbook y el CRM presentados</span></div></div><div class="detail-note">Todo listo para el Día 2 de co-construcción con el equipo elite.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-cierre" onclick="openPresentation('cierre')">▶ Iniciar</button><span class="block-status" id="status-cierre"></span></div></div></div></div></div>
     </div>
@@ -568,6 +585,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
       <div class="pipeline-modal-eyebrow" id="pipeline-modal-eyebrow">Pipeline</div>
       <div class="pipeline-modal-title" id="pipeline-modal-title">Título</div>
       <div id="pipeline-modal-stages"></div>
+    </div>
+  </div>
+
+  <!-- RELOJ GIGANTE DE RECESO (pantalla completa) -->
+  <div class="break-overlay" id="break-overlay">
+    <div class="break-bg" style="background-image:url('https://raw.githubusercontent.com/gruponuwek-web/faw-evento/main/faw_elam_cover.jpeg')"></div>
+    <div class="break-dim"></div>
+    <button class="break-close" onclick="closeBreakTimer()">✕</button>
+    <div class="break-content">
+      <div class="break-eyebrow">Receso</div>
+      <div class="break-clock" id="break-clock">--:--</div>
+      <div class="break-sub">Hora actual</div>
     </div>
   </div>
 
@@ -1173,6 +1202,30 @@ function closePipelineModal() {
 function toggleStage(headEl) {
   const body = headEl.nextElementSibling;
   body.classList.toggle('open');
+}
+
+// ── RELOJ GIGANTE DE RECESO (Día 1) — hora actual, no cuenta regresiva ────
+let breakTimerHandle = null;
+
+function openBreakTimer() {
+  document.getElementById('break-overlay').classList.add('open');
+  tickBreakTimer();
+  if (breakTimerHandle) clearInterval(breakTimerHandle);
+  breakTimerHandle = setInterval(tickBreakTimer, 1000);
+}
+
+function tickBreakTimer() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const s = String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('break-clock').textContent = h + ':' + m + ':' + s;
+}
+
+function closeBreakTimer() {
+  document.getElementById('break-overlay').classList.remove('open');
+  if (breakTimerHandle) clearInterval(breakTimerHandle);
+  breakTimerHandle = null;
 }
 
 function closePresentation() {
