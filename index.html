@@ -175,6 +175,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .pres-numbered-badge { width:44px; height:44px; border-radius:50%; background:#1B3A6B; color:#fff; font-weight:800; font-size:19px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
 .pres-numbered-text { font-size:21px; color:#33455E; font-weight:600; line-height:1.4; padding-top:6px; }
 
+.pres-activity-body { font-size:22px; color:#33455E; line-height:1.6; max-width:720px; margin:0 auto 2rem; }
+.pres-activity-qr-wrap { display:inline-flex; flex-direction:column; align-items:center; gap:12px; background:#fff; border:1px solid rgba(27,58,107,0.1); border-radius:18px; padding:24px 28px; box-shadow:0 14px 40px rgba(27,58,107,0.12); }
+.pres-activity-qr { width:260px; height:260px; }
+.pres-activity-url { font-size:14px; font-weight:700; color:#1B3A6B; }
+
 .pres-bullets-title { font-size:28px; font-weight:800; color:#fff; margin-bottom:1.5rem; line-height:1.25; text-align:center; }
 .pres-bullet-list { display:flex; flex-direction:column; gap:14px; text-align:left; }
 .pres-bullet-item { display:flex; align-items:flex-start; gap:12px; font-size:15px; color:rgba(255,255,255,0.8); line-height:1.55; padding:12px 16px; border-radius:10px; }
@@ -765,6 +770,8 @@ const WELCOME_IMG = 'https://raw.githubusercontent.com/gruponuwek-web/faw-evento
 const REGISTRO_QR_IMG = 'https://raw.githubusercontent.com/gruponuwek-web/faw-evento/main/IMG_1001.jpg';
 
 const TRUCKS_IMG = 'https://raw.githubusercontent.com/gruponuwek-web/faw-evento/main/faw%20trucks.webp';
+// TODO Carlos: actualiza esta URL cuando despliegues clasificacion-eva.html en Netlify. El QR se genera solo a partir de esta URL.
+const ACTIVITY_URL = 'https://faw-clasificacion.netlify.app';
 
 const SLIDE_CONTENT = {
   registro: [
@@ -807,6 +814,15 @@ const SLIDE_CONTENT = {
       { text:'Es la referencia única — si no está en el playbook, no es el proceso oficial', emph:true },
     ]},
   ],
+  principios: [
+    { type:'bullets', eyebrow:'Antes de empezar', title:'¿Qué es cada uno para ustedes?', bullets:[
+      'Filtrar — ¿qué es para ti?',
+      'Settear — ¿qué es para ti?',
+      'Cerrar — ¿qué es para ti?',
+      { text:'En unos minutos lo vamos a poner a prueba, todos juntos', emph:true },
+    ]},
+    { type:'activity', eyebrow:'Actividad en vivo', title:'Clasifica los conceptos', body:'Cada quien entra desde su celular: escribe su nombre, arrastra los conceptos a Filtrar, Setter o Cerrar, y comparamos en vivo dónde coincidimos.', url: ACTIVITY_URL, qr: null },
+  ],
 };
 
 const SLIDE_EYEBROWS = ['Punto 1 de 3','Punto 2 de 3','Punto 3 de 3'];
@@ -845,6 +861,18 @@ function renderSlide() {
 function buildSlideHTML(s, theme) {
   const eyebrow = s.eyebrow ? `<div class="pres-slide-eyebrow">${s.eyebrow}</div>` : '';
   const light = theme === 'light';
+  if (s.type === 'activity') {
+    const qrSrc = 'https://api.qrserver.com/v1/create-qr-code/?size=340x340&data=' + encodeURIComponent(s.url||'');
+    return `<div class="pres-geo-wrap" style="text-align:center"><div class="pres-geo-accent"></div><div class="pres-geo-content" style="margin:0 auto">
+      ${s.eyebrow?`<div class="pres-geo-eyebrow">${s.eyebrow}</div>`:''}
+      <div class="pres-geo-title" style="max-width:none">${s.title||''}</div>
+      <div class="pres-activity-body">${s.body||''}</div>
+      <div class="pres-activity-qr-wrap">
+        <img class="pres-activity-qr" src="${qrSrc}" alt="QR actividad">
+        <div class="pres-activity-url">${s.url||''}</div>
+      </div>
+    </div></div>`;
+  }
   if (s.type === 'numbered') {
     const items = (s.items||[]).map((t,i) => `<div class="pres-numbered-item"><div class="pres-numbered-badge">${i+1}</div><div class="pres-numbered-text">${t}</div></div>`).join('');
     return `<div class="pres-geo-wrap"><div class="pres-geo-accent"></div><div class="pres-geo-content" style="max-width:1000px">
