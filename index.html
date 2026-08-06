@@ -62,6 +62,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 
 .block { background:#fff; border:1px solid #e0e0d8; border-radius:12px; overflow:hidden; cursor:pointer; transition:box-shadow 0.15s; }
 .block:hover { box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+.block.block-locked { cursor:default; }
+.block.block-locked:hover { box-shadow:none; }
 .block-header { display:flex; align-items:center; gap:12px; padding:14px 16px; }
 .block-icon { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
 .block-info { flex:1; }
@@ -798,10 +800,36 @@ function fmtClock(ms) {
   return h>0 ? `${h}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
 }
 
+function handleInlineToggle(bid) {
+  const dayKey = BID_TO_DAY[bid];
+  if (!dayKey) return;
+  const log = loadLog(dayKey);
+  let entry = log[bid];
+  if (!entry) {
+    // Aún no arranca: lo iniciamos.
+    log[bid] = { startedAt: Date.now(), finishedAt: null, realMs: null };
+  } else if (entry.startedAt && !entry.finishedAt) {
+    // En curso: lo cerramos.
+    entry.finishedAt = Date.now();
+    entry.realMs = entry.finishedAt - entry.startedAt;
+  } else if (entry.finishedAt) {
+    // Ya completado: reinicia el registro para volver a tomar tiempo si hace falta.
+    delete log[bid];
+  }
+  saveLog(dayKey, log);
+  updateBlockStatus(bid);
+  updateDayProgress(dayKey);
+}
+
 function openPresentation(bid) {
   const dayKey = BID_TO_DAY[bid];
   const meta = findBlock(bid);
   if (!meta || !dayKey) return;
+
+  // Bloques sin diapositivas reales todavía: no abrimos presentación de relleno.
+  // Solo arrancamos/paramos el cronómetro inline, para que puedan navegar libre el temario.
+  if (!SLIDE_CONTENT[bid]) { return handleInlineToggle(bid); }
+
   const log = loadLog(dayKey);
   let entry = log[bid];
 
@@ -1320,9 +1348,10 @@ function updateBlockStatus(bid) {
   const status = document.getElementById('status-'+bid);
   const blockEl = document.getElementById('blk-'+bid);
   if (!btn || !status) return;
+  const hasContent = !!SLIDE_CONTENT[bid];
   btn.classList.remove('done','progress');
   if (entry && entry.finishedAt) {
-    btn.textContent = '↻ Ver de nuevo';
+    btn.textContent = hasContent ? '↻ Ver de nuevo' : '↻ Reiniciar';
     btn.classList.add('done');
     const mins = Math.round(entry.realMs/60000);
     status.textContent = '✓ Completado — ' + (mins<1?'<1 min':mins+' min');
@@ -1331,7 +1360,7 @@ function updateBlockStatus(bid) {
       blockEl.style.borderLeft = '5px solid #2E8B57';
     }
   } else if (entry && entry.startedAt) {
-    btn.textContent = '▶ Continuar';
+    btn.textContent = hasContent ? '▶ Continuar' : '■ Finalizar';
     btn.classList.add('progress');
     status.textContent = '● En curso';
     if (blockEl) { blockEl.style.background = ''; blockEl.style.borderLeft = ''; }
@@ -1367,7 +1396,27 @@ document.addEventListener('DOMContentLoaded', function() {
     DAYS[dayKey].items.filter(i=>i.type==='block').forEach(b => updateBlockStatus(b.id));
     updateDayProgress(dayKey);
   });
+  applyContentLocks();
 });
+
+// Bloques sin diapositivas reales: ni botón de Iniciar ni tarjeta expandible —
+// solo la fila plana (hora/título/duración) hasta que tengan contenido de verdad.
+// Se ajusta solo: en cuanto un bloque tenga SLIDE_CONTENT, se desbloquea automáticamente.
+function applyContentLocks() {
+  Object.keys(DAYS).forEach(dayKey => {
+    DAYS[dayKey].items.filter(i=>i.type==='block').forEach(b => {
+      const blockEl = document.getElementById('blk-'+b.id);
+      if (!blockEl) return;
+      const actions = blockEl.querySelector('.block-actions');
+      const arrow = blockEl.querySelector('.block-arr');
+      const locked = !SLIDE_CONTENT[b.id];
+      blockEl.classList.toggle('block-locked', locked);
+      blockEl.onclick = locked ? null : function(){ tog(this); };
+      if (actions) actions.style.display = locked ? 'none' : '';
+      if (arrow) arrow.style.display = locked ? 'none' : '';
+    });
+  });
+}
 
 function resetDayLog(dayKey) {
   const cfg = DAYS[dayKey];
