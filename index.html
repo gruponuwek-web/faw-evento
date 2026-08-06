@@ -170,6 +170,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .role-modal-title { font-size:28px; font-weight:900; color:#1B3A6B; margin-bottom:1rem; }
 .role-modal-body { font-size:16px; color:#33455E; line-height:1.7; }
 
+.pres-numbered-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:20px 40px; }
+.pres-numbered-item { display:flex; align-items:flex-start; gap:16px; }
+.pres-numbered-badge { width:44px; height:44px; border-radius:50%; background:#1B3A6B; color:#fff; font-weight:800; font-size:19px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.pres-numbered-text { font-size:21px; color:#33455E; font-weight:600; line-height:1.4; padding-top:6px; }
+
 .pres-bullets-title { font-size:28px; font-weight:800; color:#fff; margin-bottom:1.5rem; line-height:1.25; text-align:center; }
 .pres-bullet-list { display:flex; flex-direction:column; gap:14px; text-align:left; }
 .pres-bullet-item { display:flex; align-items:flex-start; gap:12px; font-size:15px; color:rgba(255,255,255,0.8); line-height:1.55; padding:12px 16px; border-radius:10px; }
@@ -781,6 +786,27 @@ const SLIDE_CONTENT = {
       { text:'La WBR — el ritual semanal que sostiene todo el sistema', emph:true },
     ]},
   ],
+  playbook: [
+    { type:'bullets', eyebrow:'Por qué importa', title:'El mismo estándar para todos', bullets:[
+      'Deja de depender de la memoria o el estilo de cada vendedor',
+      'Convierte la experiencia de los mejores vendedores en un sistema que cualquiera puede replicar',
+      { text:'Es un documento vivo — se actualiza con cada aprendizaje del equipo', emph:true },
+    ]},
+    { type:'numbered', eyebrow:'La estructura', title:'Qué contiene el Playbook', items:[
+      'Contexto de la empresa',
+      'Cliente ideal',
+      'Los 3 pipelines: Perfilador, Setter, Asesor',
+      'Perfilamiento y calificación de leads',
+      'Manual de ventas: scripts, objeciones, handoff',
+      'Guiones de seguimiento',
+      'Rituales y herramientas: WBR, GROW, CRM',
+    ]},
+    { type:'bullets', eyebrow:'Sus alcances', title:'Qué cubre el Playbook', bullets:[
+      'Cubre los 3 roles del pipeline: Perfilador, Setter y Asesor/Closer',
+      'Incluye guiones para conversación, seguimiento y manejo de objeciones',
+      { text:'Es la referencia única — si no está en el playbook, no es el proceso oficial', emph:true },
+    ]},
+  ],
 };
 
 const SLIDE_EYEBROWS = ['Punto 1 de 3','Punto 2 de 3','Punto 3 de 3'];
@@ -819,6 +845,14 @@ function renderSlide() {
 function buildSlideHTML(s, theme) {
   const eyebrow = s.eyebrow ? `<div class="pres-slide-eyebrow">${s.eyebrow}</div>` : '';
   const light = theme === 'light';
+  if (s.type === 'numbered') {
+    const items = (s.items||[]).map((t,i) => `<div class="pres-numbered-item"><div class="pres-numbered-badge">${i+1}</div><div class="pres-numbered-text">${t}</div></div>`).join('');
+    return `<div class="pres-geo-wrap"><div class="pres-geo-accent"></div><div class="pres-geo-content" style="max-width:1000px">
+      ${s.eyebrow?`<div class="pres-geo-eyebrow">${s.eyebrow}</div>`:''}
+      <div class="pres-geo-title">${s.title||''}</div>
+      <div class="pres-numbered-grid">${items}</div>
+    </div></div>`;
+  }
   if (s.type === 'bullets') {
     if (light) {
       const items = (s.bullets||[]).map(b => {
