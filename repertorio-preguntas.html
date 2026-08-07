@@ -63,27 +63,105 @@
   .empty-state { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; min-height:380px; gap:12px; }
   .empty-state-icon { font-size:40px; }
   .empty-state-text { font-size:16px; color:rgba(51,69,94,0.55); font-weight:600; max-width:320px; line-height:1.5; }
+
+  .surprise-fab { position:fixed; bottom:18px; left:18px; width:46px; height:46px; border-radius:50%; background:#fff; border:1.5px solid rgba(27,58,107,0.15); font-size:21px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 20px rgba(27,58,107,0.12); z-index:50; transition:transform 0.15s; }
+  .surprise-fab:hover { transform:scale(1.1) rotate(-8deg); }
+  .manual-fab { bottom:72px; }
+
+  #manual-section { position:fixed; inset:0; z-index:500; background:#fff; overflow-y:auto; padding:2rem 2.5rem 4rem; }
+  .manual-header { max-width:760px; margin:0 auto 2rem; text-align:center; }
+  .manual-download { background:#1B3A6B; color:#fff; border:none; border-radius:100px; padding:13px 30px; font-size:14px; font-weight:800; cursor:pointer; margin-top:1rem; }
+  .manual-download:hover { background:#14294d; }
+  .manual-hint { font-size:12px; color:rgba(51,69,94,0.5); margin-top:8px; }
+  .manual-doc { max-width:760px; margin:0 auto; }
+  .manual-stage-title { font-size:24px; font-weight:900; color:#1B3A6B; margin:2.5rem 0 0.25rem; padding-bottom:0.5rem; border-bottom:3px solid #1B3A6B; }
+  .manual-stage-title:first-child { margin-top:0; }
+  .manual-concept { margin:1.5rem 0; }
+  .manual-concept-name { font-size:17px; font-weight:800; color:#1B3A6B; display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  .manual-list { margin:0 0 0 1.2rem; padding:0; }
+  .manual-list li { font-size:14.5px; color:#33455E; line-height:1.7; }
+  .manual-extra-label { font-size:11px; font-weight:800; color:#2E8B57; text-transform:uppercase; letter-spacing:0.05em; margin:8px 0 2px 1.2rem; }
+
+  @media print {
+    .surprise-fab, .manual-fab, .surprise-back, .manual-download, .manual-hint, #main-section, #surprise-section { display:none !important; }
+    #manual-section { position:static; overflow:visible; padding:0; }
+    body { background:#fff; padding:0; }
+  }
+
+  .hidden { display:none !important; }
+
+  #surprise-section { position:fixed; inset:0; z-index:500; background:#F7F5EF; overflow-y:auto; padding:2rem 2.5rem 3rem; }
+  #surprise-section .header, #surprise-section .tabs { max-width:1100px; margin-left:auto; margin-right:auto; }
+  .surprise-back { background:none; border:none; color:rgba(51,69,94,0.6); font-size:13px; font-weight:700; cursor:pointer; margin-bottom:1rem; padding:0; }
+  .surprise-back:hover { color:#1B3A6B; }
+
+  .conv-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start; }
+  @media (max-width:760px) { .conv-grid { grid-template-columns:1fr; } }
+  .conv-block { background:#fff; border-radius:16px; padding:1.5rem 1.6rem; box-shadow:0 6px 18px rgba(27,58,107,0.06); }
+  .conv-title { font-size:15px; font-weight:900; color:#1B3A6B; margin-bottom:1rem; }
+  .chat-line { display:flex; margin-bottom:9px; }
+  .chat-line.asesor { justify-content:flex-end; }
+  .chat-col { display:flex; flex-direction:column; max-width:78%; }
+  .chat-line.asesor .chat-col { align-items:flex-end; }
+  .chat-label { font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; opacity:0.55; margin-bottom:3px; }
+  .bubble { padding:9px 14px; border-radius:14px; font-size:13.5px; line-height:1.45; }
+  .bubble.asesor { background:#1B3A6B; color:#fff; border-bottom-right-radius:4px; }
+  .bubble.prospecto { background:#EEF1F7; color:#1B3A6B; border-bottom-left-radius:4px; }
 </style>
 </head>
 <body>
 
-  <div class="header">
-    <div class="eyebrow">Repertorio de preguntas</div>
-    <h1>El guion vivo de la negociación</h1>
-    <div class="subtitle">Toca un concepto para ver sus preguntas — y agrega las tuyas si el equipo encuentra otras mejores</div>
+  <div id="main-section">
+    <div class="header">
+      <div class="eyebrow">Repertorio de preguntas</div>
+      <h1>El guion vivo de la negociación</h1>
+      <div class="subtitle">Toca un concepto para ver sus preguntas — y agrega las tuyas si el equipo encuentra otras mejores</div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active filtrar" id="tab-filtrar" onclick="showStage('filtrar')">🔍 Filtrar</button>
+      <button class="tab-btn setter" id="tab-setter" onclick="showStage('setter')">🔧 Setter</button>
+      <button class="tab-btn cerrar" id="tab-cerrar" onclick="showStage('cerrar')">🥊 Cerrar</button>
+    </div>
+
+    <div class="stage-intro" id="stage-intro"></div>
+
+    <div class="layout">
+      <div class="concept-list" id="concept-list"></div>
+      <div class="detail-panel" id="detail-panel"></div>
+    </div>
+
+    <button class="surprise-fab" onclick="openSurprise()" title="¡Sorpresa!">🎁</button>
   </div>
 
-  <div class="tabs">
-    <button class="tab-btn active filtrar" id="tab-filtrar" onclick="showStage('filtrar')">🔍 Filtrar</button>
-    <button class="tab-btn setter" id="tab-setter" onclick="showStage('setter')">🔧 Setter</button>
-    <button class="tab-btn cerrar" id="tab-cerrar" onclick="showStage('cerrar')">🥊 Cerrar</button>
+  <div id="surprise-section" class="hidden">
+    <button class="surprise-back" onclick="closeSurprise()">← Regresar al repertorio</button>
+    <div class="header">
+      <div class="eyebrow">¡Sorpresa!</div>
+      <h1>Así suena en una conversación real</h1>
+      <div class="subtitle">2 ejemplos por rol, armados con las preguntas y frases puente de este repertorio</div>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active filtrar" id="stab-filtrar" onclick="showSurpriseStage('filtrar')">🔍 Filtrar</button>
+      <button class="tab-btn setter" id="stab-setter" onclick="showSurpriseStage('setter')">🔧 Setter</button>
+      <button class="tab-btn cerrar" id="stab-cerrar" onclick="showSurpriseStage('cerrar')">🥊 Cerrar</button>
+    </div>
+    <div id="surprise-content" style="max-width:1100px;margin:0 auto"></div>
+    <button class="surprise-fab" onclick="openManual()" title="Manual completo">📄</button>
   </div>
 
-  <div class="stage-intro" id="stage-intro"></div>
-
-  <div class="layout">
-    <div class="concept-list" id="concept-list"></div>
-    <div class="detail-panel" id="detail-panel"></div>
+  <div id="manual-section" class="hidden">
+    <div class="manual-header">
+      <button class="surprise-back" onclick="closeManual()">← Regresar a las conversaciones</button>
+      <div class="eyebrow">Manual completo</div>
+      <h1 style="font-size:30px">El manual de ventas, de un tirón</h1>
+      <div class="subtitle">Los 3 roles, cada concepto, sus preguntas — y las que agregó el equipo hoy</div>
+      <div>
+        <button class="manual-download" onclick="window.print()">🖨️ Descargar (PDF)</button>
+        <div class="manual-hint">Se abre el diálogo de impresión — elige "Guardar como PDF" para descargarlo</div>
+      </div>
+    </div>
+    <div class="manual-doc" id="manual-doc"></div>
   </div>
 
 <script>
@@ -329,6 +407,165 @@ async function deleteExtra(pregunta) {
     console.error('No se pudo eliminar la pregunta', e);
   }
   renderDetail();
+}
+
+// ── ¡SORPRESA! — conversaciones ejemplo por rol ───────────────────────────
+const SURPRISE = {
+  filtrar: [
+    { title:'Conversación 1 — Don Efrén, el camión-hombre urgido', lines:[
+      { s:'prospecto', t:'Vi un video suyo en Facebook, un camión pasando por una zona bien pedregosa. Me late, ¿me pueden dar info?' },
+      { s:'asesor', t:'¡Con mucho gusto! Cuénteme, ¿qué es lo que está buscando exactamente?' },
+      { s:'prospecto', t:'Ando buscando una unidad, la que tengo ya no aguanta el ritmo que traigo.' },
+      { s:'asesor', t:'Entiendo perfectamente esa necesidad — es justo lo que más nos buscan últimamente. Y pensando en el futuro, ¿qué le gustaría lograr con esta nueva unidad?' },
+      { s:'prospecto', t:'Poder tomar más rutas — ahorita rechazo pedidos porque no me alcanza.' },
+      { s:'asesor', t:'Me encanta esa visión, vamos a trabajar para que la alcancemos. Platíqueme, ¿qué tamaño o capacidad tiene en mente?' },
+      { s:'prospecto', t:'Algo intermedio, cargo cajas de abarrotes casi siempre.' },
+      { s:'asesor', t:'Perfecto, eso me ayuda mucho a orientarlo bien. Y en cuanto al peso, ¿qué tanto necesita cargar?' },
+      { s:'prospecto', t:'Como tonelada y media en promedio.' },
+      { s:'asesor', t:'Con esos datos ya tengo una idea clara de qué unidad le conviene. Una última cosa antes de seguir — ¿en qué ciudad o zona opera?' },
+      { s:'prospecto', t:'Aquí en Toluca y alrededores.' },
+    ]},
+    { title:'Conversación 2 — Distribuidora que ya no se da abasto', lines:[
+      { s:'prospecto', t:'Un colega compartió su página en redes, dijo que aquí el financiamiento sí se mueve rápido. Quisiera saber más.' },
+      { s:'asesor', t:'¡Qué bueno que nos contacta! Cuénteme, ¿qué es lo que está buscando exactamente?' },
+      { s:'prospecto', t:'Necesitamos ampliar la flotilla, nos está quedando chica la operación.' },
+      { s:'asesor', t:'Entiendo perfectamente esa necesidad. Y pensando en el futuro, ¿qué le gustaría lograr con esta nueva unidad?' },
+      { s:'prospecto', t:'Dejar de rechazar clientes por falta de unidades disponibles.' },
+      { s:'asesor', t:'Me encanta esa visión. Platíqueme, ¿qué tamaño o capacidad tiene en mente?' },
+      { s:'prospecto', t:'Algo mediano, para reparto en varias ciudades.' },
+      { s:'asesor', t:'Perfecto. Y en cuanto al peso, ¿qué tanto necesita cargar?' },
+      { s:'prospecto', t:'Depende del día, pero hasta 3 toneladas en temporada alta.' },
+      { s:'asesor', t:'Con esos datos ya tengo una idea clara. Una última cosa — ¿en qué ciudad o zona opera?' },
+      { s:'prospecto', t:'Base en Querétaro, pero rutas hasta CDMX y Guanajuato.' },
+    ]},
+  ],
+  setter: [
+    { title:'Conversación 1 — Flotilla chica que quiere crecer', lines:[
+      { s:'prospecto', t:'Vi su publicación en Instagram sobre el financiamiento propio, por eso les escribo.' },
+      { s:'asesor', t:'Qué gusto saludarlo. Platíquemos un poco de su operación — ¿su empresa es constituida o trabaja de manera independiente?' },
+      { s:'prospecto', t:'Empresa familiar, ya llevamos 8 años.' },
+      { s:'asesor', t:'Perfecto, así puedo orientarle mejor las opciones que tenemos para su tipo de operación. Cuénteme, ¿qué es lo que transporta principalmente?' },
+      { s:'prospecto', t:'Material de construcción, sobre todo cemento y varilla.' },
+      { s:'asesor', t:'Muy bien. Y cuénteme, ¿cuántas unidades tiene actualmente en su flotilla?' },
+      { s:'prospecto', t:'Apenas 2, por eso no hemos podido meter financiamiento propio en otras marcas.' },
+      { s:'asesor', t:'Perfecto, con eso ya sé exactamente qué opciones le podemos ofrecer. Ahora, cuénteme algo más de fondo — ¿qué es lo que más le cuesta o le preocupa de su operación hoy?' },
+      { s:'prospecto', t:'Que se nos poncha mucho la unidad vieja y perdemos días de chamba.' },
+      { s:'asesor', t:'Le agradezco mucho la confianza de compartir eso. Y para ir afinando la propuesta, ¿qué presupuesto tiene contemplado para esta inversión?' },
+      { s:'prospecto', t:'Ando buscando algo que se pueda financiar a 4 años, de contado no nos alcanza.' },
+    ]},
+    { title:'Conversación 2 — El que ya trae otra marca y no le funcionó', lines:[
+      { s:'prospecto', t:'Los vi en Facebook, andaba buscando opciones y me llamó la atención el tema del servicio postventa.' },
+      { s:'asesor', t:'Qué bueno que nos escribe. Cuénteme, ¿con qué marca o unidades trabaja actualmente?' },
+      { s:'prospecto', t:'Traigo una de otra marca, pero llevo dos meses esperando una refacción.' },
+      { s:'asesor', t:'Le agradezco compartir eso, me ayuda mucho a entender de dónde viene. Y sobre sus rutas, ¿en qué tipo de tránsito opera — urbano, carretera, mixto?' },
+      { s:'prospecto', t:'Carretera casi todo, viajes entre ciudades.' },
+      { s:'asesor', t:'Excelente. Ahora, cuénteme algo más de fondo — ¿qué es lo que más le cuesta o le preocupa de su operación hoy?' },
+      { s:'prospecto', t:'No poder confiar en que la unidad va a estar disponible cuando la necesito.' },
+      { s:'asesor', t:'Le agradezco mucho la confianza de compartir eso. Y platíqueme, ¿usted toma la decisión final, o hay alguien más involucrado?' },
+      { s:'prospecto', t:'Yo decido, es mi negocio.' },
+      { s:'asesor', t:'Perfecto, así sabemos bien con quién avanzar. Y para ir afinando la propuesta, ¿qué presupuesto tiene contemplado para esta inversión?' },
+      { s:'prospecto', t:'Prefiero no comprometer todo mi capital, algo con financiamiento me interesa más.' },
+    ]},
+  ],
+  cerrar: [
+    { title:'Conversación 1 — El que compara con Sitrac', lines:[
+      { s:'prospecto', t:'Le escribo por lo que vi en sus redes — ando comparando marcas antes de decidir.' },
+      { s:'asesor', t:'Con mucho gusto le ayudo a comparar. Dígame, ¿ha tenido alguna mala experiencia con el servicio de otra marca?' },
+      { s:'prospecto', t:'Con Sitrac, sí — tardan mucho en conseguir refacciones aquí en México.' },
+      { s:'asesor', t:'Entiendo completamente esa frustración, y es justo ahí donde nosotros hacemos la diferencia. Cuénteme, ¿está viendo otras opciones en este momento?' },
+      { s:'prospecto', t:'Sí, ando comparando entre ustedes y ellos.' },
+      { s:'asesor', t:'Gracias por su honestidad, eso me ayuda a mostrarle justo lo que nos hace diferentes. Y pensando en eso, ¿qué necesitaría ver de nuestra parte para decidirse por FAW?' },
+      { s:'prospecto', t:'Que me garanticen que el servicio postventa sí va a estar ahí cuando lo necesite.' },
+      { s:'asesor', t:'Justo ahí es donde más nos diferenciamos, y se lo voy a mostrar en un momento. Antes, platíqueme algo muy concreto — ¿le gustaría hacer una prueba de manejo con la unidad?' },
+      { s:'prospecto', t:'Sí, me gustaría sentirla antes de decidir.' },
+      { s:'asesor', t:'Perfecto, se la voy a preparar. Y para ir dejando todo listo, ¿ya tiene pensado cómo le gustaría hacer la compra — financiamiento, contado, o algún otro esquema?' },
+      { s:'prospecto', t:'Financiamiento, de preferencia con ustedes si el esquema es bueno.' },
+    ]},
+    { title:'Conversación 2 — El que ya casi decide, falta el empujón', lines:[
+      { s:'prospecto', t:'Llevo días viendo sus publicaciones, ya me decidí a escribirles directamente.' },
+      { s:'asesor', t:'Qué gusto que se animó a escribirnos. Cuénteme, ¿qué es lo que menos le gustó de otras opciones que ha visto?' },
+      { s:'prospecto', t:'Todas se parecen mucho, la verdad — precio similar, specs similares.' },
+      { s:'asesor', t:'Gracias por su honestidad. Y pensando en eso, ¿qué necesitaría ver de nuestra parte para decidirse por FAW?' },
+      { s:'prospecto', t:'Sinceramente, ya casi me decido — nada más quiero estar seguro del tema de garantía.' },
+      { s:'asesor', t:'Se lo agradezco mucho, eso me ayuda a enfocarme en lo que de verdad importa para usted. Y hablando de eso, ¿qué tan importante es para usted el servicio después de la compra?' },
+      { s:'prospecto', t:'Muy importante, no quiero que la unidad se me pare por falta de refacciones.' },
+      { s:'asesor', t:'Justo ahí es donde más nos diferenciamos. Antes, platíqueme algo muy concreto — ¿cuándo tendría disponibilidad para venir a probarla en persona?' },
+      { s:'prospecto', t:'Esta semana mismo, entre más pronto mejor.' },
+      { s:'asesor', t:'Con esa información ya puedo empezar a armarle el camino más conveniente. Ya para cerrar bien esto, ¿para cuándo tiene pensado tomar la decisión?' },
+      { s:'prospecto', t:'Si todo sale bien en la prueba, este mismo mes.' },
+    ]},
+  ],
+};
+
+let surpriseStage = 'filtrar';
+
+function openSurprise() {
+  document.getElementById('main-section').classList.add('hidden');
+  document.getElementById('surprise-section').classList.remove('hidden');
+  showSurpriseStage('filtrar');
+  window.scrollTo(0, 0);
+}
+function closeSurprise() {
+  document.getElementById('surprise-section').classList.add('hidden');
+  document.getElementById('main-section').classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+
+// ── Manual completo (documento descargable) ───────────────────────────────
+const STAGE_LABELS = { filtrar:'🔍 Filtrar', setter:'🔧 Setter', cerrar:'🥊 Cerrar' };
+
+async function openManual() {
+  document.getElementById('surprise-section').classList.add('hidden');
+  document.getElementById('manual-section').classList.remove('hidden');
+  await loadAllExtras();
+  renderManual();
+  window.scrollTo(0, 0);
+}
+function closeManual() {
+  document.getElementById('manual-section').classList.add('hidden');
+  document.getElementById('surprise-section').classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+
+function renderManual() {
+  const doc = document.getElementById('manual-doc');
+  doc.innerHTML = Object.keys(STAGES).map(stageKey => {
+    const stage = STAGES[stageKey];
+    const conceptsHtml = stage.concepts.map(c => {
+      const suggestedHtml = c.questions.map(q => `<li>${q}</li>`).join('');
+      const extraList = allExtras.filter(x => x.etapa === stageKey && x.concepto === c.name);
+      const extraHtml = extraList.length
+        ? `<div class="manual-extra-label">Agregadas por el equipo</div><ul class="manual-list">${extraList.map(x => `<li>${x.pregunta}</li>`).join('')}</ul>`
+        : '';
+      return `
+        <div class="manual-concept">
+          <div class="manual-concept-name">${c.name} <span class="badge ${c.forzosa?'forzosa':'opcional'}">${c.forzosa?'Forzosa':'Opcional'}</span></div>
+          <ul class="manual-list">${suggestedHtml}</ul>
+          ${extraHtml}
+        </div>`;
+    }).join('');
+    return `<div class="manual-stage-title">${STAGE_LABELS[stageKey]}</div>${conceptsHtml}`;
+  }).join('');
+}
+
+function showSurpriseStage(stageKey) {
+  surpriseStage = stageKey;
+  ['filtrar','setter','cerrar'].forEach(k => {
+    document.getElementById('stab-'+k).classList.toggle('active', k===stageKey);
+  });
+  const convs = SURPRISE[stageKey];
+  document.getElementById('surprise-content').innerHTML = `<div class="conv-grid">` + convs.map(conv => `
+    <div class="conv-block">
+      <div class="conv-title">${conv.title}</div>
+      ${conv.lines.map(line => `
+        <div class="chat-line ${line.s}">
+          <div class="chat-col">
+            <div class="chat-label">${line.s==='asesor'?'Asesor':'Prospecto'}</div>
+            <div class="bubble ${line.s}">${line.t}</div>
+          </div>
+        </div>`).join('')}
+    </div>`).join('') + `</div>`;
+  window.scrollTo(0, 0);
 }
 
 function showStage(stageKey) {
