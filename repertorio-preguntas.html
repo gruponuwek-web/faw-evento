@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Repertorio de preguntas — EVA+ FAW</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body {
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    background:#F7F5EF; color:#33455E; min-height:100vh; padding:2rem 2.5rem 3rem;
+  }
+  .header { text-align:center; margin-bottom:1.5rem; }
+  .eyebrow { font-size:14px; font-weight:800; color:#E8611A; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:0.5rem; }
+  h1 { font-size:32px; font-weight:900; color:#1B3A6B; margin-bottom:0.4rem; }
+  .subtitle { font-size:15px; color:rgba(51,69,94,0.7); font-weight:600; }
+
+  .tabs { display:flex; justify-content:center; gap:10px; margin-bottom:1.75rem; flex-wrap:wrap; }
+  .tab-btn { background:#fff; border:1.5px solid rgba(27,58,107,0.15); color:#1B3A6B; font-weight:700; font-size:14px; padding:10px 22px; border-radius:100px; cursor:pointer; }
+  .tab-btn.active.filtrar { background:#3E6FB0; color:#fff; border-color:#3E6FB0; }
+  .tab-btn.active.setter { background:#1B3A6B; color:#fff; border-color:#1B3A6B; }
+  .tab-btn.active.cerrar { background:#E8611A; color:#fff; border-color:#E8611A; }
+
+  .stage-intro { text-align:center; font-size:14px; color:rgba(51,69,94,0.6); margin-bottom:1.5rem; }
+
+  .layout { display:flex; gap:22px; max-width:1120px; margin:0 auto; align-items:flex-start; }
+  .concept-list { flex:0 0 300px; display:flex; flex-direction:column; gap:8px; }
+  .concept-row {
+    background:#fff; border:1.5px solid rgba(27,58,107,0.1); border-left-width:5px; border-radius:10px;
+    padding:12px 14px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;
+    gap:8px; text-align:left; width:100%; font-family:inherit;
+  }
+  .concept-row.forzosa { border-left-color:#C93A3E; }
+  .concept-row.opcional { border-left-color:#3E6FB0; }
+  .concept-row.active { box-shadow:0 6px 18px rgba(27,58,107,0.14); background:#EEF1F7; }
+  .concept-row .name { font-weight:700; font-size:14px; color:#1B3A6B; }
+  .badge { font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; padding:3px 8px; border-radius:100px; white-space:nowrap; flex-shrink:0; }
+  .badge.forzosa { background:rgba(201,58,62,0.12); color:#C93A3E; }
+  .badge.opcional { background:rgba(62,111,176,0.12); color:#3E6FB0; }
+
+  .detail-panel { flex:1; background:#fff; border-radius:16px; padding:1.75rem 2rem; box-shadow:0 10px 30px rgba(27,58,107,0.08); min-height:420px; }
+  .detail-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem; gap:12px; }
+  .detail-name { font-size:24px; font-weight:900; color:#1B3A6B; }
+  .q-label { font-size:11px; font-weight:800; color:rgba(51,69,94,0.5); text-transform:uppercase; letter-spacing:0.06em; margin:0 0 8px; }
+  .q-item { display:flex; gap:10px; align-items:flex-start; font-size:15px; color:#33455E; padding:9px 0; border-bottom:1px solid rgba(27,58,107,0.06); }
+  .q-item:last-of-type { border-bottom:none; }
+  .q-num { width:22px; height:22px; border-radius:50%; background:#EEF1F7; color:#1B3A6B; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+  .q-extra .q-num { background:rgba(46,139,87,0.15); color:#2E8B57; }
+  .q-del { background:none; border:none; color:rgba(201,58,62,0.5); font-size:16px; cursor:pointer; margin-left:auto; flex-shrink:0; padding:0 4px; }
+  .q-del:hover { color:#C93A3E; }
+
+  .bridge-box { margin:16px 0; background:rgba(232,97,26,0.08); border-left:4px solid #E8611A; border-radius:0 10px 10px 0; padding:12px 16px; }
+  .bridge-label { font-size:10px; font-weight:800; color:#E8611A; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:5px; }
+  .bridge-text { font-size:14px; color:#1B3A6B; font-style:italic; line-height:1.5; }
+
+  .add-q-section { margin-top:1.5rem; padding-top:1.25rem; border-top:1px solid rgba(27,58,107,0.08); }
+  .add-q-form { display:flex; gap:8px; }
+  .add-q-input { flex:1; padding:11px 14px; border:1.5px solid rgba(27,58,107,0.18); border-radius:8px; font-size:14px; font-family:inherit; }
+  .add-q-input:focus { outline:none; border-color:#3E6FB0; }
+  .add-q-btn { background:#1B3A6B; color:#fff; border:none; border-radius:8px; padding:11px 20px; font-weight:700; cursor:pointer; font-size:13px; white-space:nowrap; }
+  .add-q-btn:hover { background:#14294d; }
+
+  .empty-state { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; min-height:380px; gap:12px; }
+  .empty-state-icon { font-size:40px; }
+  .empty-state-text { font-size:16px; color:rgba(51,69,94,0.55); font-weight:600; max-width:320px; line-height:1.5; }
+</style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="eyebrow">Repertorio de preguntas</div>
+    <h1>El guion vivo de la negociación</h1>
+    <div class="subtitle">Toca un concepto para ver sus preguntas — y agrega las tuyas si el equipo encuentra otras mejores</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active filtrar" id="tab-filtrar" onclick="showStage('filtrar')">🔍 Filtrar</button>
+    <button class="tab-btn setter" id="tab-setter" onclick="showStage('setter')">🔧 Setter</button>
+    <button class="tab-btn cerrar" id="tab-cerrar" onclick="showStage('cerrar')">🥊 Cerrar</button>
+  </div>
+
+  <div class="stage-intro" id="stage-intro"></div>
+
+  <div class="layout">
+    <div class="concept-list" id="concept-list"></div>
+    <div class="detail-panel" id="detail-panel"></div>
+  </div>
+
+<script>
+const STAGES = {
+  filtrar: {
+    intro: 'Primer contacto — rápido, sin comprometer. El objetivo es saber si sigue.',
+    concepts: [
+      { name:'Cómo se enteró de nosotros', forzosa:false, questions:[
+        '¿Cómo llegó a conocer a ELAM FAW?',
+        '¿Qué fue lo que le llamó la atención de nosotros?',
+        '¿Ya nos conocía o es la primera vez que nos contacta?'
+      ], bridge:'Qué bueno que llegó por ahí — así puedo entender mejor qué necesita. Cuénteme, ¿qué es lo que está buscando exactamente?' },
+      { name:'Necesidad', forzosa:true, questions:[
+        '¿Qué tipo de unidad está buscando?',
+        '¿Para qué la necesita — qué operación va a resolver?',
+        '¿Qué lo trae a buscar una unidad en este momento?'
+      ], bridge:'Entiendo perfectamente esa necesidad — es justo lo que más nos buscan últimamente. Y pensando en el futuro, ¿qué le gustaría lograr con esta nueva unidad?' },
+      { name:'Anhelo', forzosa:false, questions:[
+        '¿Qué le gustaría lograr con esta nueva unidad?',
+        'Si esto funciona bien, ¿cómo se vería su operación en un año?',
+        '¿Qué es lo que más le gustaría que esta unidad le resuelva?'
+      ], bridge:'Me encanta esa visión, vamos a trabajar para que la alcancemos. Platíqueme, ¿qué tamaño o capacidad tiene en mente?' },
+      { name:'Tamaño', forzosa:true, questions:[
+        '¿Qué tamaño o capacidad de unidad tiene en mente?',
+        '¿Qué volumen necesita mover por viaje?',
+        '¿Ya tiene una línea en mente — ligero, mediano, pesado?'
+      ], bridge:'Perfecto, eso me ayuda mucho a orientarlo bien. Y en cuanto al peso, ¿qué tanto necesita cargar?' },
+      { name:'Peso', forzosa:true, questions:[
+        '¿Qué peso aproximado necesita transportar?',
+        '¿Cuál es la carga más pesada que mueve normalmente?',
+        '¿Maneja cargas variables o siempre es un peso similar?'
+      ], bridge:'Con esos datos ya tengo una idea clara de qué unidad le conviene. Una última cosa antes de seguir — ¿en qué ciudad o zona opera?' },
+      { name:'Ubicación', forzosa:false, questions:[
+        '¿En qué ciudad o zona está ubicada su operación?',
+        '¿Dónde opera principalmente sus rutas?',
+        '¿Tiene base fija o se mueve entre varias ciudades?'
+      ], bridge:'Excelente, ya tengo un buen panorama de su operación. Ahora sí, platíqueme un poco más de su empresa — ¿trabaja de manera independiente o tiene una empresa constituida?' },
+    ]
+  },
+  setter: {
+    intro: 'Diagnóstico a fondo — conecta el dolor con lo que ofrece ELAM FAW.',
+    concepts: [
+      { name:'Tipo de empresa', forzosa:true, questions:[
+        '¿Su operación es una empresa constituida o trabaja de manera independiente?',
+        '¿Cómo está organizada su operación — persona física o empresa?',
+        '¿Usted es el propietario, o forma parte de una empresa más grande?'
+      ], bridge:'Perfecto, así puedo orientarle mejor las opciones que tenemos para su tipo de operación. Cuénteme, ¿qué es lo que transporta principalmente?' },
+      { name:'Qué transportas', forzosa:true, questions:[
+        '¿Qué es lo que transporta principalmente?',
+        '¿A qué giro se dedica su operación de carga?',
+        '¿Qué tipo de mercancía mueve con más frecuencia?'
+      ], bridge:'Muy bien, eso me da mucha claridad de su operación. Y hablando de esa carga, ¿qué material es el que más carga?' },
+      { name:'Material que carga', forzosa:false, questions:[
+        '¿Qué tipo de material o mercancía carga con más frecuencia?',
+        '¿Su carga es a granel, paletizada, o de otro tipo?',
+        '¿Maneja algún material que requiera condiciones especiales?'
+      ], bridge:'Entiendo, eso es información valiosa para recomendarle la configuración correcta. Y cuénteme, ¿cuántas unidades tiene actualmente en su flotilla?' },
+      { name:'Cantidad de unidades', forzosa:true, questions:[
+        '¿Cuántas unidades tiene actualmente en su flotilla?',
+        '¿Con cuántos camiones opera hoy?',
+        '¿Está buscando ampliar su flotilla o es su primera unidad?'
+      ], bridge:'Perfecto, con eso ya sé exactamente qué opciones de financiamiento le podemos ofrecer. Y platíqueme, ¿con qué marca o unidades trabaja actualmente?' },
+      { name:'Equipo actual', forzosa:false, questions:[
+        '¿Con qué marca o unidades trabaja actualmente?',
+        '¿Qué tan satisfecho está con el equipo que tiene hoy?',
+        '¿Qué es lo que más le gustaría mejorar de su equipo actual?'
+      ], bridge:'Le agradezco compartir eso, me ayuda mucho a entender de dónde viene. Y sobre sus rutas, ¿en qué tipo de tránsito opera — urbano, carretera, mixto?' },
+      { name:'Tipo de tránsito', forzosa:false, questions:[
+        '¿En qué tipo de rutas opera — urbanas, carretera, o mixtas?',
+        '¿Sus recorridos son cortos o de larga distancia?',
+        '¿Qué condiciones de camino enfrenta más seguido?'
+      ], bridge:'Excelente, esa información es clave para la configuración correcta. Ahora, cuénteme algo más de fondo — ¿qué es lo que más le cuesta o le preocupa de su operación hoy?' },
+      { name:'Dolor', forzosa:true, questions:[
+        '¿Qué es lo que más le preocupa o le cuesta de su operación en este momento?',
+        '¿Qué es lo que le está frenando para crecer como quisiera?',
+        'Si pudiera resolver una sola cosa de su operación hoy, ¿cuál sería?'
+      ], bridge:'Le agradezco mucho la confianza de compartir eso — es justo lo que buscamos entender antes de recomendar algo. Y platíqueme, ¿con quién más se apoya en su operación?' },
+      { name:'Equipo aliado', forzosa:false, questions:[
+        '¿Con quién más se apoya en su operación — choferes, socios, familia?',
+        '¿Alguien más participa en las decisiones de la empresa?',
+        '¿Tiene algún equipo de confianza que lo respalde en esto?'
+      ], bridge:'Qué bien contar con ese respaldo. Y hablando de decisiones, ¿usted es quien toma la decisión final, o hay alguien más involucrado?' },
+      { name:'Decisor', forzosa:true, questions:[
+        '¿Usted toma la decisión final, o hay alguien más involucrado?',
+        '¿Necesita consultar con alguien más antes de avanzar?',
+        '¿Quién más debería estar en esta conversación?'
+      ], bridge:'Perfecto, así sabemos bien con quién avanzar. Y para ir afinando la propuesta, ¿qué presupuesto tiene contemplado para esta inversión?' },
+      { name:'Presupuesto', forzosa:true, questions:[
+        '¿Qué presupuesto tiene contemplado para esta inversión?',
+        '¿Cómo tiene pensado financiar la unidad — crédito, contado, esquema propio?',
+        '¿Qué rango de inversión le hace sentido para este proyecto?'
+      ], bridge:'Muy bien, con esto ya podemos armarle una propuesta realista. Antes de seguir, quiero entender algo más — ¿qué le ha frustrado de otras marcas o experiencias anteriores?' },
+    ]
+  },
+  cerrar: {
+    intro: 'Antes de la decisión — despertar objeciones antes de que aparezcan solas.',
+    concepts: [
+      { name:'Frustración', forzosa:false, questions:[
+        '¿Qué le ha frustrado de otras marcas o experiencias anteriores?',
+        '¿Ha tenido alguna mala experiencia con el servicio de otra marca?',
+        '¿Qué es lo que menos le gustó de otras opciones que ha visto?'
+      ], bridge:'Entiendo completamente esa frustración, y es justo ahí donde nosotros hacemos la diferencia. Cuénteme, ¿está viendo otras opciones en este momento?' },
+      { name:'Otras opciones', forzosa:false, questions:[
+        '¿Está considerando otras marcas en este momento?',
+        '¿Con quién más ha platicado sobre esta compra?',
+        '¿Qué le está haciendo dudar entre las opciones que tiene?'
+      ], bridge:'Gracias por su honestidad, eso me ayuda a mostrarle justo lo que nos hace diferentes. Ya para cerrar, ¿para cuándo tiene pensado tomar la decisión?' },
+      { name:'Fecha estimada de compra', forzosa:true, questions:[
+        '¿Para cuándo tiene pensado tomar la decisión?',
+        '¿Qué tan urgente es esta compra para su operación?',
+        '¿Hay alguna fecha límite que debamos tener en cuenta?'
+      ], bridge:'Perfecto, con toda esta información ya podemos avanzar hacia la propuesta final.' },
+    ]
+  }
+};
+
+// TODO Carlos: si tu Apps Script tiene otra URL, actualízala aquí (es la misma del portal de clasificación)
+const GS_URL = 'https://script.google.com/macros/s/AKfycbxKvgzuh_r-NIBZ_UX3wk8hzbGIMzN1QI3rFXLJrNSX4dm-ELx2jujM3t-r0EN7N4Ok/exec';
+
+async function gs(action, data) {
+  const res = await fetch(GS_URL, {
+    method: 'POST',
+    body: new URLSearchParams({ action, data: JSON.stringify(data || {}) })
+  });
+  return res.json();
+}
+
+let currentStage = 'filtrar';
+let currentIndex = null;
+let allExtras = []; // cache de Preguntas_Extra, cargado del Sheet
+
+async function loadAllExtras() {
+  try {
+    const res = await gs('preguntasGet');
+    allExtras = res.items || [];
+  } catch (e) {
+    console.error('No se pudieron cargar las preguntas del equipo', e);
+  }
+}
+
+function renderList() {
+  const stage = STAGES[currentStage];
+  const listEl = document.getElementById('concept-list');
+  listEl.innerHTML = stage.concepts.map((c, i) => `
+    <button type="button" class="concept-row ${c.forzosa?'forzosa':'opcional'} ${i===currentIndex?'active':''}" onclick="selectConcept(${i})">
+      <span class="name">${c.name}</span>
+      <span class="badge ${c.forzosa?'forzosa':'opcional'}">${c.forzosa?'Forzosa':'Opcional'}</span>
+    </button>`).join('');
+}
+
+function renderDetail() {
+  const panel = document.getElementById('detail-panel');
+  if (currentIndex === null) {
+    panel.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">👈</div>
+        <div class="empty-state-text">Selecciona un concepto de la lista para ver sus preguntas sugeridas y la frase puente.</div>
+      </div>`;
+    return;
+  }
+  const stage = STAGES[currentStage];
+  const c = stage.concepts[currentIndex];
+  const extraList = allExtras.filter(x => x.etapa === currentStage && x.concepto === c.name);
+
+  const suggestedHtml = c.questions.map((q, qi) => `<div class="q-item"><div class="q-num">${qi+1}</div><div>${q}</div></div>`).join('');
+  const extraHtml = extraList.map(x => `
+    <div class="q-item q-extra">
+      <div class="q-num">+</div><div style="flex:1">${x.pregunta}</div>
+      <button class="q-del" onclick="deleteExtra('${x.pregunta.replace(/'/g,"\\'")}')" title="Eliminar">✕</button>
+    </div>`).join('');
+
+  document.getElementById('detail-panel').innerHTML = `
+    <div class="detail-top">
+      <div class="detail-name">${c.name}</div>
+      <span class="badge ${c.forzosa?'forzosa':'opcional'}">${c.forzosa?'Forzosa':'Opcional'}</span>
+    </div>
+    <div class="q-label">Preguntas sugeridas</div>
+    ${suggestedHtml}
+    ${extraList.length ? `<div class="q-label" style="margin-top:14px">Agregadas por el equipo</div>${extraHtml}` : ''}
+    <div class="bridge-box">
+      <div class="bridge-label">Frase puente para avanzar</div>
+      <div class="bridge-text">"${c.bridge}"</div>
+    </div>
+    <div class="add-q-section">
+      <div class="q-label">Agregar una pregunta nueva</div>
+      <div class="add-q-form">
+        <input type="text" class="add-q-input" id="new-q-input" placeholder="Escribe la pregunta y presiona Enter o Agregar" onkeydown="if(event.key==='Enter') addExtra()">
+        <button class="add-q-btn" id="add-q-btn" onclick="addExtra()">+ Agregar</button>
+      </div>
+    </div>
+  `;
+}
+
+function selectConcept(i) {
+  currentIndex = (currentIndex === i) ? null : i;
+  renderList();
+  renderDetail();
+}
+
+async function addExtra() {
+  const input = document.getElementById('new-q-input');
+  const btn = document.getElementById('add-q-btn');
+  const val = input.value.trim();
+  if (!val) return;
+  const c = STAGES[currentStage].concepts[currentIndex];
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
+  try {
+    await gs('preguntasAdd', { etapa: currentStage, concepto: c.name, pregunta: val });
+    await loadAllExtras();
+  } catch (e) {
+    console.error('No se pudo guardar la pregunta', e);
+  }
+  renderDetail();
+}
+
+async function deleteExtra(pregunta) {
+  const c = STAGES[currentStage].concepts[currentIndex];
+  try {
+    await gs('preguntasDelete', { etapa: currentStage, concepto: c.name, pregunta: pregunta });
+    await loadAllExtras();
+  } catch (e) {
+    console.error('No se pudo eliminar la pregunta', e);
+  }
+  renderDetail();
+}
+
+function showStage(stageKey) {
+  currentStage = stageKey;
+  currentIndex = null;
+  ['filtrar','setter','cerrar'].forEach(k => {
+    document.getElementById('tab-'+k).classList.toggle('active', k===stageKey);
+  });
+  document.getElementById('stage-intro').textContent = STAGES[stageKey].intro;
+  renderList();
+  renderDetail();
+}
+
+async function init() {
+  showStage('filtrar');
+  await loadAllExtras();
+  renderDetail();
+}
+init();
+</script>
+</body>
+</html>
