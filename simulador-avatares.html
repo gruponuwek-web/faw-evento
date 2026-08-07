@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulador de conversaciones — EVA+ FAW</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body {
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    background:#F7F5EF; color:#33455E; min-height:100vh; padding:2rem 1.5rem 3rem;
+  }
+  .wrap { max-width:900px; margin:0 auto; }
+  .hidden { display:none !important; }
+  .header { text-align:center; margin-bottom:1.75rem; }
+  .eyebrow { font-size:13px; font-weight:800; color:#E8611A; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:0.5rem; }
+  h1 { font-size:30px; font-weight:900; color:#1B3A6B; margin-bottom:0.4rem; line-height:1.2; }
+  .subtitle { font-size:15px; color:rgba(51,69,94,0.7); font-weight:600; }
+  .btn-back { background:none; border:none; color:rgba(51,69,94,0.6); font-size:13px; font-weight:700; cursor:pointer; margin-bottom:1rem; padding:0; }
+  .btn-back:hover { color:#1B3A6B; }
+  .btn-link { background:none; border:none; color:#3E6FB0; font-size:13px; font-weight:700; cursor:pointer; text-decoration:underline; }
+
+  /* Nombre */
+  .name-card { background:#fff; border-radius:16px; padding:1.75rem; max-width:480px; margin:0 auto; box-shadow:0 10px 30px rgba(27,58,107,0.08); }
+  .chip { background:#F7F5EF; border:1.5px solid rgba(27,58,107,0.15); color:#1B3A6B; font-size:13px; font-weight:700; padding:8px 14px; border-radius:100px; cursor:pointer; }
+  .chip.selected { background:#1B3A6B; color:#fff; border-color:#1B3A6B; }
+  input[type=text] { width:100%; padding:14px 16px; font-size:16px; border:1.5px solid rgba(27,58,107,0.2); border-radius:10px; margin-bottom:1rem; font-family:inherit; }
+  input[type=text]:focus { outline:none; border-color:#3E6FB0; }
+  .btn-primary { width:100%; background:#1B3A6B; color:#fff; border:none; border-radius:10px; padding:14px; font-size:16px; font-weight:700; cursor:pointer; }
+  .btn-primary:hover { background:#14294d; }
+  .btn-primary:disabled { opacity:0.4; cursor:not-allowed; }
+  .center-link { text-align:center; margin-top:1.25rem; }
+
+  /* Rol */
+  .role-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .role-card { background:#fff; border:2px solid transparent; border-radius:18px; padding:2rem 1.25rem; text-align:center; cursor:pointer; box-shadow:0 8px 24px rgba(27,58,107,0.06); transition:transform 0.15s, box-shadow 0.15s; }
+  .role-card:hover { transform:translateY(-4px); box-shadow:0 16px 40px rgba(27,58,107,0.14); }
+  .role-icon { font-size:38px; margin-bottom:10px; }
+  .role-name { font-size:18px; font-weight:900; color:#1B3A6B; margin-bottom:6px; }
+  .role-obj { font-size:12.5px; color:rgba(51,69,94,0.6); line-height:1.4; }
+  @media (max-width:700px) { .role-grid { grid-template-columns:1fr; } }
+
+  /* Avatar */
+  .avatar-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+  @media (max-width:700px) { .avatar-grid { grid-template-columns:1fr; } }
+  .avatar-card { background:#fff; border-radius:14px; padding:1.1rem 1.3rem; cursor:pointer; border-left:5px solid; box-shadow:0 6px 18px rgba(27,58,107,0.06); }
+  .avatar-card.gender-hombre { border-left-color:#2563EB; }
+  .avatar-card.gender-mujer { border-left-color:#E64980; }
+  .avatar-card.locked { opacity:0.4; cursor:not-allowed; filter:grayscale(0.6); }
+  .avatar-card.used-same { outline:2px solid #2E8B57; }
+  .avatar-name { font-size:15.5px; font-weight:800; color:#1B3A6B; display:flex; align-items:center; gap:6px; margin-bottom:6px; }
+  .avatar-tag { font-size:12px; color:rgba(51,69,94,0.65); margin-bottom:2px; }
+  .avatar-lock-note { font-size:11px; color:#C93A3E; font-weight:700; margin-top:6px; }
+  .avatar-used-note { font-size:11px; color:#2E8B57; font-weight:700; margin-top:6px; }
+  .unlock-bar { text-align:center; margin-top:1.5rem; }
+  .btn-unlock { background:none; border:1.5px solid rgba(201,58,62,0.3); color:#C93A3E; border-radius:8px; padding:9px 18px; font-size:12.5px; font-weight:700; cursor:pointer; }
+
+  /* Dificultad */
+  .diff-block { background:#fff; border-radius:16px; padding:1.75rem; margin-bottom:1.25rem; box-shadow:0 8px 24px rgba(27,58,107,0.06); }
+  .diff-label { font-size:15px; font-weight:800; color:#1B3A6B; margin-bottom:12px; }
+  .diff-options { display:flex; gap:10px; }
+  .diff-opt { flex:1; background:#F7F5EF; border:1.5px solid transparent; color:#33455E; font-size:14px; font-weight:700; padding:12px; border-radius:10px; cursor:pointer; font-family:inherit; text-align:center; }
+  .diff-opt.selected { background:rgba(62,111,176,0.14); border-color:#3E6FB0; color:#1B3A6B; }
+  .diff-opt-sub { display:block; font-size:10.5px; font-weight:500; opacity:0.65; margin-top:2px; }
+
+  /* Chat */
+  .recap-card { display:flex; align-items:center; gap:14px; background:#fff; border-radius:14px; padding:1rem 1.25rem; margin-bottom:1rem; box-shadow:0 6px 18px rgba(27,58,107,0.06); flex-wrap:wrap; }
+  .recap-avatar-icon { font-size:28px; flex-shrink:0; }
+  .recap-name { font-size:15px; font-weight:900; color:#1B3A6B; }
+  .recap-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+  .recap-tag { font-size:11px; font-weight:700; color:rgba(51,69,94,0.7); background:#F7F5EF; padding:3px 10px; border-radius:100px; }
+
+  .concept-bar { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:1rem; padding:1rem; background:#fff; border-radius:14px; box-shadow:0 6px 18px rgba(27,58,107,0.06); }  .concept-chip { font-size:11.5px; font-weight:700; padding:6px 12px; border-radius:100px; border:1.5px solid; white-space:nowrap; transition:all 0.2s; }
+  .concept-chip.forzosa { border-color:#C93A3E; color:#C93A3E; background:rgba(201,58,62,0.06); }
+  .concept-chip.opcional { border-color:#3E6FB0; color:#3E6FB0; background:rgba(62,111,176,0.06); }
+  .concept-chip.touched { border-color:#2E8B57; color:#fff; background:#2E8B57; }
+
+  .sim-status { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; font-size:13px; font-weight:700; color:#1B3A6B; flex-wrap:wrap; gap:8px; }
+  .sim-status-item { background:#fff; padding:8px 16px; border-radius:100px; box-shadow:0 4px 12px rgba(27,58,107,0.06); }
+
+  .chat-box { background:#fff; border-radius:16px; padding:1.5rem; height:420px; overflow-y:auto; box-shadow:0 8px 24px rgba(27,58,107,0.06); margin-bottom:1rem; display:flex; flex-direction:column; gap:12px; }
+  .msg-row { display:flex; }
+  .msg-row.vendedor { justify-content:flex-end; }
+  .msg-col { max-width:78%; display:flex; flex-direction:column; }
+  .msg-row.vendedor .msg-col { align-items:flex-end; }
+  .msg-label { font-size:9px; font-weight:800; text-transform:uppercase; opacity:0.5; margin-bottom:3px; }
+  .msg-bubble { padding:10px 14px; border-radius:14px; font-size:14px; line-height:1.45; }
+  .msg-bubble.vendedor { background:#1B3A6B; color:#fff; border-bottom-right-radius:4px; }
+  .msg-bubble.avatar { background:#EEF1F7; color:#1B3A6B; border-bottom-left-radius:4px; }
+  .msg-bubble.thinking { background:#EEF1F7; color:rgba(27,58,107,0.5); font-style:italic; }
+
+  .chat-input-row { display:flex; gap:10px; }
+  .chat-input { flex:1; padding:13px 16px; border:1.5px solid rgba(27,58,107,0.18); border-radius:10px; font-size:14px; font-family:inherit; }
+  .chat-input:focus { outline:none; border-color:#3E6FB0; }
+  .btn-send { background:#1B3A6B; color:#fff; border:none; border-radius:10px; padding:13px 24px; font-weight:800; cursor:pointer; font-size:14px; }
+  .btn-send:disabled { opacity:0.4; cursor:not-allowed; }
+
+  /* Resultado */
+  .result-card { background:#fff; border-radius:20px; padding:2.25rem; text-align:center; box-shadow:0 12px 34px rgba(27,58,107,0.1); }
+  .result-icon { font-size:52px; margin-bottom:0.75rem; }
+  .result-score { font-size:52px; font-weight:900; color:#1B3A6B; margin:0.5rem 0; }
+  .result-score span { font-size:18px; font-weight:700; color:rgba(51,69,94,0.5); }
+  .result-detail { font-size:14px; color:rgba(51,69,94,0.7); margin-bottom:1.5rem; }
+  .feedback-box { background:#F7F5EF; border-radius:14px; padding:1.25rem 1.5rem; text-align:left; margin-bottom:1.5rem; }
+  .feedback-label { font-size:11px; font-weight:800; color:#E8611A; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; }
+  .feedback-text { font-size:14px; line-height:1.6; color:#33455E; white-space:pre-line; }
+  .result-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  .btn-secondary { background:none; border:1.5px solid rgba(27,58,107,0.2); color:#1B3A6B; border-radius:10px; padding:12px 22px; font-weight:700; cursor:pointer; font-size:14px; }
+
+  /* Ranking */
+  .rank-tabs { display:flex; justify-content:center; gap:8px; margin-bottom:1.5rem; flex-wrap:wrap; }
+  .rank-tab { background:#fff; border:1.5px solid rgba(27,58,107,0.15); color:#1B3A6B; font-weight:700; font-size:13px; padding:9px 18px; border-radius:100px; cursor:pointer; }
+  .rank-tab.active { background:#1B3A6B; color:#fff; border-color:#1B3A6B; }
+  .rank-list { background:#fff; border-radius:16px; padding:1rem 1.5rem; box-shadow:0 8px 24px rgba(27,58,107,0.06); }
+  .rank-row { display:flex; align-items:center; gap:14px; padding:12px 0; border-bottom:1px solid rgba(27,58,107,0.06); }
+  .rank-row:last-child { border-bottom:none; }
+  .rank-pos { font-size:18px; font-weight:900; color:rgba(27,58,107,0.3); width:28px; flex-shrink:0; }
+  .rank-row:nth-child(1) .rank-pos { color:#E8611A; }
+  .rank-name { flex:1; font-size:15px; font-weight:800; color:#1B3A6B; }
+  .rank-meta { font-size:11.5px; color:rgba(51,69,94,0.55); }
+  .rank-score { font-size:16px; font-weight:900; color:#2E8B57; }
+  .rank-empty { text-align:center; padding:2rem; color:rgba(51,69,94,0.5); font-size:14px; }
+
+  #print-transcript { display:none; }
+  @media print {
+    body * { visibility:hidden; }
+    #print-transcript, #print-transcript * { visibility:visible; }
+    #print-transcript { display:block; position:absolute; inset:0; padding:1rem; }
+    .pt-msg { margin-bottom:10px; padding:8px 12px; border-radius:8px; font-size:13px; line-height:1.4; }
+    .pt-msg.vendedor { background:#EEF1F7; }
+    .pt-msg.avatar { background:#F7F5EF; }
+    .pt-label { font-size:9px; font-weight:800; text-transform:uppercase; opacity:0.6; margin-bottom:2px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- PANTALLA: NOMBRE -->
+  <div id="screen-name">
+    <div class="header">
+      <div class="eyebrow">EVA+ · FAW</div>
+      <h1>Simulador de conversaciones</h1>
+      <div class="subtitle">Practica los 3 roles del pipeline contra un prospecto simulado con IA</div>
+    </div>
+    <div class="name-card">
+      <div class="pool" id="user-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:0.75rem"></div>
+      <div id="user-list-empty" class="subtitle" style="display:none;font-size:12px;margin-bottom:0.75rem">Aún no hay nadie registrado — sé el primero.</div>
+      <input type="text" id="name-input" placeholder="Escribe tu nombre" autocomplete="off">
+      <button class="btn-primary" onclick="startFlow()">Comenzar</button>
+    </div>
+    <div class="center-link"><button class="btn-link" onclick="showScreen('ranking')">🏆 Ver el ranking</button></div>
+  </div>
+
+  <!-- PANTALLA: ROL -->
+  <div id="screen-role" class="hidden">
+    <button class="btn-back" onclick="showScreen('name')">← Regresar</button>
+    <div class="header">
+      <div class="eyebrow">Paso 1 de 3</div>
+      <h1>¿Qué rol vas a practicar?</h1>
+      <div class="subtitle">Cada rol tiene su propio objetivo y sus propios conceptos que cubrir</div>
+    </div>
+    <div class="role-grid" id="role-grid"></div>
+  </div>
+
+  <!-- PANTALLA: AVATAR -->
+  <div id="screen-avatar" class="hidden">
+    <button class="btn-back" onclick="showScreen('role')">← Regresar</button>
+    <div class="header">
+      <div class="eyebrow">Paso 2 de 3</div>
+      <h1>Elige tu prospecto</h1>
+      <div class="subtitle">Un avatar usado en otro rol queda bloqueado para ti hasta que lo desbloquees</div>
+    </div>
+    <div class="avatar-grid" id="avatar-grid"></div>
+    <div class="unlock-bar"><button class="btn-unlock" onclick="unlockAvatars()">🔓 Desbloquear mis avatares</button></div>
+  </div>
+
+  <!-- PANTALLA: DIFICULTAD -->
+  <div id="screen-difficulty" class="hidden">
+    <button class="btn-back" onclick="showScreen('avatar')">← Regresar</button>
+    <div class="header">
+      <div class="eyebrow">Paso 3 de 3</div>
+      <h1>Nivel de dificultad</h1>
+      <div class="subtitle">Ajusta qué tanto habla y qué tanto objeta tu prospecto</div>
+    </div>
+    <div class="diff-block">
+      <div class="diff-label">💬 ¿Qué tanto platica?</div>
+      <div class="diff-options" id="platica-options"></div>
+    </div>
+    <div class="diff-block">
+      <div class="diff-label">🥊 ¿Qué tanto objeta?</div>
+      <div class="diff-options" id="objeta-options"></div>
+    </div>
+    <button class="btn-primary" id="btn-start-sim" onclick="startSimulation()" disabled>Iniciar simulación</button>
+  </div>
+
+  <!-- PANTALLA: CHAT -->
+  <div id="screen-chat" class="hidden">
+    <button class="btn-back" onclick="backFromChat()">← Regresar</button>
+    <div class="header" style="margin-bottom:1rem">
+      <div class="eyebrow" id="chat-eyebrow">Filtrar</div>
+      <h1 id="chat-title" style="font-size:22px">Conversación</h1>
+    </div>
+    <div class="recap-card" id="recap-card"></div>
+    <div class="concept-bar" id="concept-bar"></div>
+    <div class="sim-status">
+      <div class="sim-status-item">Turno <span id="turn-count">0</span>/7</div>
+      <div class="sim-status-item">Aciertos <span id="acierto-count">0</span>/4</div>
+    </div>
+    <div class="chat-box" id="chat-box"></div>
+    <div class="chat-input-row">
+      <input type="text" class="chat-input" id="chat-input" placeholder="Escribe lo que le dirías al prospecto..." onkeydown="if(event.key==='Enter') sendMessage()">
+      <button class="btn-send" id="btn-send" onclick="sendMessage()">Enviar</button>
+    </div>
+  </div>
+
+  <!-- PANTALLA: RESULTADO -->
+  <div id="screen-result" class="hidden">
+    <div class="result-card">
+      <div class="result-icon" id="result-icon">🏆</div>
+      <div class="subtitle" id="result-title">¡Lo lograste!</div>
+      <div class="result-score" id="result-score">0<span> pts</span></div>
+      <div class="result-detail" id="result-detail"></div>
+      <div class="feedback-box">
+        <div class="feedback-label">Retroalimentación</div>
+        <div class="feedback-text" id="feedback-text">Generando retroalimentación...</div>
+      </div>
+      <div class="result-actions">
+        <button class="btn-primary" style="width:auto" onclick="showScreen('role')">🔁 Otro ejercicio</button>
+        <button class="btn-secondary" onclick="window.print()">🖨️ Imprimir conversación + retro</button>
+        <button class="btn-secondary" onclick="showScreen('ranking')">🏆 Ver ranking</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOLO PARA IMPRESIÓN: transcripción completa + retroalimentación -->
+  <div id="print-transcript"></div>
+
+  <!-- PANTALLA: RANKING -->
+  <div id="screen-ranking" class="hidden">
+    <button class="btn-back" onclick="showScreen('name')">← Regresar</button>
+    <div class="header">
+      <div class="eyebrow">Salón de la fama</div>
+      <h1>Ranking</h1>
+      <div class="subtitle">Ordenado por promedio de puntos, no por total</div>
+    </div>
+    <div class="rank-tabs">
+      <button class="rank-tab active" id="rtab-general" onclick="showRanking('general')">👑 General</button>
+      <button class="rank-tab" id="rtab-filtrar" onclick="showRanking('filtrar')">🔍 Filtrar</button>
+      <button class="rank-tab" id="rtab-setter" onclick="showRanking('setter')">🔧 Setter</button>
+      <button class="rank-tab" id="rtab-cerrar" onclick="showRanking('cerrar')">🥊 Cerrar</button>
+    </div>
+    <div class="rank-list" id="rank-list"></div>
+  </div>
+
+</div>
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────────────
+const API_BASE = 'https://simulador-conversaciones-ventas.onrender.com';
+const MAX_TURNS = 7;
+const NEEDED_ACIERTOS = 4;
+const POINTS_TABLE = { 0:50, 1:40, 2:30, 3:20 }; // fallos -> puntos por acierto
+
+// ── CONCEPTOS POR ROL (mismos del repertorio de preguntas) ──────────────────
+const ROLE_META = {
+  filtrar: { label:'Filtrar', icon:'🔍', objetivo:'Calificar al prospecto y decidir si pasa a la etapa de Setter.' },
+  setter:  { label:'Setter',  icon:'🔧', objetivo:'Completar el diagnóstico del prospecto y lograr la información necesaria para un handoff documentado al Asesor.' },
+  cerrar:  { label:'Cerrar',  icon:'🥊', objetivo:'Conseguir que el prospecto agende una prueba de manejo o dé una fecha concreta de decisión.' },
+};
+
+const CONCEPTS = {
+  filtrar: [
+    { name:'Cómo se enteró de nosotros', forzosa:false, gloss:'de dónde vino el contacto (redes sociales, referido, etc.)' },
+    { name:'Necesidad', forzosa:true, gloss:'qué tipo de unidad busca y para qué la necesita' },
+    { name:'Anhelo', forzosa:false, gloss:'qué le gustaría lograr con la nueva unidad' },
+    { name:'Tamaño', forzosa:true, gloss:'tamaño o capacidad de unidad que tiene en mente' },
+    { name:'Peso', forzosa:true, gloss:'peso aproximado que necesita transportar' },
+    { name:'Ubicación', forzosa:false, gloss:'ciudad o zona donde opera' },
+  ],
+  setter: [
+    { name:'Tipo de empresa', forzosa:true, gloss:'si es empresa constituida o independiente (camión-hombre)' },
+    { name:'Qué transportas', forzosa:true, gloss:'qué es lo que transporta principalmente' },
+    { name:'Material que carga', forzosa:false, gloss:'tipo de material o mercancía que carga' },
+    { name:'Cantidad de unidades', forzosa:true, gloss:'cuántas unidades tiene actualmente en su flotilla' },
+    { name:'Equipo actual', forzosa:false, gloss:'con qué marca o unidades trabaja hoy' },
+    { name:'Tipo de tránsito', forzosa:false, gloss:'en qué tipo de rutas opera (urbano, carretera, mixto)' },
+    { name:'Dolor', forzosa:true, gloss:'qué es lo que más le preocupa o le cuesta de su operación' },
+    { name:'Equipo aliado', forzosa:false, gloss:'con quién más se apoya en su operación' },
+    { name:'Decisor', forzosa:true, gloss:'si él toma la decisión final o hay alguien más involucrado' },
+    { name:'Presupuesto', forzosa:true, gloss:'qué presupuesto tiene contemplado para la inversión' },
+  ],
+  cerrar: [
+    { name:'Frustración', forzosa:false, gloss:'qué le ha frustrado de otras marcas o experiencias anteriores' },
+    { name:'Otras opciones', forzosa:false, gloss:'si está considerando otras marcas en este momento' },
+    { name:'Qué necesitaría FAW para ganar', forzosa:true, gloss:'qué necesitaría ver de FAW para decidirse' },
+    { name:'Expectativas de servicio postventa', forzosa:true, gloss:'qué tan importante es el servicio y la garantía después de la compra' },
+    { name:'Prueba de manejo', forzosa:true, gloss:'si le gustaría hacer una prueba de manejo con la unidad' },
+    { name:'Forma de compra', forzosa:true, gloss:'cómo tiene pensado hacer la compra (contado, financiamiento)' },
+    { name:'Fecha estimada de compra', forzosa:true, gloss:'para cuándo tiene pensado tomar la decisión' },
+  ],
+};
+
+// ── AVATARES ──────────────────────────────────────────────────────────────
+const SABE_DESC = {
+  sabe_confia: 'Conoces bien de camiones, comparas especificaciones y números — pero SÍ confías en la orientación de un buen vendedor y estás dispuesto/a a escuchar recomendaciones.',
+  sabe_terco: 'Conoces bien de camiones, comparas especificaciones y números — pero NO te dejas guiar fácilmente, confías sobre todo en tu propio criterio y cuestionas las recomendaciones.',
+  novato_guiado: 'No conoces mucho de camiones técnicamente, pero te dejas guiar con gusto por las recomendaciones del vendedor.',
+  novato_desconfiado: 'No conoces mucho de camiones técnicamente, y tampoco te dejas guiar fácilmente — desconfías en general y necesitas comparativas honestas frente a la competencia, no solo que te digan qué comprar.',
+};
+const SABE_LABEL = {
+  sabe_confia: '🧠 Sabe y confía', sabe_terco: '🧠🚫 Sabe, pero terco',
+  novato_guiado: '🤷 No sabe, guiado', novato_desconfiado: '🛡️ No sabe, desconfiado',
+};
+
+const AVATARS = [
+  { id:'esperanza', name:'Transportes Esperanza', gender:'mujer', sabe:'sabe_confia', empresa:'Flotilla chica (2–10 unidades)', dolor:'Renovación — su flotilla vieja le sale cara', decisor:'Tiene que consultar con alguien más', urgencia:'Apenas está explorando' },
+  { id:'carmen', name:'María del Carmen Ávalos', gender:'mujer', sabe:'sabe_terco', empresa:'Camión-hombre (1 unidad)', dolor:'Tiene un contrato nuevo con fecha límite', decisor:'Es el decisor', urgencia:'Listo para decidir ya' },
+  { id:'jose', name:'José Antonio', gender:'hombre', sabe:'novato_guiado', empresa:'Camión-hombre (1 unidad)', dolor:'Crecimiento — ya no se da abasto', decisor:'Es el decisor', urgencia:'Listo para decidir ya' },
+  { id:'srm', name:'Transportes SRM', gender:'hombre', sabe:'novato_desconfiado', empresa:'Camión-hombre (1 unidad)', dolor:'Bloqueo bancario — no califica en banco', decisor:'Es el decisor', urgencia:'Apenas está explorando' },
+  { id:'amanda', name:'Amanda Rivera', gender:'mujer', sabe:'novato_guiado', empresa:'Flotilla chica (2–10 unidades)', dolor:'Crecimiento — ya no se da abasto', decisor:'Es el decisor', urgencia:'Listo para decidir ya' },
+  { id:'tuzo', name:'Tuzo Pachuca', gender:'hombre', sabe:'sabe_confia', empresa:'Flotilla chica (2–10 unidades)', dolor:'Renovación — su flotilla vieja le sale cara', decisor:'Tiene que consultar con alguien más', urgencia:'Apenas está explorando' },
+  { id:'arturo', name:'Arturo Chávez', gender:'hombre', sabe:'novato_guiado', empresa:'Camión-hombre (1 unidad)', dolor:'Renovación — su flotilla vieja le sale cara', decisor:'Es el decisor', urgencia:'Apenas está explorando' },
+  { id:'sureste', name:'Transporte del Sureste', gender:'mujer', sabe:'sabe_terco', empresa:'Flotilla chica (2–10 unidades)', dolor:'Crecimiento — ya no se da abasto', decisor:'Es el decisor', urgencia:'Listo para decidir ya' },
+  { id:'pedro', name:'Pedro García', gender:'hombre', sabe:'novato_desconfiado', empresa:'Flotilla chica (2–10 unidades)', dolor:'Crecimiento — ya no se da abasto', decisor:'Tiene que consultar con alguien más', urgencia:'Apenas está explorando' },
+  { id:'alfonso', name:'Alfonso Gomez', gender:'hombre', sabe:'sabe_confia', empresa:'Camión-hombre (1 unidad)', dolor:'Bloqueo bancario — no califica en banco', decisor:'Es el decisor', urgencia:'Listo para decidir ya' },
+];
+
+const DIFF_OPTS = [
+  { key:'poco', label:'Poco', sub:'seco / no objeta' },
+  { key:'medio', label:'Medio', sub:'moderado' },
+  { key:'mucho', label:'Mucho', sub:'muy hablador / muy objetor' },
+];
+const PLATICA_DESC = {
+  poco: 'Eres parco: respuestas cortas y secas, cuesta trabajo sacarte información, casi nunca das detalles extra.',
+  medio: 'Respondes con una cantidad moderada de información, ni muy corto ni muy largo.',
+  mucho: 'Te expresas con muchas palabras, cuentas contexto extra sin que te lo pidan, a veces respondes de más y hablas de varias cosas a la vez.',
+};
+const OBJETA_DESC = {
+  poco: 'Casi no pones objeciones, cooperas y respondes con facilidad.',
+  medio: 'Ocasionalmente pones alguna objeción o duda, pero generalmente cooperas.',
+  mucho: 'Objetas seguido: cuestionas el precio, mencionas que "los camiones son chinos", comparas con la competencia constantemente, dudas antes de responder.',
+};
+
+// ── CONEXIÓN AL GOOGLE SHEET (mismo de toda la actividad) ──────────────────
+const GS_URL = 'https://script.google.com/macros/s/AKfycbxKvgzuh_r-NIBZ_UX3wk8hzbGIMzN1QI3rFXLJrNSX4dm-ELx2jujM3t-r0EN7N4Ok/exec';
+async function gs(action, data) {
+  const res = await fetch(GS_URL, {
+    method: 'POST',
+    body: new URLSearchParams({ action, data: JSON.stringify(data || {}) })
+  });
+  return res.json();
+}
+
+// ── ESTADO ──────────────────────────────────────────────────────────────────
+const LS_NAME = 'eva_sim_username';
+
+let userName = '';
+let cachedLocks = {}; // { userName: { avatarId: role } } — cargado del Sheet
+let cachedHistorial = []; // cargado del Sheet
+let session = null; // { role, avatarId, platica, objeta, touched:Set, turn, fallos, messages:[], finished }
+
+function showScreen(name) {
+  ['name','role','avatar','difficulty','chat','result','ranking'].forEach(s => {
+    document.getElementById('screen-'+s).classList.toggle('hidden', s !== name);
+  });
+  window.scrollTo(0,0);
+  if (name === 'role') renderRoleGrid();
+  if (name === 'ranking') { loadHistorial().then(() => showRanking('general')); }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const saved = localStorage.getItem(LS_NAME);
+  if (saved) document.getElementById('name-input').value = saved;
+  loadUserPicker();
+});
+
+async function loadUserPicker() {
+  const listEl = document.getElementById('user-list');
+  const emptyEl = document.getElementById('user-list-empty');
+  const saved = localStorage.getItem(LS_NAME);
+  try {
+    const data = await gs('getUsers');
+    const users = data.users || [];
+    listEl.innerHTML = '';
+    if (users.length === 0) {
+      emptyEl.style.display = 'block';
+    } else {
+      emptyEl.style.display = 'none';
+      users.forEach(u => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'chip' + (saved && saved.toLowerCase()===u.toLowerCase() ? ' selected' : '');
+        chip.textContent = u;
+        chip.onclick = () => { document.getElementById('name-input').value = u; startFlow(); };
+        listEl.appendChild(chip);
+      });
+    }
+  } catch (e) {
+    emptyEl.style.display = 'block';
+    emptyEl.textContent = 'No se pudo cargar la lista — revisa tu conexión, o solo escribe tu nombre.';
+    console.error(e);
+  }
+}
+
+async function startFlow() {
+  const input = document.getElementById('name-input');
+  const name = input.value.trim();
+  if (!name) { input.focus(); return; }
+  userName = name;
+  localStorage.setItem(LS_NAME, name);
+  try { await gs('registerUser', { name }); } catch(e) { console.error('No se pudo registrar usuario', e); }
+  await loadLocks();
+  showScreen('role');
+}
+
+// ── PASO 1: ROL ───────────────────────────────────────────────────────────
+function renderRoleGrid() {
+  const grid = document.getElementById('role-grid');
+  grid.innerHTML = Object.keys(ROLE_META).map(key => {
+    const r = ROLE_META[key];
+    return `<div class="role-card" onclick="pickRole('${key}')">
+      <div class="role-icon">${r.icon}</div>
+      <div class="role-name">${r.label}</div>
+      <div class="role-obj">${r.objetivo}</div>
+    </div>`;
+  }).join('');
+}
+function pickRole(roleKey) {
+  session = { role: roleKey, avatarId:null, platica:null, objeta:null, touched:new Set(), turn:0, fallos:0, messages:[], finished:false };
+  showScreen('avatar');
+  renderAvatarGrid();
+}
+
+// ── PASO 2: AVATAR ────────────────────────────────────────────────────────
+async function loadLocks() {
+  try {
+    const data = await gs('simLocks');
+    cachedLocks = data.locks || {};
+  } catch (e) { console.error('No se pudieron cargar los avatares bloqueados', e); }
+}
+
+function renderAvatarGrid() {
+  const locks = cachedLocks[userName] || {};
+  const grid = document.getElementById('avatar-grid');
+  grid.innerHTML = AVATARS.map(a => {
+    const lockedRole = locks[a.id];
+    const isLocked = lockedRole && lockedRole !== session.role;
+    const isUsedSame = lockedRole === session.role;
+    const cls = 'avatar-card gender-' + a.gender + (isLocked ? ' locked' : '') + (isUsedSame ? ' used-same' : '');
+    const genderIcon = a.gender === 'mujer' ? '👩' : '👨';
+    return `<div class="${cls}" onclick="${isLocked ? '' : `pickAvatar('${a.id}')`}">
+      <div class="avatar-name">${genderIcon} ${a.name}</div>
+      <div class="avatar-tag">${SABE_LABEL[a.sabe]}</div>
+      <div class="avatar-tag">${a.empresa}</div>
+      <div class="avatar-tag">${a.dolor}</div>
+      ${isLocked ? `<div class="avatar-lock-note">🔒 Ya lo usaste en ${ROLE_META[lockedRole].label}</div>` : ''}
+      ${isUsedSame ? `<div class="avatar-used-note">✓ Ya lo usaste aquí — puedes repetirlo</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+async function pickAvatar(avatarId) {
+  if (!cachedLocks[userName]) cachedLocks[userName] = {};
+  if (!cachedLocks[userName][avatarId]) {
+    cachedLocks[userName][avatarId] = session.role; // optimista, se refleja ya en pantalla
+    try { await gs('simLockAvatar', { userName, avatarId, role: session.role }); }
+    catch (e) { console.error('No se pudo guardar el bloqueo de avatar', e); }
+  }
+  session.avatarId = avatarId;
+  showScreen('difficulty');
+  renderDifficulty();
+}
+
+async function unlockAvatars() {
+  if (!confirm('¿Desbloquear todos tus avatares? Vas a poder volver a usarlos en cualquier rol.')) return;
+  delete cachedLocks[userName];
+  try { await gs('simUnlockUser', { userName }); }
+  catch (e) { console.error('No se pudo desbloquear en el Sheet', e); }
+  renderAvatarGrid();
+}
+
+// ── PASO 3: DIFICULTAD ────────────────────────────────────────────────────
+function renderDifficulty() {
+  document.getElementById('platica-options').innerHTML = DIFF_OPTS.map(o =>
+    `<button type="button" class="diff-opt" id="platica-${o.key}" onclick="pickDiff('platica','${o.key}')">${o.label}<span class="diff-opt-sub">${o.sub}</span></button>`).join('');
+  document.getElementById('objeta-options').innerHTML = DIFF_OPTS.map(o =>
+    `<button type="button" class="diff-opt" id="objeta-${o.key}" onclick="pickDiff('objeta','${o.key}')">${o.label}<span class="diff-opt-sub">${o.sub}</span></button>`).join('');
+}
+function pickDiff(kind, key) {
+  session[kind] = key;
+  DIFF_OPTS.forEach(o => document.getElementById(kind+'-'+o.key).classList.toggle('selected', o.key===key));
+  document.getElementById('btn-start-sim').disabled = !(session.platica && session.objeta);
+}
+
+// ── SIMULACIÓN ────────────────────────────────────────────────────────────
+function buildSystemPrompt() {
+  const avatar = AVATARS.find(a => a.id === session.avatarId);
+  const roleInfo = ROLE_META[session.role];
+  const concepts = CONCEPTS[session.role];
+  const pronombre = avatar.gender === 'mujer' ? 'ella' : 'él';
+  const conceptList = concepts.map(c => `- ${c.name}${c.forzosa?' (clave)':''}: ${c.gloss}`).join('\n');
+  const touchedList = [...session.touched].join(', ') || 'ninguno todavía';
+
+  return `Eres un actor de roleplay de ventas. Actúas EXCLUSIVAMENTE como el siguiente prospecto de camiones respondiendo a un vendedor de FAW. Nunca reveles que eres una IA ni salgas del personaje. Responde siempre en español, de México, de forma natural y breve (1 a 3 frases salvo que tu nivel de "plática" indique lo contrario).
+
+PERSONAJE:
+- Nombre: ${avatar.name} (pronombre: ${pronombre})
+- Tipo de operación: ${avatar.empresa}
+- Su dolor principal: ${avatar.dolor}
+- Rol en la decisión: ${avatar.decisor}
+- Urgencia: ${avatar.urgencia}
+- Conocimiento técnico: ${SABE_DESC[avatar.sabe]}
+- Qué tanto platicas: ${PLATICA_DESC[session.platica]}
+- Qué tanto objetas: ${OBJETA_DESC[session.objeta]}
+
+CONTEXTO DEL EJERCICIO:
+El vendedor está practicando el rol de ${roleInfo.label}. Su objetivo es: ${roleInfo.objetivo}
+No le regales información que no te haya preguntado, solo respóndele lo que te pregunte, en personaje.
+
+Conceptos que el vendedor puede intentar cubrir en esta conversación (no se los reveles directamente, solo respóndelos si te los preguntan):
+${conceptList}
+
+Conceptos que YA se cubrieron en turnos anteriores (no los vuelvas a marcar si se repiten): ${touchedList}
+
+INSTRUCCIONES DE RESPUESTA — MUY IMPORTANTE:
+Responde ÚNICAMENTE con un JSON válido, sin texto adicional, sin backticks, con este formato exacto:
+{"mensaje": "tu respuesta en personaje", "conceptos_detectados": ["Nombre exacto del concepto"], "puente_usado": true}
+
+"conceptos_detectados": SOLO los conceptos de la lista de arriba que el ÚLTIMO MENSAJE DEL VENDEDOR haya preguntado o abordado claramente — nunca repitas uno ya cubierto, y nunca inventes conceptos fuera de la lista. Usa el nombre EXACTO tal como aparece en la lista. Si no se tocó ningún concepto nuevo, regresa un arreglo vacío.
+"puente_usado": true si el vendedor usó una frase de transición empática (validando algo que dijiste antes) antes de su pregunta; false si preguntó en seco.`;
+}
+
+function startSimulation() {
+  const avatar = AVATARS.find(a => a.id === session.avatarId);
+  document.getElementById('chat-eyebrow').textContent = ROLE_META[session.role].label + ' · ' + avatar.name;
+  document.getElementById('chat-title').textContent = 'Conversación en curso';
+  session.messages = [];
+  session.touched = new Set();
+  session.turn = 0;
+  session.fallos = 0;
+  session.finished = false;
+  renderRecapCard();
+  renderConceptBar();
+  renderStatus();
+  document.getElementById('chat-box').innerHTML = '';
+  addBubble('avatar', '(escribe algo para arrancar la conversación — tú das el primer mensaje como vendedor)');
+  showScreen('chat');
+}
+
+function renderRecapCard() {
+  const avatar = AVATARS.find(a => a.id === session.avatarId);
+  const genderIcon = avatar.gender === 'mujer' ? '👩' : '👨';
+  const platicaOpt = DIFF_OPTS.find(o => o.key === session.platica);
+  const objetaOpt = DIFF_OPTS.find(o => o.key === session.objeta);
+  document.getElementById('recap-card').innerHTML = `
+    <div class="recap-avatar-icon">${genderIcon}</div>
+    <div>
+      <div class="recap-name">Le hablas a: ${avatar.name}</div>
+      <div class="recap-tags">
+        <span class="recap-tag">${SABE_LABEL[avatar.sabe]}</span>
+        <span class="recap-tag">${avatar.empresa}</span>
+        <span class="recap-tag">${avatar.dolor}</span>
+        <span class="recap-tag">${avatar.decisor}</span>
+        <span class="recap-tag">${avatar.urgencia}</span>
+        <span class="recap-tag">💬 Platica: ${platicaOpt.label}</span>
+        <span class="recap-tag">🥊 Objeta: ${objetaOpt.label}</span>
+      </div>
+    </div>`;
+}
+
+function backFromChat() {
+  if (session.turn > 0 && !confirm('¿Salir de esta conversación? Se pierde el progreso de este intento y no se guarda puntaje.')) return;
+  showScreen('role');
+}
+
+function renderPrintTranscript(avatar, score, success, feedbackText) {
+  const fecha = new Date().toLocaleString('es-MX');
+  const msgsHtml = session.messages.map(m => `
+    <div class="pt-msg ${m.role==='user'?'vendedor':'avatar'}">
+      <div class="pt-label">${m.role==='user' ? userName : avatar.name}</div>
+      <div>${m.content}</div>
+    </div>`).join('');
+  document.getElementById('print-transcript').innerHTML = `
+    <h2 style="color:#1B3A6B">Simulación — ${ROLE_META[session.role].label} · ${avatar.name}</h2>
+    <p style="font-size:12px;color:#666;margin-bottom:14px">${userName} · ${fecha} · ${score} pts · ${success?'Meta lograda':'No completada'}</p>
+    <h3 style="font-size:14px;color:#1B3A6B;margin-bottom:8px">Transcripción</h3>
+    ${msgsHtml}
+    <h3 style="font-size:14px;color:#1B3A6B;margin:16px 0 8px">Retroalimentación</h3>
+    <p style="font-size:13px;line-height:1.6;white-space:pre-line">${feedbackText}</p>`;
+}
+
+function renderConceptBar() {
+  const concepts = CONCEPTS[session.role];
+  document.getElementById('concept-bar').innerHTML = concepts.map(c => {
+    const touched = session.touched.has(c.name);
+    const cls = touched ? 'touched' : (c.forzosa ? 'forzosa' : 'opcional');
+    return `<span class="concept-chip ${cls}">${touched?'✓ ':''}${c.name}</span>`;
+  }).join('');
+}
+function renderStatus() {
+  document.getElementById('turn-count').textContent = session.turn;
+  document.getElementById('acierto-count').textContent = Math.min(session.touched.size, NEEDED_ACIERTOS);
+}
+
+function addBubble(who, text) {
+  const box = document.getElementById('chat-box');
+  const row = document.createElement('div');
+  row.className = 'msg-row ' + (who==='vendedor'?'vendedor':'avatar');
+  row.innerHTML = `<div class="msg-col"><div class="msg-label">${who==='vendedor'?'Tú':'Prospecto'}</div><div class="msg-bubble ${who==='vendedor'?'vendedor':'avatar'}">${text}</div></div>`;
+  box.appendChild(row);
+  box.scrollTop = box.scrollHeight;
+  return row;
+}
+
+async function sendMessage() {
+  if (session.finished) return;
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  document.getElementById('btn-send').disabled = true;
+
+  addBubble('vendedor', text);
+  session.messages.push({ role:'user', content:text });
+
+  const thinkingRow = addBubble('avatar', '<span class="msg-bubble thinking">escribiendo…</span>');
+
+  try {
+    const res = await fetch(API_BASE + '/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ system: buildSystemPrompt(), messages: session.messages, max_tokens: 400 })
+    });
+    const data = await res.json();
+    const raw = (data.content && data.content[0] && data.content[0].text) || '{}';
+    const clean = raw.replace(/```json|```/g, '').trim();
+    let parsed;
+    try { parsed = JSON.parse(clean); } catch(e) { parsed = { mensaje: raw, conceptos_detectados: [], puente_usado:false }; }
+
+    thinkingRow.remove();
+    addBubble('avatar', parsed.mensaje || '...');
+    session.messages.push({ role:'assistant', content: parsed.mensaje || '' });
+
+    // Detectar conceptos nuevos (match tolerante)
+    const concepts = CONCEPTS[session.role];
+    let newFound = 0;
+    (parsed.conceptos_detectados || []).forEach(det => {
+      const detNorm = String(det).toLowerCase().trim();
+      const match = concepts.find(c => {
+        const cn = c.name.toLowerCase();
+        return cn === detNorm || cn.includes(detNorm) || detNorm.includes(cn);
+      });
+      if (match && !session.touched.has(match.name)) {
+        session.touched.add(match.name);
+        newFound++;
+      }
+    });
+
+    session.turn++;
+    if (newFound === 0) session.fallos++;
+
+    renderConceptBar();
+    renderStatus();
+
+    if (session.touched.size >= NEEDED_ACIERTOS) {
+      finishSimulation(true);
+    } else if (session.turn >= MAX_TURNS) {
+      finishSimulation(false);
+    }
+  } catch (e) {
+    thinkingRow.remove();
+    addBubble('avatar', '(hubo un problema de conexión, intenta de nuevo)');
+    console.error(e);
+  }
+  document.getElementById('btn-send').disabled = false;
+}
+
+// ── RESULTADO Y PUNTAJE ───────────────────────────────────────────────────
+async function finishSimulation(success) {
+  session.finished = true;
+  const acierosContados = Math.min(session.touched.size, NEEDED_ACIERTOS);
+  let score;
+  if (success) {
+    const puntosPorAcierto = POINTS_TABLE[Math.min(session.fallos,3)] || 20;
+    score = puntosPorAcierto * NEEDED_ACIERTOS;
+  } else {
+    score = session.touched.size * 10;
+  }
+
+  document.getElementById('result-icon').textContent = success ? '🏆' : '😅';
+  document.getElementById('result-title').textContent = success ? '¡Lo lograste!' : 'No lo lograste — vuelve a intentarlo';
+  document.getElementById('result-score').innerHTML = score + '<span> pts</span>';
+  document.getElementById('result-detail').textContent = `${session.touched.size} de ${CONCEPTS[session.role].length} conceptos cubiertos · ${session.fallos} turno(s) sin avance · ${session.turn} turnos usados`;
+  document.getElementById('feedback-text').textContent = 'Generando retroalimentación...';
+  showScreen('result');
+
+  // Guardar en el Google Sheet
+  const avatar = AVATARS.find(a => a.id === session.avatarId);
+  try {
+    await gs('simSubmit', { userName, role:session.role, avatarName:avatar.name, score, aciertos:session.touched.size, fallos:session.fallos, success });
+  } catch (e) { console.error('No se pudo guardar el resultado en el Sheet', e); }
+
+  // Feedback de IA
+  let feedbackText = 'Buen intento — sigue practicando.';
+  try {
+    const concepts = CONCEPTS[session.role];
+    const faltantes = concepts.filter(c => !session.touched.has(c.name));
+    const faltantesForzosos = faltantes.filter(c => c.forzosa).map(c => c.name);
+    const feedbackPrompt = `Diste retroalimentación breve (máximo 4 líneas) a un vendedor de FAW en entrenamiento, en español, tono constructivo y directo, tuteando. Practicó el rol de ${ROLE_META[session.role].label} contra el prospecto "${avatar.name}" (${SABE_LABEL[avatar.sabe]}). Cubrió ${session.touched.size} de ${concepts.length} conceptos en ${session.turn} turnos, con ${session.fallos} turnos sin avance. ${success ? 'Logró la meta.' : 'No alcanzó la meta de 4 conceptos.'} Conceptos forzosos que le faltaron: ${faltantesForzosos.length ? faltantesForzosos.join(', ') : 'ninguno'}. Dale 2-3 líneas de retroalimentación específica y una sugerencia concreta de cómo mejorar la próxima vez. No repitas literalmente todo lo anterior, redáctalo natural.`;
+    const res = await fetch(API_BASE + '/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ system: 'Eres un coach de ventas experto, breve y directo.', messages: [{role:'user', content:feedbackPrompt}], max_tokens: 220 })
+    });
+    const data = await res.json();
+    feedbackText = (data.content && data.content[0] && data.content[0].text) || feedbackText;
+    document.getElementById('feedback-text').textContent = feedbackText;
+  } catch (e) {
+    feedbackText = 'No se pudo generar retroalimentación de IA esta vez, pero tu puntaje ya quedó guardado.';
+    document.getElementById('feedback-text').textContent = feedbackText;
+  }
+
+  renderPrintTranscript(avatar, score, success, feedbackText);
+}
+
+// ── RANKING ───────────────────────────────────────────────────────────────
+async function loadHistorial() {
+  try {
+    const data = await gs('simResults');
+    cachedHistorial = data.historial || [];
+  } catch (e) { console.error('No se pudo cargar el historial', e); }
+  return cachedHistorial;
+}
+
+function showRanking(scope) {
+  ['general','filtrar','setter','cerrar'].forEach(k => document.getElementById('rtab-'+k).classList.toggle('active', k===scope));
+  const hist = cachedHistorial;
+  const filtered = scope === 'general' ? hist : hist.filter(h => h.role === scope);
+
+  const byUser = {};
+  filtered.forEach(h => {
+    if (!byUser[h.userName]) byUser[h.userName] = { total:0, count:0 };
+    byUser[h.userName].total += h.score;
+    byUser[h.userName].count += 1;
+  });
+  const rows = Object.keys(byUser).map(name => ({
+    name, avg: Math.round(byUser[name].total / byUser[name].count), count: byUser[name].count, total: byUser[name].total
+  })).sort((a,b) => b.avg - a.avg);
+
+  const listEl = document.getElementById('rank-list');
+  if (!rows.length) {
+    listEl.innerHTML = '<div class="rank-empty">Todavía no hay ejercicios registrados en esta categoría.</div>';
+    return;
+  }
+  const medals = ['🥇','🥈','🥉'];
+  listEl.innerHTML = rows.map((r, i) => `
+    <div class="rank-row">
+      <div class="rank-pos">${medals[i] || (i+1)}</div>
+      <div>
+        <div class="rank-name">${r.name}</div>
+        <div class="rank-meta">${r.total} pts totales · ${r.count} ejercicio${r.count===1?'':'s'}</div>
+      </div>
+      <div class="rank-score">${r.avg}<span style="font-size:11px;font-weight:600"> prom.</span></div>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>
