@@ -270,33 +270,33 @@ const ROLE_META = {
 
 const CONCEPTS = {
   filtrar: [
-    { name:'Cómo se enteró de nosotros', forzosa:false, gloss:'de dónde vino el contacto (redes sociales, referido, etc.)' },
-    { name:'Necesidad', forzosa:true, gloss:'qué tipo de unidad busca y para qué la necesita' },
-    { name:'Anhelo', forzosa:false, gloss:'qué le gustaría lograr con la nueva unidad' },
-    { name:'Tamaño', forzosa:true, gloss:'tamaño o capacidad de unidad que tiene en mente' },
-    { name:'Peso', forzosa:true, gloss:'peso aproximado que necesita transportar' },
-    { name:'Ubicación', forzosa:false, gloss:'ciudad o zona donde opera' },
+    { name:'Cómo se enteró de nosotros', forzosa:false, questions:['¿Cómo llegó a conocer a ELAM FAW?','¿Qué fue lo que le llamó la atención de nosotros?','¿Ya nos conocía o es la primera vez que nos contacta?'] },
+    { name:'Necesidad', forzosa:true, questions:['¿Qué tipo de unidad está buscando?','¿Para qué la necesita — qué operación va a resolver?','¿Qué lo trae a buscar una unidad en este momento?'] },
+    { name:'Anhelo', forzosa:false, questions:['¿Qué le gustaría lograr con esta nueva unidad?','Si esto funciona bien, ¿cómo se vería su operación en un año?','¿Qué es lo que más le gustaría que esta unidad le resuelva?'] },
+    { name:'Tamaño', forzosa:true, questions:['¿Qué tamaño o capacidad de unidad tiene en mente?','¿Qué volumen necesita mover por viaje?','¿Ya tiene una línea en mente — ligero, mediano, pesado?'] },
+    { name:'Peso', forzosa:true, questions:['¿Qué peso aproximado necesita transportar?','¿Cuál es la carga más pesada que mueve normalmente?','¿Maneja cargas variables o siempre es un peso similar?'] },
+    { name:'Ubicación', forzosa:false, questions:['¿En qué ciudad o zona está ubicada su operación?','¿Dónde opera principalmente sus rutas?','¿Tiene base fija o se mueve entre varias ciudades?'] },
   ],
   setter: [
-    { name:'Tipo de empresa', forzosa:true, gloss:'si es empresa constituida o independiente (camión-hombre)' },
-    { name:'Qué transportas', forzosa:true, gloss:'qué es lo que transporta principalmente' },
-    { name:'Material que carga', forzosa:false, gloss:'tipo de material o mercancía que carga' },
-    { name:'Cantidad de unidades', forzosa:true, gloss:'cuántas unidades tiene actualmente en su flotilla' },
-    { name:'Equipo actual', forzosa:false, gloss:'con qué marca o unidades trabaja hoy' },
-    { name:'Tipo de tránsito', forzosa:false, gloss:'en qué tipo de rutas opera (urbano, carretera, mixto)' },
-    { name:'Dolor', forzosa:true, gloss:'qué es lo que más le preocupa o le cuesta de su operación' },
-    { name:'Equipo aliado', forzosa:false, gloss:'con quién más se apoya en su operación' },
-    { name:'Decisor', forzosa:true, gloss:'si él toma la decisión final o hay alguien más involucrado' },
-    { name:'Presupuesto', forzosa:true, gloss:'qué presupuesto tiene contemplado para la inversión' },
+    { name:'Tipo de empresa', forzosa:true, questions:['¿Su operación es una empresa constituida o trabaja de manera independiente?','¿Cómo está organizada su operación — persona física o empresa?','¿Usted es el propietario, o forma parte de una empresa más grande?'] },
+    { name:'Qué transportas', forzosa:true, questions:['¿Qué es lo que transporta principalmente?','¿A qué giro se dedica su operación de carga?','¿Qué tipo de mercancía mueve con más frecuencia?'] },
+    { name:'Material que carga', forzosa:false, questions:['¿Qué tipo de material o mercancía carga con más frecuencia?','¿Su carga es a granel, paletizada, o de otro tipo?','¿Maneja algún material que requiera condiciones especiales?'] },
+    { name:'Cantidad de unidades', forzosa:true, questions:['¿Cuántas unidades tiene actualmente en su flotilla?','¿Con cuántos camiones opera hoy?','¿Está buscando ampliar su flotilla o es su primera unidad?'] },
+    { name:'Equipo actual', forzosa:false, questions:['¿Con qué marca o unidades trabaja actualmente?','¿Qué tan satisfecho está con el equipo que tiene hoy?','¿Qué es lo que más le gustaría mejorar de su equipo actual?'] },
+    { name:'Tipo de tránsito', forzosa:false, questions:['¿En qué tipo de rutas opera — urbanas, carretera, o mixtas?','¿Sus recorridos son cortos o de larga distancia?','¿Qué condiciones de camino enfrenta más seguido?'] },
+    { name:'Dolor', forzosa:true, questions:['¿Qué es lo que más le preocupa o le cuesta de su operación en este momento?','¿Qué es lo que le está frenando para crecer como quisiera?','Si pudiera resolver una sola cosa de su operación hoy, ¿cuál sería?'] },
+    { name:'Equipo aliado', forzosa:false, questions:['¿Con quién más se apoya en su operación — choferes, socios, familia?','¿Alguien más participa en las decisiones de la empresa?','¿Tiene algún equipo de confianza que lo respalde en esto?'] },
+    { name:'Decisor', forzosa:true, questions:['¿Usted toma la decisión final, o hay alguien más involucrado?','¿Necesita consultar con alguien más antes de avanzar?','¿Quién más debería estar en esta conversación?'] },
+    { name:'Presupuesto', forzosa:true, questions:['¿Qué presupuesto tiene contemplado para esta inversión?','¿Cómo tiene pensado financiar la unidad — crédito, contado, esquema propio?','¿Qué rango de inversión le hace sentido para este proyecto?'] },
   ],
   cerrar: [
-    { name:'Frustración', forzosa:false, gloss:'qué le ha frustrado de otras marcas o experiencias anteriores' },
-    { name:'Otras opciones', forzosa:false, gloss:'si está considerando otras marcas en este momento' },
-    { name:'Qué necesitaría FAW para ganar', forzosa:true, gloss:'qué necesitaría ver de FAW para decidirse' },
-    { name:'Expectativas de servicio postventa', forzosa:true, gloss:'qué tan importante es el servicio y la garantía después de la compra' },
-    { name:'Prueba de manejo', forzosa:true, gloss:'si le gustaría hacer una prueba de manejo con la unidad' },
-    { name:'Forma de compra', forzosa:true, gloss:'cómo tiene pensado hacer la compra (contado, financiamiento)' },
-    { name:'Fecha estimada de compra', forzosa:true, gloss:'para cuándo tiene pensado tomar la decisión' },
+    { name:'Frustración', forzosa:false, questions:['¿Qué le ha frustrado de otras marcas o experiencias anteriores?','¿Ha tenido alguna mala experiencia con el servicio de otra marca?','¿Qué es lo que menos le gustó de otras opciones que ha visto?'] },
+    { name:'Otras opciones', forzosa:false, questions:['¿Está considerando otras marcas en este momento?','¿Con quién más ha platicado sobre esta compra?','¿Qué le está haciendo dudar entre las opciones que tiene?'] },
+    { name:'Qué necesitaría FAW para ganar', forzosa:true, questions:['¿Qué necesitaría ver de nuestra parte para decidirse por FAW?','Si hubiera algo que nos faltara para ganarnos su confianza, ¿qué sería?','¿Qué le haría decir que sí hoy mismo?'] },
+    { name:'Expectativas de servicio postventa', forzosa:true, questions:['¿Qué tan importante es para usted el servicio y la garantía después de la compra?','¿Ha tenido problemas para conseguir refacciones o servicio con otras marcas?','¿Qué esperaría de nosotros si algo llegara a fallar con la unidad?'] },
+    { name:'Prueba de manejo', forzosa:true, questions:['¿Le gustaría hacer una prueba de manejo con la unidad?','¿Cuándo tendría disponibilidad para venir a probarla en persona?','¿Qué necesitaría sentir al manejarla para confirmar que es la unidad correcta?'] },
+    { name:'Forma de compra', forzosa:true, questions:['¿Cómo tiene pensado hacer la compra — de contado o con financiamiento?','¿Ya ha trabajado con algún esquema de crédito para unidades antes?','¿Le interesaría conocer las opciones de financiamiento propio que manejamos?'] },
+    { name:'Fecha estimada de compra', forzosa:true, questions:['¿Para cuándo tiene pensado tomar la decisión?','¿Qué tan urgente es esta compra para su operación?','¿Hay alguna fecha límite que debamos tener en cuenta?'] },
   ],
 };
 
@@ -357,6 +357,7 @@ const LS_NAME = 'eva_sim_username';
 let userName = '';
 let cachedLocks = {}; // { userName: { avatarId: role } } — cargado del Sheet
 let cachedHistorial = []; // cargado del Sheet
+let cachedExtras = []; // preguntas agregadas por el equipo (Preguntas_Extra), cargado del Sheet
 let session = null; // { role, avatarId, platica, objeta, touched:Set, turn, fallos, messages:[], finished }
 
 function showScreen(name) {
@@ -409,7 +410,7 @@ async function startFlow() {
   userName = name;
   localStorage.setItem(LS_NAME, name);
   try { await gs('registerUser', { name }); } catch(e) { console.error('No se pudo registrar usuario', e); }
-  await loadLocks();
+  await Promise.all([loadLocks(), loadExtras()]);
   showScreen('role');
 }
 
@@ -437,6 +438,13 @@ async function loadLocks() {
     const data = await gs('simLocks');
     cachedLocks = data.locks || {};
   } catch (e) { console.error('No se pudieron cargar los avatares bloqueados', e); }
+}
+
+async function loadExtras() {
+  try {
+    const data = await gs('preguntasGet');
+    cachedExtras = data.items || [];
+  } catch (e) { console.error('No se pudieron cargar las preguntas del equipo', e); }
 }
 
 function renderAvatarGrid() {
@@ -515,9 +523,13 @@ CONTEXTO: El vendedor está practicando el rol de ${roleInfo.label}. No le regal
 
 function buildDetectorPrompt(vendorMsg, prevPersonaMsg) {
   const concepts = CONCEPTS[session.role];
-  const conceptList = concepts.map(c => `- ${c.name}: ${c.gloss}`).join('\n');
+  const conceptList = concepts.map(c => {
+    const extras = getExtraQuestions(session.role, c.name);
+    const allQuestions = [...c.questions, ...extras];
+    return `- ${c.name}: se considera cubierto si el vendedor pregunta algo equivalente a alguna de estas formas (u otras muy similares en intención): ${allQuestions.map(q=>`"${q}"`).join(' / ')}`;
+  }).join('\n');
   const touchedList = [...session.touched].join(', ') || 'ninguno todavía';
-  const system = `Eres un clasificador. No actúas ningún personaje. Tu única tarea es leer el mensaje de un vendedor de camiones y decidir qué conceptos de esta lista abordó:
+  const system = `Eres un clasificador. No actúas ningún personaje. Tu única tarea es leer el mensaje de un vendedor de camiones y decidir qué conceptos de esta lista abordó — usando como marco de referencia las preguntas reales que el equipo de ventas ya validó para cada concepto:
 ${conceptList}
 
 Ya se cubrieron antes (no los repitas): ${touchedList}
@@ -525,10 +537,14 @@ Ya se cubrieron antes (no los repitas): ${touchedList}
 Responde ÚNICAMENTE con un JSON válido, sin texto adicional, sin backticks, con este formato exacto:
 {"conceptos_detectados": ["Nombre exacto del concepto"], "puente_usado": true}
 
-"conceptos_detectados": SOLO conceptos de la lista que el mensaje del vendedor haya preguntado o abordado claramente. Usa el nombre EXACTO tal como aparece en la lista. Si no tocó ninguno nuevo, regresa un arreglo vacío. Nunca inventes conceptos fuera de la lista.
+"conceptos_detectados": SOLO conceptos de la lista que el mensaje del vendedor haya preguntado o abordado claramente — no necesita ser idéntico a los ejemplos, pero sí debe tener la misma intención. Usa el nombre EXACTO tal como aparece en la lista. Si no tocó ninguno nuevo, regresa un arreglo vacío. Nunca inventes conceptos fuera de la lista.
 "puente_usado": true si el vendedor validó o reconoció algo dicho antes (frase empática de transición) antes de preguntar; false si preguntó en seco.`;
   const userMsg = `Lo que el prospecto acababa de decir: "${prevPersonaMsg || '(inicio de la conversación)'}"\n\nLo que el vendedor respondió/preguntó: "${vendorMsg}"`;
   return { system, userMsg };
+}
+
+function getExtraQuestions(role, conceptName) {
+  return cachedExtras.filter(x => x.etapa === role && x.concepto === conceptName).map(x => x.pregunta);
 }
 
 function startSimulation() {
