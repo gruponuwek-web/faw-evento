@@ -87,8 +87,6 @@
   .msg-bubble.vendedor { background:#1B3A6B; color:#fff; border-bottom-right-radius:4px; }
   .msg-bubble.avatar { background:#EEF1F7; color:#1B3A6B; border-bottom-left-radius:4px; }
   .msg-bubble.thinking { background:#EEF1F7; color:rgba(27,58,107,0.5); font-style:italic; }
-  .msg-feedback { margin-top:6px; padding:8px 12px; border-radius:10px; background:rgba(201,58,62,0.08); border-left:3px solid #C93A3E; font-size:12.5px; color:#C93A3E; line-height:1.4; max-width:78%; }
-  .msg-feedback.perfect { background:rgba(46,139,87,0.1); border-left-color:#2E8B57; color:#2E8B57; }
 
   .chat-input-row { display:flex; gap:10px; }
   .chat-input { flex:1; padding:13px 16px; border:1.5px solid rgba(27,58,107,0.18); border-radius:10px; font-size:14px; font-family:inherit; }
@@ -471,12 +469,14 @@ function startObjSimulation(avatarId) {
       <div class="obj-label">Cómo arrancar</div>
       <div style="font-size:13.5px;line-height:1.5">Tú tienes que <b>provocar</b> la objeción — no esperes a que aparezca sola. Empieza con una pregunta que la despierte, ej: <i>"¿Está viendo otras opciones?"</i>, <i>"¿Qué le haría dudar de decidirse hoy?"</i>, <i>"¿Qué necesitaría ver de nosotros para avanzar?"</i>. De esa primera pregunta se arma todo el ejercicio.</div>
     </div>
+    <div class="concept-bar" id="obj-concept-bar"></div>
     <div class="sim-status"><div class="sim-status-item">Turno <span id="obj-turn-count">0</span>/${MAX_TURNS}</div><div class="sim-status-item">Ciclos completos <span id="obj-acierto-count">0</span>/${NEEDED_ACIERTOS}</div></div>
     <div class="chat-box" id="obj-chat-box"></div>
     <div class="chat-input-row">
       <input type="text" class="chat-input" id="obj-chat-input" placeholder="Ej: ¿Está viendo otras opciones en este momento?" onkeydown="if(event.key==='Enter') sendObjMessage()">
       <button class="btn-send" id="obj-btn-send" onclick="sendObjMessage()">Enviar</button>
     </div>`;
+  renderObjConceptBar();
   addObjBubble('avatar', '(tú arrancas — hazme una pregunta que despierte una objeción, y a partir de ahí seguimos)');
 }
 
@@ -485,15 +485,21 @@ function backFromObjSim() {
   renderAvatarPicker();
 }
 
+function renderObjConceptBar() {
+  document.getElementById('obj-concept-bar').innerHTML = STEPS.map(s => {
+    const t = simSession.touched.has(s.key);
+    return `<span class="concept-chip${t?' touched':''}">${t?'✓ ':''}${s.title}</span>`;
+  }).join('');
+}
 function renderObjStatus() {
   document.getElementById('obj-turn-count').textContent = simSession.turn;
   document.getElementById('obj-acierto-count').textContent = Math.min(simSession.cyclesDone||0, NEEDED_ACIERTOS);
 }
-function addObjBubble(who, text, feedbackHtml) {
+function addObjBubble(who, text) {
   const box = document.getElementById('obj-chat-box');
   const row = document.createElement('div');
   row.className = 'msg-row ' + (who==='vendedor'?'vendedor':'avatar');
-  row.innerHTML = `<div class="msg-col"><div class="msg-label">${who==='vendedor'?'Tú':'Prospecto'}</div><div class="msg-bubble ${who==='vendedor'?'vendedor':'avatar'}">${text}</div>${feedbackHtml||''}</div>`;
+  row.innerHTML = `<div class="msg-col"><div class="msg-label">${who==='vendedor'?'Tú':'Prospecto'}</div><div class="msg-bubble ${who==='vendedor'?'vendedor':'avatar'}">${text}</div></div>`;
   box.appendChild(row); box.scrollTop = box.scrollHeight;
   return row;
 }
@@ -529,7 +535,7 @@ async function sendObjMessage() {
   document.getElementById('obj-btn-send').disabled = true;
 
   const prevPersonaMsg = [...simSession.messages].reverse().find(m=>m.role==='assistant');
-  const vendorRow = addObjBubble('vendedor', text);
+  addObjBubble('vendedor', text);
   simSession.messages.push({role:'user', content:text});
   const thinkingRow = addObjBubble('avatar', '<span class="msg-bubble thinking">escribiendo…</span>');
 
@@ -548,17 +554,7 @@ async function sendObjMessage() {
     let parsedDet;
     try { parsedDet = JSON.parse(rawDet.replace(/```json|```/g,'').trim()); } catch(e) { parsedDet = {}; }
 
-    // Retroalimentación directa debajo de la respuesta del vendedor — solo lo que le faltó a ESTE mensaje
-    const missing = [];
-    if (!parsedDet.validar) missing.push('Validar');
-    if (!parsedDet.explorar) missing.push('Explorar');
-    if (!parsedDet.explicar) missing.push('Explicar / Diferenciar');
-    if (!parsedDet.pregunta_ab) missing.push('Pregunta A/B');
-    const feedbackHtml = missing.length === 0
-      ? '<div class="msg-feedback perfect">✅ Completo — usaste los 4 elementos de la fórmula.</div>'
-      : `<div class="msg-feedback">Te faltó: ${missing.join(', ')}</div>`;
-    vendorRow.querySelector('.msg-col').insertAdjacentHTML('beforeend', feedbackHtml);
-
+    ['validar','explorar','explicar','pregunta_ab'].forEach(k => { if (parsedDet[k]) simSession.touched.add(k==='pregunta_ab'?'pregunta':k); });
     simSession.cyclesDone = simSession.cyclesDone || 0;
     const cicloCompleto = !!parsedDet.ciclo_completo;
     if (cicloCompleto) simSession.cyclesDone++;
@@ -566,6 +562,7 @@ async function sendObjMessage() {
     simSession.turn++;
     if (!cicloCompleto) simSession.fallos++;
 
+    renderObjConceptBar();
     renderObjStatus();
 
     if (simSession.cyclesDone >= NEEDED_ACIERTOS) finishObjSimulation(true);
