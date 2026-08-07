@@ -465,15 +465,19 @@ function startObjSimulation(avatarId) {
       <div><div class="recap-name">Le hablas a: ${avatar.name}</div>
       <div class="recap-tags"><span class="recap-tag">${SABE_LABEL[avatar.sabe]}</span><span class="recap-tag">${avatar.empresa}</span><span class="recap-tag">Objeta mucho — modo objeciones</span></div></div>
     </div>
+    <div class="obj-card" style="padding:1rem 1.25rem">
+      <div class="obj-label">Cómo arrancar</div>
+      <div style="font-size:13.5px;line-height:1.5">Tú tienes que <b>provocar</b> la objeción — no esperes a que aparezca sola. Empieza con una pregunta que la despierte, ej: <i>"¿Está viendo otras opciones?"</i>, <i>"¿Qué le haría dudar de decidirse hoy?"</i>, <i>"¿Qué necesitaría ver de nosotros para avanzar?"</i>. De esa primera pregunta se arma todo el ejercicio.</div>
+    </div>
     <div class="concept-bar" id="obj-concept-bar"></div>
     <div class="sim-status"><div class="sim-status-item">Turno <span id="obj-turn-count">0</span>/${MAX_TURNS}</div><div class="sim-status-item">Ciclos completos <span id="obj-acierto-count">0</span>/${NEEDED_ACIERTOS}</div></div>
     <div class="chat-box" id="obj-chat-box"></div>
     <div class="chat-input-row">
-      <input type="text" class="chat-input" id="obj-chat-input" placeholder="Responde a la objeción..." onkeydown="if(event.key==='Enter') sendObjMessage()">
+      <input type="text" class="chat-input" id="obj-chat-input" placeholder="Ej: ¿Está viendo otras opciones en este momento?" onkeydown="if(event.key==='Enter') sendObjMessage()">
       <button class="btn-send" id="obj-btn-send" onclick="sendObjMessage()">Enviar</button>
     </div>`;
   renderObjConceptBar();
-  addObjBubble('avatar', '(escribe algo para arrancar — tú das el primer mensaje, el prospecto va a objetar)');
+  addObjBubble('avatar', '(tú arrancas — hazme una pregunta que despierte una objeción, y a partir de ahí seguimos)');
 }
 
 function backFromObjSim() {
@@ -505,7 +509,8 @@ function buildObjPersonaPrompt() {
   const pronombre = avatar.gender==='mujer'?'ella':'él';
   return `Eres un actor de roleplay. Actúas EXCLUSIVAMENTE como un prospecto de camiones difícil, que pone objeciones seguido (precio, "son chinos", desconfianza, comparación con la competencia como Sitrac, necesita consultar, no es el momento). Nunca salgas del personaje. Responde en español de México, texto plano, breve (1-3 frases), SIN JSON.
 PERSONAJE: ${avatar.name} (${pronombre}), ${avatar.empresa}, su dolor: ${avatar.dolor}.
-Tu trabajo es objetar de forma realista ante lo que te diga el vendedor — si su respuesta te convence de verdad (valida, explora, explica bien, y te pregunta con opciones), puedes ceder un poco o mostrarte más receptivo. Si su respuesta es floja o no contesta tu objeción, insiste o pon otra objeción.`;
+El vendedor va a arrancar provocando la objeción con una pregunta (ej. "¿está viendo otras opciones?"). En cuanto te pregunte algo así, suéltale una objeción real y específica que encaje con tu personaje — no te quedes vago ni evasivo, dile la objeción concreta.
+De ahí en adelante: objeta de forma realista ante lo que te diga el vendedor — si su respuesta te convence de verdad (valida, explora, explica bien, y te pregunta con opciones), puedes ceder un poco o mostrarte más receptivo. Si su respuesta es floja o no contesta tu objeción, insiste o pon otra objeción.`;
 }
 
 function buildObjDetectorPrompt(vendorMsg, prevPersonaMsg) {
