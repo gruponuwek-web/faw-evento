@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manejo de objeciones — EVA+ FAW</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body {
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    background:#F7F5EF; color:#33455E; min-height:100vh; padding:2rem 1.5rem 3rem;
+  }
+  .wrap { max-width:900px; margin:0 auto; }
+  .hidden { display:none !important; }
+  .header { text-align:center; margin-bottom:1.75rem; }
+  .eyebrow { font-size:13px; font-weight:800; color:#E8611A; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:0.5rem; }
+  h1 { font-size:30px; font-weight:900; color:#1B3A6B; margin-bottom:0.4rem; line-height:1.2; }
+  .subtitle { font-size:15px; color:rgba(51,69,94,0.7); font-weight:600; }
+  .btn-back { background:none; border:none; color:rgba(51,69,94,0.6); font-size:13px; font-weight:700; cursor:pointer; margin-bottom:1rem; padding:0; }
+  .btn-back:hover { color:#1B3A6B; }
+  .btn-link { background:none; border:none; color:#3E6FB0; font-size:13px; font-weight:700; cursor:pointer; text-decoration:underline; }
+
+  /* Nombre */
+  .name-card { background:#fff; border-radius:16px; padding:1.75rem; max-width:480px; margin:0 auto; box-shadow:0 10px 30px rgba(27,58,107,0.08); }
+  .chip { background:#F7F5EF; border:1.5px solid rgba(27,58,107,0.15); color:#1B3A6B; font-size:13px; font-weight:700; padding:8px 14px; border-radius:100px; cursor:pointer; }
+  input[type=text], textarea { width:100%; padding:14px 16px; font-size:16px; border:1.5px solid rgba(27,58,107,0.2); border-radius:10px; margin-bottom:1rem; font-family:inherit; }
+  input[type=text]:focus, textarea:focus { outline:none; border-color:#3E6FB0; }
+  .btn-primary { width:100%; background:#1B3A6B; color:#fff; border:none; border-radius:10px; padding:14px; font-size:16px; font-weight:700; cursor:pointer; }
+  .btn-primary:hover { background:#14294d; }
+  .btn-primary:disabled { opacity:0.4; cursor:not-allowed; }
+  .center-link { text-align:center; margin-top:1.25rem; }
+
+  /* Nav principal */
+  .main-tabs { display:flex; justify-content:center; gap:10px; margin-bottom:1.75rem; flex-wrap:wrap; }
+  .main-tab { background:#fff; border:1.5px solid rgba(27,58,107,0.15); color:#1B3A6B; font-weight:700; font-size:14px; padding:11px 22px; border-radius:100px; cursor:pointer; }
+  .main-tab.active { background:#1B3A6B; color:#fff; border-color:#1B3A6B; }
+
+  /* Teoría */
+  .principle-box { background:#1B3A6B; color:#fff; border-radius:16px; padding:1.75rem 2rem; text-align:center; margin-bottom:1.75rem; }
+  .principle-label { font-size:11px; font-weight:800; color:#8FC1E8; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px; }
+  .principle-text { font-size:22px; font-weight:900; }
+  .steps-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:2rem; }
+  @media (max-width:760px) { .steps-grid { grid-template-columns:1fr 1fr; } }
+  .step-card { background:#fff; border-radius:14px; padding:1.25rem 1.1rem; box-shadow:0 6px 18px rgba(27,58,107,0.06); }
+  .step-num { width:30px; height:30px; border-radius:8px; background:#1B3A6B; color:#fff; font-weight:900; font-size:14px; display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
+  .step-title { font-size:14.5px; font-weight:800; color:#1B3A6B; margin-bottom:6px; }
+  .step-desc { font-size:12.5px; color:rgba(51,69,94,0.7); line-height:1.5; }
+  .examples-title { font-size:18px; font-weight:900; color:#1B3A6B; margin:2rem 0 1rem; text-align:center; }
+  .example-card { background:#fff; border-radius:14px; padding:1.5rem 1.75rem; margin-bottom:1rem; box-shadow:0 6px 18px rgba(27,58,107,0.06); }
+  .example-objection { font-size:15px; font-weight:800; color:#C93A3E; margin-bottom:12px; }
+  .example-objection span { font-size:10px; font-weight:800; text-transform:uppercase; color:rgba(201,58,62,0.6); display:block; margin-bottom:2px; }
+  .example-line { display:flex; gap:10px; margin-bottom:8px; font-size:14px; line-height:1.5; }
+  .example-line b { color:#1B3A6B; flex-shrink:0; min-width:78px; }
+
+  /* Ejercicios */
+  .obj-card { background:#fff; border-radius:16px; padding:1.75rem; box-shadow:0 8px 24px rgba(27,58,107,0.08); margin-bottom:1.25rem; }
+  .obj-label { font-size:11px; font-weight:800; color:#E8611A; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; }
+  .obj-text { font-size:19px; font-weight:800; color:#1B3A6B; margin-bottom:1.25rem; }
+  textarea#obj-response { min-height:120px; resize:vertical; }
+  .grade-box { display:flex; flex-direction:column; gap:8px; margin:1rem 0; }
+  .grade-row { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:10px; background:#F7F5EF; font-size:13.5px; font-weight:700; color:#33455E; }
+  .grade-row.ok { background:rgba(46,139,87,0.1); color:#2E8B57; }
+  .grade-row.missing { background:rgba(201,58,62,0.08); color:#C93A3E; }
+  .grade-icon { font-size:16px; }
+
+  /* Chat (simulador) */
+  .recap-card { display:flex; align-items:center; gap:14px; background:#fff; border-radius:14px; padding:1rem 1.25rem; margin-bottom:1rem; box-shadow:0 6px 18px rgba(27,58,107,0.06); flex-wrap:wrap; }
+  .recap-avatar-icon { font-size:28px; flex-shrink:0; }
+  .recap-name { font-size:15px; font-weight:900; color:#1B3A6B; }
+  .recap-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+  .recap-tag { font-size:11px; font-weight:700; color:rgba(51,69,94,0.7); background:#F7F5EF; padding:3px 10px; border-radius:100px; }
+
+  .concept-bar { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:1rem; padding:1rem; background:#fff; border-radius:14px; box-shadow:0 6px 18px rgba(27,58,107,0.06); }
+  .concept-chip { font-size:12px; font-weight:700; padding:6px 12px; border-radius:100px; border:1.5px solid #C93A3E; color:#C93A3E; background:rgba(201,58,62,0.06); white-space:nowrap; }
+  .concept-chip.touched { border-color:#2E8B57; color:#fff; background:#2E8B57; }
+
+  .sim-status { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; font-size:13px; font-weight:700; color:#1B3A6B; flex-wrap:wrap; gap:8px; }
+  .sim-status-item { background:#fff; padding:8px 16px; border-radius:100px; box-shadow:0 4px 12px rgba(27,58,107,0.06); }
+
+  .chat-box { background:#fff; border-radius:16px; padding:1.5rem; height:420px; overflow-y:auto; box-shadow:0 8px 24px rgba(27,58,107,0.06); margin-bottom:1rem; display:flex; flex-direction:column; gap:12px; }
+  .msg-row { display:flex; }
+  .msg-row.vendedor { justify-content:flex-end; }
+  .msg-col { max-width:78%; display:flex; flex-direction:column; }
+  .msg-row.vendedor .msg-col { align-items:flex-end; }
+  .msg-label { font-size:9px; font-weight:800; text-transform:uppercase; opacity:0.5; margin-bottom:3px; }
+  .msg-bubble { padding:10px 14px; border-radius:14px; font-size:14px; line-height:1.45; }
+  .msg-bubble.vendedor { background:#1B3A6B; color:#fff; border-bottom-right-radius:4px; }
+  .msg-bubble.avatar { background:#EEF1F7; color:#1B3A6B; border-bottom-left-radius:4px; }
+  .msg-bubble.thinking { background:#EEF1F7; color:rgba(27,58,107,0.5); font-style:italic; }
+
+  .chat-input-row { display:flex; gap:10px; }
+  .chat-input { flex:1; padding:13px 16px; border:1.5px solid rgba(27,58,107,0.18); border-radius:10px; font-size:14px; font-family:inherit; }
+  .chat-input:focus { outline:none; border-color:#3E6FB0; }
+  .btn-send { background:#1B3A6B; color:#fff; border:none; border-radius:10px; padding:13px 24px; font-weight:800; cursor:pointer; font-size:14px; }
+  .btn-send:disabled { opacity:0.4; cursor:not-allowed; }
+
+  /* Avatares */
+  .avatar-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+  @media (max-width:700px) { .avatar-grid { grid-template-columns:1fr; } }
+  .avatar-card { background:#fff; border-radius:14px; padding:1.1rem 1.3rem; cursor:pointer; border-left:5px solid; box-shadow:0 6px 18px rgba(27,58,107,0.06); }
+  .avatar-card.gender-hombre { border-left-color:#2563EB; }
+  .avatar-card.gender-mujer { border-left-color:#E64980; }
+  .avatar-card.locked { opacity:0.4; cursor:not-allowed; filter:grayscale(0.6); }
+  .avatar-name { font-size:15.5px; font-weight:800; color:#1B3A6B; display:flex; align-items:center; gap:6px; margin-bottom:6px; }
+  .avatar-tag { font-size:12px; color:rgba(51,69,94,0.65); margin-bottom:2px; }
+  .avatar-lock-note { font-size:11px; color:#C93A3E; font-weight:700; margin-top:6px; }
+  .unlock-bar { text-align:center; margin-top:1.5rem; }
+  .btn-unlock { background:none; border:1.5px solid rgba(201,58,62,0.3); color:#C93A3E; border-radius:8px; padding:9px 18px; font-size:12.5px; font-weight:700; cursor:pointer; }
+
+  /* Resultado */
+  .result-card { background:#fff; border-radius:20px; padding:2.25rem; text-align:center; box-shadow:0 12px 34px rgba(27,58,107,0.1); }
+  .result-icon { font-size:52px; margin-bottom:0.75rem; }
+  .result-score { font-size:52px; font-weight:900; color:#1B3A6B; margin:0.5rem 0; }
+  .result-score span { font-size:18px; font-weight:700; color:rgba(51,69,94,0.5); }
+  .result-detail { font-size:14px; color:rgba(51,69,94,0.7); margin-bottom:1.5rem; }
+  .feedback-box { background:#F7F5EF; border-radius:14px; padding:1.25rem 1.5rem; text-align:left; margin-bottom:1.5rem; }
+  .feedback-label { font-size:11px; font-weight:800; color:#E8611A; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; }
+  .feedback-text { font-size:14px; line-height:1.6; color:#33455E; white-space:pre-line; }
+  .result-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  .btn-secondary { background:none; border:1.5px solid rgba(27,58,107,0.2); color:#1B3A6B; border-radius:10px; padding:12px 22px; font-weight:700; cursor:pointer; font-size:14px; }
+
+  /* Ranking */
+  .rank-list { background:#fff; border-radius:16px; padding:1rem 1.5rem; box-shadow:0 8px 24px rgba(27,58,107,0.06); margin-top:1rem; }
+  .rank-row { display:flex; align-items:center; gap:14px; padding:12px 0; border-bottom:1px solid rgba(27,58,107,0.06); }
+  .rank-row:last-child { border-bottom:none; }
+  .rank-pos { font-size:18px; font-weight:900; color:rgba(27,58,107,0.3); width:28px; flex-shrink:0; }
+  .rank-row:nth-child(1) .rank-pos { color:#E8611A; }
+  .rank-name { flex:1; font-size:15px; font-weight:800; color:#1B3A6B; }
+  .rank-meta { font-size:11.5px; color:rgba(51,69,94,0.55); }
+  .rank-score { font-size:16px; font-weight:900; color:#2E8B57; }
+  .rank-empty { text-align:center; padding:2rem; color:rgba(51,69,94,0.5); font-size:14px; }
+  .rank-section-title { font-size:16px; font-weight:900; color:#1B3A6B; margin:2rem 0 0; text-align:center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- PANTALLA: NOMBRE -->
+  <div id="screen-name">
+    <div class="header">
+      <div class="eyebrow">EVA+ · FAW</div>
+      <h1>Manejo de objeciones</h1>
+      <div class="subtitle">Teoría, ejercicios y simulador — practica hasta que se vuelva reflejo</div>
+    </div>
+    <div class="name-card">
+      <div class="pool" id="user-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:0.75rem"></div>
+      <div id="user-list-empty" class="subtitle" style="display:none;font-size:12px;margin-bottom:0.75rem">Aún no hay nadie registrado — sé el primero.</div>
+      <input type="text" id="name-input" placeholder="Escribe tu nombre" autocomplete="off">
+      <button class="btn-primary" onclick="startFlow()">Comenzar</button>
+    </div>
+  </div>
+
+  <!-- PANTALLA: PORTAL (3 momentos) -->
+  <div id="screen-portal" class="hidden">
+    <button class="btn-back" onclick="showScreen('name')">← Salir</button>
+    <div class="header">
+      <div class="eyebrow">EVA+ · FAW</div>
+      <h1>Manejo de objeciones</h1>
+    </div>
+    <div class="main-tabs">
+      <button class="main-tab active" id="mtab-teoria" onclick="showMoment('teoria')">📖 Teoría</button>
+      <button class="main-tab" id="mtab-ejercicios" onclick="showMoment('ejercicios')">✍️ Ejercicios</button>
+      <button class="main-tab" id="mtab-simulador" onclick="showMoment('simulador')">🎭 Simulador</button>
+    </div>
+
+    <!-- MOMENTO 1: TEORÍA -->
+    <div id="moment-teoria">
+      <div class="principle-box">
+        <div class="principle-label">El principio</div>
+        <div class="principle-text">Las objeciones no se debaten, se exploran.</div>
+      </div>
+      <div class="steps-grid" id="steps-grid"></div>
+      <div class="examples-title">La fórmula en acción</div>
+      <div id="examples-list"></div>
+    </div>
+
+    <!-- MOMENTO 2: EJERCICIOS -->
+    <div id="moment-ejercicios" class="hidden">
+      <div id="ejercicio-view"></div>
+      <div class="rank-section-title">🏆 Ranking de Ejercicios</div>
+      <div class="rank-list" id="rank-ejercicios"></div>
+    </div>
+
+    <!-- MOMENTO 3: SIMULADOR -->
+    <div id="moment-simulador" class="hidden">
+      <div id="simulador-view"></div>
+    </div>
+  </div>
+
+</div>
+<script>
+// ── CONEXIÓN AL GOOGLE SHEET ────────────────────────────────────────────────
+const GS_URL = 'https://script.google.com/macros/s/AKfycbxKvgzuh_r-NIBZ_UX3wk8hzbGIMzN1QI3rFXLJrNSX4dm-ELx2jujM3t-r0EN7N4Ok/exec';
+async function gs(action, data) {
+  const res = await fetch(GS_URL, { method:'POST', body:new URLSearchParams({ action, data: JSON.stringify(data||{}) }) });
+  return res.json();
+}
+const API_BASE = 'https://simulador-conversaciones-ventas.onrender.com';
+const LS_NAME = 'eva_sim_username';
+
+// ── LA FÓRMULA ──────────────────────────────────────────────────────────────
+const STEPS = [
+  { key:'validar', num:1, title:'Validar', desc:'Decir que sí, entiendo, comprendo, tienes razón, ahora veo. Reconocer sin ceder.' },
+  { key:'explorar', num:2, title:'Explorar', desc:'Preguntas cada vez más específicas y profundas — de lo general a lo concreto, hasta encontrar la raíz real.' },
+  { key:'explicar', num:3, title:'Explicar / Diferenciar / Reformular', desc:'Ya con la raíz real identificada, aquí entra tu explicación o la diferencia de FAW.' },
+  { key:'pregunta', num:4, title:'Pregunta A/B', desc:'"¿Te hace sentido o...?" / "¿Es verdad?" / "¿Desea continuar?" / "¿Desea platicarlo con alguien más?"' },
+];
+
+const EXAMPLES = [
+  { objection:'"Está muy caro comparado con lo que he visto."', lines:[
+    ['Validar','Entiendo, el precio siempre es algo que hay que revisar con cuidado.'],
+    ['Explorar','¿Comparado con qué te parece caro — con otra marca, con lo que traías presupuestado, o con lo que esperabas de entrada?'],
+    ['Explicar','Justo ahí está la diferencia — el precio de FAW ya incluye equipamiento completo y financiamiento propio. No es el camión más barato, pero es el que menos te va a costar operar.'],
+    ['Pregunta A/B','¿Te hace sentido comparar el costo total, o prefieres que lo veamos solo por el precio de lista?'],
+  ]},
+  { objection:'"He escuchado que son camiones chinos, no sé qué tan buenos sean."', lines:[
+    ['Validar','Comprendo, es algo que mucha gente pregunta al inicio.'],
+    ['Explorar','¿Qué es lo que te preocupa exactamente — el rendimiento, la durabilidad, o la disponibilidad de refacciones?'],
+    ['Explicar','Justo esa es la diferencia con una importadora genérica — nuestras unidades se configuran para México, con refacciones aquí y servicio en 27 distribuidores.'],
+    ['Pregunta A/B','¿Te gustaría platicar con alguien que ya opera una unidad FAW, o prefieres verlo tú mismo en una prueba de manejo?'],
+  ]},
+  { objection:'"Lo tengo que consultar con mi socio."', lines:[
+    ['Validar','Tiene sentido, es una decisión importante.'],
+    ['Explorar','¿Qué necesitaría ver esa persona para sentirse tranquila con la decisión?'],
+    ['Explicar','Podemos armar la información justo para eso — números claros y una comparativa.'],
+    ['Pregunta A/B','¿Te sirve que preparemos esa información juntos, o prefieres platicarlo primero y regresamos después?'],
+  ]},
+  { objection:'"Sitrac me ofrece algo parecido."', lines:[
+    ['Validar','Sí, Sitrac es una marca conocida, tiene sentido que la compares.'],
+    ['Explorar','¿Has tenido alguna experiencia con su servicio después de la venta, o es algo que has escuchado de otros operadores?'],
+    ['Explicar','La diferencia real no es la marca — es que el soporte no desaparece después de la firma. Refacciones en México, garantía documentada.'],
+    ['Pregunta A/B','¿Es algo que te gustaría confirmar antes de decidir, o ya tienes claro que el soporte es tu prioridad?'],
+  ]},
+];
+
+const OBJECTION_POOL = [
+  'Está muy caro comparado con lo que he visto.',
+  'He escuchado que son camiones chinos, no sé qué tan buenos sean.',
+  'Lo tengo que consultar con mi socio o mi familia.',
+  'Ya tengo otra marca y me ha funcionado bien.',
+  'Sitrac me ofrece algo parecido.',
+  'No es el momento, ahorita ando apretado de dinero.',
+  'No confío mucho en los esquemas de financiamiento.',
+  'Necesito verlo primero antes de decidir.',
+];
+
+// ── AVATARES (mismos del simulador general) ─────────────────────────────────
+const SABE_LABEL = { sabe_confia:'🧠 Sabe y confía', sabe_terco:'🧠🚫 Sabe, pero terco', novato_guiado:'🤷 No sabe, guiado', novato_desconfiado:'🛡️ No sabe, desconfiado' };
+const AVATARS = [
+  { id:'esperanza', name:'Transportes Esperanza', gender:'mujer', sabe:'sabe_confia', empresa:'Flotilla chica (2–10 unidades)', dolor:'Renovación — su flotilla vieja le sale cara', decisor:'Tiene que consultar con alguien más', urgencia:'Apenas está explorando' },
+  { id:'carmen', name:'María del Carmen Ávalos', gender:'mujer', sabe:'sabe_terco', empresa:'Camión-hombre (1 unidad)', dolor:'Tiene un contrato nuevo con fecha límite', decisor:'Es el decisor', urgencia:'Listo para decidir ya' },
+  { id:'jose', name:'José Antonio', gender:'hombre', sabe:'novato_guiado', empresa:'Camión-hombre (1 unidad)', dolor:'Crecimiento — ya no se da abasto', decisor:'Es el decisor', urgencia:'Listo para decidir ya' },
+  { id:'srm', name:'Transportes SRM', gender:'hombre', sabe:'novato_desconfiado', empresa:'Camión-hombre (1 unidad)', dolor:'Bloqueo bancario — no califica en banco', decisor:'Es el decisor', urgencia:'Apenas está explorando' },
+  { id:'amanda', name:'Amanda Rivera', gender:'mujer', sabe:'novato_guiado', empresa:'Flotilla chica (2–10 unidades)', dolor:'Crecimiento — ya no se da abasto', decisor:'Es el decisor', urgencia:'Listo para decidir ya' },
+  { id:'tuzo', name:'Tuzo Pachuca', gender:'hombre', sabe:'sabe_confia', empresa:'Flotilla chica (2–10 unidades)', dolor:'Renovación — su flotilla vieja le sale cara', decisor:'Tiene que consultar con alguien más', urgencia:'Apenas está explorando' },
+  { id:'arturo', name:'Arturo Chávez', gender:'hombre', sabe:'novato_guiado', empresa:'Camión-hombre (1 unidad)', dolor:'Renovación — su flotilla vieja le sale cara', decisor:'Es el decisor', urgencia:'Apenas está explorando' },
+  { id:'sureste', name:'Transporte del Sureste', gender:'mujer', sabe:'sabe_terco', empresa:'Flotilla chica (2–10 unidades)', dolor:'Crecimiento — ya no se da abasto', decisor:'Es el decisor', urgencia:'Listo para decidir ya' },
+  { id:'pedro', name:'Pedro García', gender:'hombre', sabe:'novato_desconfiado', empresa:'Flotilla chica (2–10 unidades)', dolor:'Crecimiento — ya no se da abasto', decisor:'Tiene que consultar con alguien más', urgencia:'Apenas está explorando' },
+  { id:'alfonso', name:'Alfonso Gomez', gender:'hombre', sabe:'sabe_confia', empresa:'Camión-hombre (1 unidad)', dolor:'Bloqueo bancario — no califica en banco', decisor:'Es el decisor', urgencia:'Listo para decidir ya' },
+];
+
+const MAX_TURNS = 7;
+const NEEDED_ACIERTOS = 3;
+const POINTS_TABLE = { 0:50, 1:40, 2:30, 3:20 };
+
+let userName = '';
+let cachedLocks = {};
+let objState = null; // { objection, }
+let simSession = null; // { avatarId, touched:Set, turn, fallos, messages:[], finished }
+
+function showScreen(name) {
+  document.getElementById('screen-name').classList.toggle('hidden', name!=='name');
+  document.getElementById('screen-portal').classList.toggle('hidden', name!=='portal');
+  window.scrollTo(0,0);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(LS_NAME);
+  if (saved) document.getElementById('name-input').value = saved;
+  loadUserPicker();
+  renderTeoria();
+});
+
+async function loadUserPicker() {
+  const listEl = document.getElementById('user-list');
+  const emptyEl = document.getElementById('user-list-empty');
+  try {
+    const data = await gs('getUsers');
+    const users = data.users || [];
+    listEl.innerHTML = '';
+    if (!users.length) { emptyEl.style.display='block'; }
+    else {
+      emptyEl.style.display='none';
+      users.forEach(u => {
+        const chip = document.createElement('button');
+        chip.type='button'; chip.className='chip'; chip.textContent=u;
+        chip.onclick = () => { document.getElementById('name-input').value = u; startFlow(); };
+        listEl.appendChild(chip);
+      });
+    }
+  } catch(e) { emptyEl.style.display='block'; emptyEl.textContent='No se pudo cargar la lista — escribe tu nombre.'; }
+}
+
+async function startFlow() {
+  const input = document.getElementById('name-input');
+  const name = input.value.trim();
+  if (!name) { input.focus(); return; }
+  userName = name;
+  localStorage.setItem(LS_NAME, name);
+  try { await gs('registerUser', { name }); } catch(e) {}
+  showScreen('portal');
+  showMoment('teoria');
+}
+
+function showMoment(m) {
+  ['teoria','ejercicios','simulador'].forEach(k => {
+    document.getElementById('moment-'+k).classList.toggle('hidden', k!==m);
+    document.getElementById('mtab-'+k).classList.toggle('active', k===m);
+  });
+  if (m === 'ejercicios') startEjercicio();
+  if (m === 'simulador') renderAvatarPicker();
+}
+
+// ── MOMENTO 1: TEORÍA ───────────────────────────────────────────────────────
+function renderTeoria() {
+  document.getElementById('steps-grid').innerHTML = STEPS.map(s => `
+    <div class="step-card"><div class="step-num">${s.num}</div><div class="step-title">${s.title}</div><div class="step-desc">${s.desc}</div></div>`).join('');
+  document.getElementById('examples-list').innerHTML = EXAMPLES.map(ex => `
+    <div class="example-card">
+      <div class="example-objection"><span>Objeción</span>${ex.objection}</div>
+      ${ex.lines.map(l => `<div class="example-line"><b>${l[0]}:</b><span>${l[1]}</span></div>`).join('')}
+    </div>`).join('');
+}
+
+// ── MOMENTO 2: EJERCICIOS ───────────────────────────────────────────────────
+function startEjercicio() {
+  const objection = OBJECTION_POOL[Math.floor(Math.random()*OBJECTION_POOL.length)];
+  objState = { objection };
+  document.getElementById('ejercicio-view').innerHTML = `
+    <div class="obj-card">
+      <div class="obj-label">El prospecto te dice</div>
+      <div class="obj-text">"${objection}"</div>
+      <textarea id="obj-response" placeholder="Escribe tu respuesta completa, aplicando los 4 pasos..."></textarea>
+      <button class="btn-primary" onclick="submitEjercicio()">Calificar mi respuesta</button>
+    </div>`;
+  loadRankingEjercicios();
+}
+
+async function submitEjercicio() {
+  const textarea = document.getElementById('obj-response');
+  const respuesta = textarea.value.trim();
+  if (!respuesta) { textarea.focus(); return; }
+  document.getElementById('ejercicio-view').innerHTML = `<div class="obj-card"><div class="obj-text">Calificando tu respuesta...</div></div>`;
+
+  const system = `Eres un evaluador experto de técnicas de manejo de objeciones de ventas. La fórmula que se enseña tiene 4 pasos: 1) Validar (reconocer sin ceder, ej. "entiendo", "comprendo", "tienes razón"), 2) Explorar (hacer una pregunta que profundice en la raíz real de la objeción), 3) Explicar/Diferenciar/Reformular (dar una explicación o diferenciador concreto, ya con la raíz identificada), 4) Pregunta A/B de cierre (una pregunta de opción como "¿te hace sentido o...?", "¿es verdad?", "¿desea continuar?").
+Evalúa si la respuesta del vendedor a la objeción "${objState.objection}" incluye cada uno de estos 4 elementos. Responde ÚNICAMENTE con JSON, sin texto adicional, sin backticks:
+{"validar":true,"explorar":true,"explicar":true,"pregunta_ab":true,"feedback":"2-3 líneas de retroalimentación específica y constructiva, en español, tuteando"}`;
+
+  try {
+    const res = await fetch(API_BASE + '/api/chat', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ system, messages:[{role:'user', content:`Respuesta del vendedor: "${respuesta}"`}], max_tokens:350 })
+    });
+    const data = await res.json();
+    const raw = (data.content && data.content[0] && data.content[0].text) || '{}';
+    const clean = raw.replace(/```json|```/g,'').trim();
+    let parsed;
+    try { parsed = JSON.parse(clean); } catch(e) { parsed = { validar:false, explorar:false, explicar:false, pregunta_ab:false, feedback:'No se pudo evaluar automáticamente esta vez.' }; }
+
+    const elementos = [
+      { key:'validar', label:'1. Validar', ok:!!parsed.validar },
+      { key:'explorar', label:'2. Explorar', ok:!!parsed.explorar },
+      { key:'explicar', label:'3. Explicar / Diferenciar', ok:!!parsed.explicar },
+      { key:'pregunta_ab', label:'4. Pregunta A/B', ok:!!parsed.pregunta_ab },
+    ];
+    const count = elementos.filter(e=>e.ok).length;
+    const score = count * 25;
+
+    document.getElementById('ejercicio-view').innerHTML = `
+      <div class="obj-card">
+        <div class="obj-label">Objeción</div>
+        <div class="obj-text" style="font-size:16px">"${objState.objection}"</div>
+        <div class="grade-box">
+          ${elementos.map(e => `<div class="grade-row ${e.ok?'ok':'missing'}"><span class="grade-icon">${e.ok?'✅':'❌'}</span> ${e.label}</div>`).join('')}
+        </div>
+        <div class="result-score" style="font-size:36px">${score}<span> /100 pts</span></div>
+        <div class="feedback-box">
+          <div class="feedback-label">Retroalimentación</div>
+          <div class="feedback-text">${parsed.feedback || ''}</div>
+        </div>
+        <button class="btn-primary" onclick="startEjercicio()">🔁 Otra objeción</button>
+      </div>`;
+
+    try { await gs('objSubmit', { userName, objection: objState.objection, respuesta, score, detalle: parsed }); }
+    catch(e) { console.error('No se pudo guardar el ejercicio', e); }
+    loadRankingEjercicios();
+  } catch (e) {
+    document.getElementById('ejercicio-view').innerHTML = `<div class="obj-card"><div class="obj-text">Hubo un problema de conexión. <button class="btn-link" onclick="startEjercicio()">Reintentar</button></div></div>`;
+  }
+}
+
+async function loadRankingEjercicios() {
+  const listEl = document.getElementById('rank-ejercicios');
+  try {
+    const data = await gs('objResults');
+    const hist = data.historial || [];
+    const byUser = {};
+    hist.forEach(h => { if(!byUser[h.userName]) byUser[h.userName]={total:0,count:0}; byUser[h.userName].total+=Number(h.score); byUser[h.userName].count+=1; });
+    const rows = Object.keys(byUser).map(name => ({ name, avg: Math.round(byUser[name].total/byUser[name].count), count: byUser[name].count })).sort((a,b)=>b.avg-a.avg);
+    if (!rows.length) { listEl.innerHTML = '<div class="rank-empty">Todavía no hay ejercicios registrados.</div>'; return; }
+    const medals=['🥇','🥈','🥉'];
+    listEl.innerHTML = rows.map((r,i)=>`<div class="rank-row"><div class="rank-pos">${medals[i]||(i+1)}</div><div><div class="rank-name">${r.name}</div><div class="rank-meta">${r.count} ejercicio${r.count===1?'':'s'}</div></div><div class="rank-score">${r.avg}<span style="font-size:11px;font-weight:600"> prom.</span></div></div>`).join('');
+  } catch(e) { listEl.innerHTML = '<div class="rank-empty">No se pudo cargar el ranking.</div>'; }
+}
+
+// ── MOMENTO 3: SIMULADOR ─────────────────────────────────────────────────────
+async function renderAvatarPicker() {
+  const view = document.getElementById('simulador-view');
+  view.innerHTML = `<div class="header" style="margin-bottom:1rem"><div class="subtitle">Elige tu prospecto — este avatar se bloquea solo para el simulador de objeciones</div></div><div class="avatar-grid" id="obj-avatar-grid"></div><div class="unlock-bar"><button class="btn-unlock" onclick="unlockObjAvatars()">🔓 Desbloquear mis avatares</button></div><div class="rank-section-title">🏆 Ranking del Simulador de Objeciones</div><div class="rank-list" id="rank-simulador"></div>`;
+  try { const data = await gs('objSimLocks'); cachedLocks = data.locks || {}; } catch(e) {}
+  renderObjAvatarGrid();
+  loadRankingSimulador();
+}
+
+function renderObjAvatarGrid() {
+  const locks = cachedLocks[userName] || {};
+  const grid = document.getElementById('obj-avatar-grid');
+  grid.innerHTML = AVATARS.map(a => {
+    const isLocked = !!locks[a.id];
+    const genderIcon = a.gender==='mujer'?'👩':'👨';
+    return `<div class="avatar-card gender-${a.gender}${isLocked?' locked':''}" onclick="${isLocked?'':`pickObjAvatar('${a.id}')`}">
+      <div class="avatar-name">${genderIcon} ${a.name}</div>
+      <div class="avatar-tag">${SABE_LABEL[a.sabe]}</div>
+      <div class="avatar-tag">${a.empresa}</div>
+      <div class="avatar-tag">${a.dolor}</div>
+      ${isLocked?'<div class="avatar-lock-note">🔒 Ya lo usaste aquí</div>':''}
+    </div>`;
+  }).join('');
+}
+
+async function pickObjAvatar(avatarId) {
+  if (!cachedLocks[userName]) cachedLocks[userName] = {};
+  if (!cachedLocks[userName][avatarId]) {
+    cachedLocks[userName][avatarId] = true;
+    try { await gs('objSimLockAvatar', { userName, avatarId }); } catch(e) {}
+  }
+  startObjSimulation(avatarId);
+}
+
+async function unlockObjAvatars() {
+  if (!confirm('¿Desbloquear tus avatares del simulador de objeciones?')) return;
+  delete cachedLocks[userName];
+  try { await gs('objSimUnlockUser', { userName }); } catch(e) {}
+  renderObjAvatarGrid();
+}
+
+function startObjSimulation(avatarId) {
+  const avatar = AVATARS.find(a=>a.id===avatarId);
+  simSession = { avatarId, touched:new Set(), turn:0, fallos:0, messages:[], finished:false };
+  const genderIcon = avatar.gender==='mujer'?'👩':'👨';
+  document.getElementById('simulador-view').innerHTML = `
+    <button class="btn-back" onclick="backFromObjSim()">← Regresar</button>
+    <div class="recap-card">
+      <div class="recap-avatar-icon">${genderIcon}</div>
+      <div><div class="recap-name">Le hablas a: ${avatar.name}</div>
+      <div class="recap-tags"><span class="recap-tag">${SABE_LABEL[avatar.sabe]}</span><span class="recap-tag">${avatar.empresa}</span><span class="recap-tag">Objeta mucho — modo objeciones</span></div></div>
+    </div>
+    <div class="concept-bar" id="obj-concept-bar"></div>
+    <div class="sim-status"><div class="sim-status-item">Turno <span id="obj-turn-count">0</span>/${MAX_TURNS}</div><div class="sim-status-item">Ciclos completos <span id="obj-acierto-count">0</span>/${NEEDED_ACIERTOS}</div></div>
+    <div class="chat-box" id="obj-chat-box"></div>
+    <div class="chat-input-row">
+      <input type="text" class="chat-input" id="obj-chat-input" placeholder="Responde a la objeción..." onkeydown="if(event.key==='Enter') sendObjMessage()">
+      <button class="btn-send" id="obj-btn-send" onclick="sendObjMessage()">Enviar</button>
+    </div>`;
+  renderObjConceptBar();
+  addObjBubble('avatar', '(escribe algo para arrancar — tú das el primer mensaje, el prospecto va a objetar)');
+}
+
+function backFromObjSim() {
+  if (simSession && simSession.turn>0 && !confirm('¿Salir? Se pierde el progreso de este intento.')) return;
+  renderAvatarPicker();
+}
+
+function renderObjConceptBar() {
+  document.getElementById('obj-concept-bar').innerHTML = STEPS.map(s => {
+    const t = simSession.touched.has(s.key);
+    return `<span class="concept-chip${t?' touched':''}">${t?'✓ ':''}${s.title}</span>`;
+  }).join('');
+}
+function renderObjStatus() {
+  document.getElementById('obj-turn-count').textContent = simSession.turn;
+  document.getElementById('obj-acierto-count').textContent = Math.min(simSession.cyclesDone||0, NEEDED_ACIERTOS);
+}
+function addObjBubble(who, text) {
+  const box = document.getElementById('obj-chat-box');
+  const row = document.createElement('div');
+  row.className = 'msg-row ' + (who==='vendedor'?'vendedor':'avatar');
+  row.innerHTML = `<div class="msg-col"><div class="msg-label">${who==='vendedor'?'Tú':'Prospecto'}</div><div class="msg-bubble ${who==='vendedor'?'vendedor':'avatar'}">${text}</div></div>`;
+  box.appendChild(row); box.scrollTop = box.scrollHeight;
+  return row;
+}
+
+function buildObjPersonaPrompt() {
+  const avatar = AVATARS.find(a=>a.id===simSession.avatarId);
+  const pronombre = avatar.gender==='mujer'?'ella':'él';
+  return `Eres un actor de roleplay. Actúas EXCLUSIVAMENTE como un prospecto de camiones difícil, que pone objeciones seguido (precio, "son chinos", desconfianza, comparación con la competencia como Sitrac, necesita consultar, no es el momento). Nunca salgas del personaje. Responde en español de México, texto plano, breve (1-3 frases), SIN JSON.
+PERSONAJE: ${avatar.name} (${pronombre}), ${avatar.empresa}, su dolor: ${avatar.dolor}.
+Tu trabajo es objetar de forma realista ante lo que te diga el vendedor — si su respuesta te convence de verdad (valida, explora, explica bien, y te pregunta con opciones), puedes ceder un poco o mostrarte más receptivo. Si su respuesta es floja o no contesta tu objeción, insiste o pon otra objeción.`;
+}
+
+function buildObjDetectorPrompt(vendorMsg, prevPersonaMsg) {
+  const system = `Eres un evaluador. No actúas ningún personaje. Analiza el ÚLTIMO MENSAJE DEL VENDEDOR (en respuesta a una objeción del prospecto) y determina si contiene cada uno de estos 4 elementos de la fórmula de manejo de objeciones:
+1) validar: reconoce sin ceder (ej. "entiendo", "comprendo", "tienes razón")
+2) explorar: hace una pregunta que profundiza en la raíz de la objeción
+3) explicar: da una explicación, diferenciador o reformulación concreta
+4) pregunta_ab: cierra con una pregunta de opción (ej. "¿te hace sentido o...?", "¿es verdad?", "¿deseas continuar?")
+Responde ÚNICAMENTE JSON sin texto adicional, sin backticks:
+{"validar":true,"explorar":true,"explicar":true,"pregunta_ab":true,"ciclo_completo":true}
+"ciclo_completo" es true SOLO si los 4 elementos están presentes en este mismo mensaje.`;
+  const userMsg = `El prospecto acababa de decir: "${prevPersonaMsg || '(inicio)'}"\n\nEl vendedor respondió: "${vendorMsg}"`;
+  return { system, userMsg };
+}
+
+async function sendObjMessage() {
+  if (simSession.finished) return;
+  const input = document.getElementById('obj-chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  document.getElementById('obj-btn-send').disabled = true;
+
+  const prevPersonaMsg = [...simSession.messages].reverse().find(m=>m.role==='assistant');
+  addObjBubble('vendedor', text);
+  simSession.messages.push({role:'user', content:text});
+  const thinkingRow = addObjBubble('avatar', '<span class="msg-bubble thinking">escribiendo…</span>');
+
+  try {
+    const resPersona = await fetch(API_BASE + '/api/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ system: buildObjPersonaPrompt(), messages: simSession.messages, max_tokens:250 }) });
+    const dataPersona = await resPersona.json();
+    const personaMsg = ((dataPersona.content && dataPersona.content[0] && dataPersona.content[0].text) || '...').trim();
+    thinkingRow.remove();
+    addObjBubble('avatar', personaMsg);
+    simSession.messages.push({role:'assistant', content:personaMsg});
+
+    const { system: detSystem, userMsg: detUserMsg } = buildObjDetectorPrompt(text, prevPersonaMsg ? prevPersonaMsg.content : null);
+    const resDet = await fetch(API_BASE + '/api/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ system: detSystem, messages:[{role:'user', content:detUserMsg}], max_tokens:150 }) });
+    const dataDet = await resDet.json();
+    const rawDet = (dataDet.content && dataDet.content[0] && dataDet.content[0].text) || '{}';
+    let parsedDet;
+    try { parsedDet = JSON.parse(rawDet.replace(/```json|```/g,'').trim()); } catch(e) { parsedDet = {}; }
+
+    ['validar','explorar','explicar','pregunta_ab'].forEach(k => { if (parsedDet[k]) simSession.touched.add(k==='pregunta_ab'?'pregunta':k); });
+    simSession.cyclesDone = simSession.cyclesDone || 0;
+    const cicloCompleto = !!parsedDet.ciclo_completo;
+    if (cicloCompleto) simSession.cyclesDone++;
+
+    simSession.turn++;
+    if (!cicloCompleto) simSession.fallos++;
+
+    renderObjConceptBar();
+    renderObjStatus();
+
+    if (simSession.cyclesDone >= NEEDED_ACIERTOS) finishObjSimulation(true);
+    else if (simSession.turn >= MAX_TURNS) finishObjSimulation(false);
+  } catch(e) {
+    thinkingRow.remove();
+    addObjBubble('avatar', '(problema de conexión, intenta de nuevo)');
+  }
+  document.getElementById('obj-btn-send').disabled = false;
+}
+
+async function finishObjSimulation(success) {
+  simSession.finished = true;
+  let score;
+  if (success) { score = (POINTS_TABLE[Math.min(simSession.fallos,3)]||20) * NEEDED_ACIERTOS; }
+  else { score = simSession.cyclesDone * 10; }
+
+  const avatar = AVATARS.find(a=>a.id===simSession.avatarId);
+  document.getElementById('simulador-view').innerHTML = `
+    <div class="result-card">
+      <div class="result-icon">${success?'🏆':'😅'}</div>
+      <div class="subtitle">${success?'¡Dominaste la objeción!':'No lo lograste — vuelve a intentarlo'}</div>
+      <div class="result-score">${score}<span> pts</span></div>
+      <div class="result-detail">${simSession.cyclesDone} ciclo(s) completo(s) de ${NEEDED_ACIERTOS} · ${simSession.fallos} turno(s) sin ciclo completo · ${simSession.turn} turnos usados</div>
+      <div class="result-actions">
+        <button class="btn-primary" style="width:auto" onclick="renderAvatarPicker()">🔁 Otro ejercicio</button>
+      </div>
+    </div>`;
+
+  try { await gs('objSimSubmit', { userName, avatarName:avatar.name, score, aciertos:simSession.cyclesDone, fallos:simSession.fallos, success }); }
+  catch(e) { console.error('No se pudo guardar', e); }
+}
+
+async function loadRankingSimulador() {
+  const listEl = document.getElementById('rank-simulador');
+  try {
+    const data = await gs('objSimResults');
+    const hist = data.historial || [];
+    const byUser = {};
+    hist.forEach(h => { if(!byUser[h.userName]) byUser[h.userName]={total:0,count:0}; byUser[h.userName].total+=Number(h.score); byUser[h.userName].count+=1; });
+    const rows = Object.keys(byUser).map(name => ({ name, avg: Math.round(byUser[name].total/byUser[name].count), count: byUser[name].count })).sort((a,b)=>b.avg-a.avg);
+    if (!rows.length) { listEl.innerHTML = '<div class="rank-empty">Todavía no hay ejercicios registrados.</div>'; return; }
+    const medals=['🥇','🥈','🥉'];
+    listEl.innerHTML = rows.map((r,i)=>`<div class="rank-row"><div class="rank-pos">${medals[i]||(i+1)}</div><div><div class="rank-name">${r.name}</div><div class="rank-meta">${r.count} ejercicio${r.count===1?'':'s'}</div></div><div class="rank-score">${r.avg}<span style="font-size:11px;font-weight:600"> prom.</span></div></div>`).join('');
+  } catch(e) { listEl.innerHTML = '<div class="rank-empty">No se pudo cargar el ranking.</div>'; }
+}
+</script>
+</body>
+</html>
