@@ -257,6 +257,16 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .pres-activity-qr-wrap { display:inline-flex; flex-direction:column; align-items:center; gap:12px; background:#fff; border:1px solid rgba(27,58,107,0.1); border-radius:18px; padding:24px 28px; box-shadow:0 14px 40px rgba(27,58,107,0.12); }
 .pres-activity-qr { width:260px; height:260px; }
 .pres-activity-url { font-size:14px; font-weight:700; color:#1B3A6B; }
+.pres-round-badge { display:inline-flex; align-items:center; justify-content:center; width:64px; height:64px; border-radius:50%; background:#1B3A6B; color:#fff; font-weight:900; font-size:32px; margin-bottom:1.25rem; box-shadow:0 12px 30px rgba(27,58,107,0.25); }
+.pres-crown-emoji { font-size:96px; margin-top:1.25rem; line-height:1; }
+.pres-crown-loading { font-size:16px; color:rgba(51,69,94,0.5); margin-top:1.5rem; }
+.pres-podium { display:flex; flex-direction:column; gap:12px; margin-top:1.75rem; max-width:520px; }
+.pres-podium-row { display:flex; align-items:center; gap:16px; background:#fff; border-radius:14px; padding:14px 20px; box-shadow:0 8px 22px rgba(27,58,107,0.08); }
+.pres-podium-row.first { background:linear-gradient(135deg,#FFF7E0,#fff); border:1.5px solid #F2C94C; }
+.pres-podium-medal { font-size:36px; flex-shrink:0; }
+.pres-podium-name { flex:1; font-size:19px; font-weight:900; color:#1B3A6B; text-align:left; }
+.pres-podium-score { font-size:20px; font-weight:900; color:#2E8B57; }
+.pres-podium-empty { font-size:15px; color:rgba(51,69,94,0.55); margin-top:1.5rem; }
 
 .pres-bullets-title { font-size:28px; font-weight:800; color:#fff; margin-bottom:1.5rem; line-height:1.25; text-align:center; }
 .pres-bullet-list { display:flex; flex-direction:column; gap:14px; text-align:left; }
@@ -612,34 +622,31 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
   <!-- DÍA 2 -->
   <div id="day-1" style="display:none">
     <div class="day-intro">
-      <span class="tag tag-cap" style="flex-shrink:0">Ellos enseñan</span>
+      <span class="tag tag-cap" style="flex-shrink:0">Ellos practican</span>
       <div>
-        <h2>Día 2 — Co-construcción</h2>
-        <p>Los vendedores elite validan el pipeline, construyen los perfiles de prospecto y las objeciones más frecuentes con su experiencia de campo, y practican en mesas de trabajo por rol.</p>
+        <h2>Día 2 — Negociación y simuladores</h2>
+        <p>Guión de negociación y simulador de conversaciones agrupados en 2 experiencias con cronómetro por diapositiva, coronaciones de rey/reina por ronda, y el taller de objeciones — todo con ranking en vivo.</p>
       </div>
     </div>
     <div class="day-progress">
       <div class="dp-bar"><div class="dp-fill" id="day2-progress-fill" style="width:0%"></div></div>
-      <div class="dp-row"><div class="dp-text" id="day2-progress-text">0/11 bloques completados</div><a class="dp-reset" onclick="resetDayLog('day2')">↺ Reiniciar registros</a></div>
+      <div class="dp-row"><div class="dp-text" id="day2-progress-text">0/8 bloques completados</div><a class="dp-reset" onclick="resetDayLog('day2')">↺ Reiniciar registros</a></div>
     </div>
     <div class="timeline">
-      <div class="tl-item"><div class="tl-time"><span>10:00</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_pipeline" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EAF4EE">🗺</div><div class="block-info"><div class="block-title">Validación del pipeline</div><div class="block-sub">Carlos presenta · Vendedores cuestionan</div></div><span class="block-dur">20 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Carlos presenta el pipeline visto en el Día 1 y pregunta: "¿qué falta? ¿qué no refleja su día a día?"</span></div><div class="detail-item"><div class="detail-dot"></div><span>Ajustes capturados en vivo</span></div></div><div class="detail-note">Output: pipeline validado o corregido con el conocimiento de campo del equipo elite.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_pipeline" onclick="openPresentation('d2_pipeline')">▶ Iniciar</button><span class="block-status" id="status-d2_pipeline"></span></div></div></div></div></div>
-      <div class="tl-item"><div class="tl-time"><span>10:20</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_perfiles6" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#FEF3E2">👤</div><div class="block-info"><div class="block-title">Mesa de trabajo — Crear 6 perfiles de prospecto</div><div class="block-sub">Dinámica en equipos</div></div><span class="block-dur">40 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Equipos construyen 6 perfiles de prospecto con frases reales, comportamientos y matices de campo</span></div><div class="detail-item"><div class="detail-dot"></div><span>Carlos documenta los perfiles para incorporarlos al simulador</span></div></div><div class="detail-note">Output: 6 perfiles de prospecto listos para el simulador — construidos por quienes los viven a diario.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_perfiles6" onclick="openPresentation('d2_perfiles6')">▶ Iniciar</button><span class="block-status" id="status-d2_perfiles6"></span></div></div></div></div></div>
-      <div class="tl-item"><div class="tl-time"><span>11:00</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_objeciones" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#FEF0E8">💬</div><div class="block-info"><div class="block-title">Mesa de trabajo — Las objeciones más frecuentes</div><div class="block-sub">Dinámica en equipos</div></div><span class="block-dur">30 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Equipos listan y priorizan las objeciones que más se repiten en su distribuidora</span></div><div class="detail-item"><div class="detail-dot"></div><span>Carlos documenta las versiones mejoradas en el manual de ventas</span></div></div><div class="detail-note">Output: guía de objeciones validada por vendedores que las viven — no por consultores que las teorizan.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_objeciones" onclick="openPresentation('d2_objeciones')">▶ Iniciar</button><span class="block-status" id="status-d2_objeciones"></span></div></div></div></div></div>
-      <div class="tl-item"><div class="tl-time"><span>11:30</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_perfiladores" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EEF1F7">🔍</div><div class="block-info"><div class="block-title">Perfiladores</div><div class="block-sub">El rol y su criterio de clasificación</div></div><span class="block-dur">20 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Qué hace el Perfilador y dónde termina su responsabilidad en el pipeline</span></div><div class="detail-item"><div class="detail-dot"></div><span>Criterio de clasificación (CEL) aplicado a los 6 perfiles recién construidos</span></div></div><div class="detail-note">Conecta el perfil recién creado con el rol que lo va a usar en campo.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_perfiladores" onclick="openPresentation('d2_perfiladores')">▶ Iniciar</button><span class="block-status" id="status-d2_perfiladores"></span></div></div></div></div></div>
-      <div class="tl-item"><div class="tl-time"><span>11:50</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_setters" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EAF4EE">🔧</div><div class="block-info"><div class="block-title">Setters</div><div class="block-sub">El rol y el proceso de setteo</div></div><span class="block-dur">20 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Qué información necesita recibir el Asesor del Setter para arrancar bien la conversación</span></div><div class="detail-item"><div class="detail-dot"></div><span>¿En qué momento del proceso se pierden más leads hoy y por qué?</span></div></div><div class="detail-note">Output: ajustes al manual de ventas con la experiencia real del equipo.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_setters" onclick="openPresentation('d2_setters')">▶ Iniciar</button><span class="block-status" id="status-d2_setters"></span></div></div></div></div></div>
-      <div class="tl-item"><div class="tl-time"><span>12:10</span></div><div class="tl-dot br"></div><div class="tl-content"><div class="break-item"><div class="break-line"></div><span class="break-label">Receso — 40 min</span><div class="break-line"></div></div></div></div>
-      <div class="tl-item"><div class="tl-time"><span>12:50</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_ej_perfiladores" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#FEF3E2">🎯</div><div class="block-info"><div class="block-title">Ejercicios de Perfiladores</div><div class="block-sub">Práctica en parejas</div></div><span class="block-dur">30 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Práctica de clasificación con los 6 perfiles construidos en la mañana</span></div><div class="detail-item"><div class="detail-dot"></div><span>Feedback cruzado entre pares</span></div></div><div class="detail-note">Aterrizar el criterio CEL con casos reales del propio equipo.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_ej_perfiladores" onclick="openPresentation('d2_ej_perfiladores')">▶ Iniciar</button><span class="block-status" id="status-d2_ej_perfiladores"></span></div></div></div></div></div>
-      <div class="tl-item"><div class="tl-time"><span>13:20</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_ej_setters" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EEF1F7">🔧</div><div class="block-info"><div class="block-title">Ejercicios de Setters</div><div class="block-sub">Práctica en parejas</div></div><span class="block-dur">30 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Práctica del handoff Setter → Asesor con la información mínima necesaria</span></div><div class="detail-item"><div class="detail-dot"></div><span>Feedback cruzado entre pares</span></div></div><div class="detail-note">El handoff es donde más se pierden leads — se practica hasta que sea automático.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_ej_setters" onclick="openPresentation('d2_ej_setters')">▶ Iniciar</button><span class="block-status" id="status-d2_ej_setters"></span></div></div></div></div></div>
-      <div class="tl-item"><div class="tl-time"><span>13:50</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_ej_objeciones" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#FEF0E8">🥊</div><div class="block-info"><div class="block-title">Ejercicios de Objeciones</div><div class="block-sub">Roleplay en vivo</div></div><span class="block-dur">30 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Roleplay con las objeciones priorizadas en la mesa de trabajo de la mañana</span></div><div class="detail-item"><div class="detail-dot"></div><span>Foco especial en el Elefante Rosa</span></div></div><div class="detail-note">Competencia sana entre pares genera aprendizaje acelerado.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_ej_objeciones" onclick="openPresentation('d2_ej_objeciones')">▶ Iniciar</button><span class="block-status" id="status-d2_ej_objeciones"></span></div></div></div></div></div>
-      <div class="tl-item"><div class="tl-time"><span>14:20</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_wbr" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EAF4EE">📊</div><div class="block-info"><div class="block-title">La WBR — La disciplina del éxito</div><div class="block-sub">Carlos</div></div><span class="block-dur">20 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Qué es la Weekly Business Review y por qué sostiene todo lo demás</span></div><div class="detail-item"><div class="detail-dot"></div><span>Cómo se prepara, quién participa, qué se revisa cada semana</span></div></div><div class="detail-note">Todo lo construido hoy se pierde sin la disciplina semanal que lo sostiene.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_wbr" onclick="openPresentation('d2_wbr')">▶ Iniciar</button><span class="block-status" id="status-d2_wbr"></span></div></div></div></div></div>
-      <div class="tl-item"><div class="tl-time"><span>14:40</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_siguientes_pasos" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#FEF3E2">🧭</div><div class="block-info"><div class="block-title">Siguientes pasos</div><div class="block-sub">Carlos</div></div><span class="block-dur">10 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>Compromisos concretos de cada rol antes de la implementación</span></div><div class="detail-item"><div class="detail-dot"></div><span>Qué sigue del proyecto EVA+ en las próximas semanas</span></div></div><div class="detail-note">Cerrar con compromisos claros y medibles rumbo a la implementación.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_siguientes_pasos" onclick="openPresentation('d2_siguientes_pasos')">▶ Iniciar</button><span class="block-status" id="status-d2_siguientes_pasos"></span></div></div></div></div></div>
-      <div class="tl-item"><div class="tl-time"><span>14:50</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_reconocimientos" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EEF1F7">🏅</div><div class="block-info"><div class="block-title">Reconocimientos</div><div class="block-sub">Lic. Ernesto del Blanco</div></div><span class="block-dur">10 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"><div class="detail-item"><div class="detail-dot"></div><span>El Lic. Ernesto del Blanco reconoce y agradece la aportación de cada vendedor — con nombre y distribuidora</span></div><div class="detail-item"><div class="detail-dot"></div><span>Cierre del Día 2</span></div></div><div class="detail-note">Que el reconocimiento venga del Lic. Ernesto del Blanco eleva el peso simbólico del cierre.</div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_reconocimientos" onclick="openPresentation('d2_reconocimientos')">▶ Iniciar</button><span class="block-status" id="status-d2_reconocimientos"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>10:00</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_recuperacion" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EEF1F7">🔁</div><div class="block-info"><div class="block-title">Recuperación del Día 1</div><div class="block-sub">Yunuen / Carlos</div></div><span class="block-dur">5 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"></div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_recuperacion" onclick="openPresentation('d2_recuperacion')">▶ Iniciar</button><span class="block-status" id="status-d2_recuperacion"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>10:05</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_expectativas" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#FEF3E2">💭</div><div class="block-info"><div class="block-title">Expectativas Día 2</div><div class="block-sub">Pregunta abierta al grupo</div></div><span class="block-dur">5 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"></div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_expectativas" onclick="openPresentation('d2_expectativas')">▶ Iniciar</button><span class="block-status" id="status-d2_expectativas"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>10:10</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_guion" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EAF4EE">📜</div><div class="block-info"><div class="block-title">Guión de negociación</div><div class="block-sub">Filtrado → Setter → Cerrador · 3 rondas</div></div><span class="block-dur">1h 30min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"></div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_guion" onclick="openPresentation('d2_guion')">▶ Iniciar</button><span class="block-status" id="status-d2_guion"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>11:40</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_simulador" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#FEF0E8">🤖</div><div class="block-info"><div class="block-title">Simulador de conversaciones</div><div class="block-sub">3 rondas + coronaciones + trono general</div></div><span class="block-dur">1h 20min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"></div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_simulador" onclick="openPresentation('d2_simulador')">▶ Iniciar</button><span class="block-status" id="status-d2_simulador"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>13:00</span></div><div class="tl-dot br"></div><div class="tl-content"><div class="break-item"><div class="break-line"></div><span class="break-label">Receso — Comida — 45 min</span><div class="break-line"></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>13:45</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_taller_objeciones" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EEF1F7">🥊</div><div class="block-info"><div class="block-title">Taller de objeciones</div><div class="block-sub">Teoría + ejercicios + simulador + coronación</div></div><span class="block-dur">45 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"></div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_taller_objeciones" onclick="openPresentation('d2_taller_objeciones')">▶ Iniciar</button><span class="block-status" id="status-d2_taller_objeciones"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>14:30</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_wbr" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EAF4EE">📊</div><div class="block-info"><div class="block-title">WBR — ¿Qué es y cómo se ve?</div><div class="block-sub">Carlos</div></div><span class="block-dur">15 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"></div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_wbr" onclick="openPresentation('d2_wbr')">▶ Iniciar</button><span class="block-status" id="status-d2_wbr"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>14:45</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_reconocimientos" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#FEF0E8">🏅</div><div class="block-info"><div class="block-title">Reconocimientos</div><div class="block-sub">L.A.E. Ernesto del Blanco</div></div><span class="block-dur">10 min</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"></div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_reconocimientos" onclick="openPresentation('d2_reconocimientos')">▶ Iniciar</button><span class="block-status" id="status-d2_reconocimientos"></span></div></div></div></div></div>
+      <div class="tl-item"><div class="tl-time"><span>14:55</span></div><div class="tl-dot"></div><div class="tl-content"><div class="block" id="blk-d2_cierre" onclick="tog(this)"><div class="block-header"><div class="block-icon" style="background:#EEF1F7">🎓</div><div class="block-info"><div class="block-title">Cierre</div><div class="block-sub">Fin del Día 2</div></div><span class="block-dur">—</span><span class="block-arr">▾</span></div><div class="block-detail"><div class="detail-list"></div><div class="block-actions" onclick="event.stopPropagation()"><button class="btn-iniciar" id="btn-d2_cierre" onclick="openPresentation('d2_cierre')">▶ Iniciar</button><span class="block-status" id="status-d2_cierre"></span></div></div></div></div></div>
     </div>
     <div class="summary-bar">
-      <div class="scard"><div class="s-num">5h</div><div class="s-lbl">Duración total</div></div>
-      <div class="scard"><div class="s-num">12</div><div class="s-lbl">Bloques de trabajo</div></div>
-      <div class="scard"><div class="s-num">6</div><div class="s-lbl">Perfiles construidos</div></div>
+      <div class="scard"><div class="s-num">4h 55min</div><div class="s-lbl">Duración total</div></div>
+      <div class="scard"><div class="s-num">8</div><div class="s-lbl">Bloques de trabajo</div></div>
+      <div class="scard"><div class="s-num">12</div><div class="s-lbl">Diapositivas cronometradas</div></div>
     </div>
   </div>
   <div class="taller-footer">Elaborado con <strong style="color:#E8611A">Grupo Nuwek</strong> — Programa EVA+ · ELAM FAW · Julio 2026</div>
@@ -738,18 +745,15 @@ const DAY1_ITEMS = [
   { id:'cierre',     title:'Cierre',                                    planned:0,  type:'block' },
 ];
 const DAY2_ITEMS = [
-  { id:'d2_pipeline',          title:'Validación del pipeline',                         planned:20, type:'block' },
-  { id:'d2_perfiles6',         title:'Mesa de trabajo — Crear 6 perfiles de prospecto', planned:40, type:'block' },
-  { id:'d2_objeciones',        title:'Mesa de trabajo — Las objeciones más frecuentes', planned:30, type:'block' },
-  { id:'d2_perfiladores',      title:'Perfiladores',                                    planned:20, type:'block' },
-  { id:'d2_setters',           title:'Setters',                                         planned:20, type:'block' },
-  { id:'d2_receso',            title:'Receso',                                          planned:40, type:'break' },
-  { id:'d2_ej_perfiladores',   title:'Ejercicios de Perfiladores',                      planned:30, type:'block' },
-  { id:'d2_ej_setters',        title:'Ejercicios de Setters',                           planned:30, type:'block' },
-  { id:'d2_ej_objeciones',     title:'Ejercicios de Objeciones',                        planned:30, type:'block' },
-  { id:'d2_wbr',               title:'La WBR — La disciplina del éxito',                planned:20, type:'block' },
-  { id:'d2_siguientes_pasos',  title:'Siguientes pasos',                                planned:10, type:'block' },
-  { id:'d2_reconocimientos',   title:'Reconocimientos',                                 planned:10, type:'block' },
+  { id:'d2_recuperacion',          title:'Recuperación del Día 1',                          planned:5,  type:'block' },
+  { id:'d2_expectativas',          title:'Expectativas Día 2',                              planned:5,  type:'block' },
+  { id:'d2_guion',                 title:'Guión de negociación',                            planned:90, type:'block' },
+  { id:'d2_simulador',             title:'Simulador de conversaciones',                     planned:80, type:'block' },
+  { id:'_comida2',                 title:'Receso — Comida',                                 planned:45, type:'break' },
+  { id:'d2_taller_objeciones',     title:'Taller de objeciones',                            planned:45, type:'block' },
+  { id:'d2_wbr',                   title:'WBR — ¿Qué es y cómo se ve?',                     planned:15, type:'block' },
+  { id:'d2_reconocimientos',       title:'Reconocimientos',                                 planned:10, type:'block' },
+  { id:'d2_cierre',                title:'Cierre',                                          planned:0,  type:'block' },
 ];
 const DAYS = {
   day1: { items: DAY1_ITEMS, logKey:'faw_taller_log_day1', progressFillId:'day1-progress-fill', progressTextId:'day1-progress-text', endLabel:'Fin del Día 1' },
@@ -769,11 +773,11 @@ function saveLog(dayKey, log) {
   try { localStorage.setItem(DAYS[dayKey].logKey, JSON.stringify(log)); } catch(e) {}
 }
 
-let presState = { bid:null, dayKey:null, slide:0, slideCount:3, theme:'dark', timerHandle:null, viewOnly:false };
+let presState = { bid:null, dayKey:null, slide:0, slideCount:3, theme:'dark', timerHandle:null, viewOnly:false, slideStartedAt:null };
 function getSlideCount(bid) { const c = SLIDE_CONTENT[bid]; return c ? c.length : 3; }
 // Registro y Bienvenida conservan el estilo "hero" oscuro; todo lo demás usa el tema claro/geométrico.
 // Registro y Bienvenida conservan el "hero" oscuro; CRM usa el tema invitado de SRM; todo lo demás usa el tema claro/geométrico.
-const THEME_OVERRIDES = { registro:'dark', bienvenida:'dark', crm:'srm' };
+const THEME_OVERRIDES = { registro:'dark', bienvenida:'dark', crm:'srm', d2_reconocimientos:'dark' };
 function getTheme(bid) { return THEME_OVERRIDES[bid] || 'light'; }
 
 function findBlock(bid) {
@@ -782,6 +786,11 @@ function findBlock(bid) {
   return DAYS[dayKey].items.find(b=>b.id===bid && b.type==='block');
 }
 function nextSectionTitle(bid) {
+  const custom = SLIDE_CONTENT[bid];
+  if (custom && presState.bid === bid && presState.slide < custom.length - 1) {
+    const nextSlide = custom[presState.slide + 1];
+    return (nextSlide.title || 'Siguiente diapositiva') + (nextSlide.round ? ` (Ronda ${nextSlide.round})` : '');
+  }
   const dayKey = BID_TO_DAY[bid];
   const items = DAYS[dayKey].items;
   const idx = items.findIndex(i=>i.id===bid);
@@ -839,6 +848,7 @@ function openPresentation(bid) {
   presState.slideCount = getSlideCount(bid);
   presState.theme = getTheme(bid);
   presState.viewOnly = !!(entry && entry.finishedAt);
+  presState.slideStartedAt = Date.now();
 
   if (!entry) {
     entry = { startedAt: Date.now(), finishedAt: null, realMs: null };
@@ -855,7 +865,7 @@ function openPresentation(bid) {
   if (presState.theme === 'srm') ovl.classList.add('theme-srm');
   document.getElementById('pres-eyebrow-top').textContent = presState.viewOnly ? 'Bloque completado' : 'En curso';
   document.getElementById('pres-title-top').textContent = meta.title;
-  document.getElementById('pres-planned').innerHTML = 'Planeado: <strong>' + fmtDuration(meta.planned) + '</strong>';
+  document.getElementById('pres-planned').innerHTML = 'Planeado: <strong>' + fmtDuration(currentSlideMins(bid, 0, meta)) + '</strong>';
   document.getElementById('pres-next').innerHTML = 'Siguiente: <strong>' + nextSectionTitle(bid) + '</strong>';
   document.getElementById('pres-finalizar').style.display = presState.viewOnly ? 'none' : 'inline-block';
 
@@ -874,16 +884,31 @@ function openPresentation(bid) {
   }
 }
 
+function currentSlideMins(bid, slideIdx, meta) {
+  const custom = SLIDE_CONTENT[bid];
+  const slide = custom ? custom[slideIdx] : null;
+  return (slide && slide.mins != null) ? slide.mins : meta.planned;
+}
+
 function tickTimer() {
   const log = loadLog(presState.dayKey);
   const entry = log[presState.bid];
   const meta = findBlock(presState.bid);
   if (!entry || !entry.startedAt) return;
-  const elapsed = Date.now() - entry.startedAt;
+
+  const custom = SLIDE_CONTENT[presState.bid];
+  const slide = custom ? custom[presState.slide] : null;
+  const perSlide = slide && slide.mins != null;
+
+  const elapsed = perSlide ? (Date.now() - presState.slideStartedAt) : (Date.now() - entry.startedAt);
+  const plannedMin = perSlide ? slide.mins : meta.planned;
+
   document.getElementById('pres-timer-num').textContent = fmtClock(elapsed);
-  document.getElementById('pres-timer-lbl').textContent = 'En vivo';
-  if (meta.planned <= 0) { setTimerColor('tg-gray'); return; }
-  const plannedMs = meta.planned*60000;
+  document.getElementById('pres-timer-lbl').textContent = perSlide ? 'En vivo · esta diapositiva' : 'En vivo';
+  document.getElementById('pres-planned').innerHTML = 'Planeado: <strong>' + fmtDuration(plannedMin) + '</strong>';
+
+  if (plannedMin <= 0) { setTimerColor('tg-gray'); return; }
+  const plannedMs = plannedMin*60000;
   if (elapsed <= plannedMs*0.8) setTimerColor('tg-green');
   else if (elapsed <= plannedMs) setTimerColor('tg-yellow');
   else setTimerColor('tg-red');
@@ -900,7 +925,16 @@ const WELCOME_IMG = 'https://raw.githubusercontent.com/gruponuwek-web/faw-evento
 const REGISTRO_QR_IMG = 'https://raw.githubusercontent.com/gruponuwek-web/faw-evento/main/IMG_1001.jpg';
 
 const TRUCKS_IMG = 'https://raw.githubusercontent.com/gruponuwek-web/faw-evento/main/faw%20trucks.webp';
+const ELAM_COVER_IMG = 'https://raw.githubusercontent.com/gruponuwek-web/faw-evento/main/faw_elam_cover.jpeg';
 const ACTIVITY_URL = 'https://eloquent-sawine-3fd809.netlify.app';
+const REPERTORIO_URL = 'https://gruponuwek-web.github.io/faw-evento/repertorio-preguntas.html';
+const SIMULADOR_URL = 'https://gruponuwek-web.github.io/faw-evento/simulador-avatares.html';
+const OBJECIONES_URL = 'https://gruponuwek-web.github.io/faw-evento/portal-objeciones.html';
+const GS_URL = 'https://script.google.com/macros/s/AKfycbxKvgzuh_r-NIBZ_UX3wk8hzbGIMzN1QI3rFXLJrNSX4dm-ELx2jujM3t-r0EN7N4Ok/exec';
+async function gs(action, data) {
+  const res = await fetch(GS_URL, { method:'POST', body:new URLSearchParams({ action, data: JSON.stringify(data||{}) }) });
+  return res.json();
+}
 
 const SLIDE_CONTENT = {
   registro: [
@@ -993,6 +1027,53 @@ const SLIDE_CONTENT = {
   cierre: [
     { type:'closing', image: WELCOME_IMG, eyebrow:'Cierre del Día 1', title:'El nuevo motor ya arrancó.', sub:'Gracias por un gran Día 1, FAW — nos vemos mañana.' },
   ],
+
+  // ═══════════════ DÍA 2 ═══════════════
+  d2_recuperacion: [
+    { type:'bullets', eyebrow:'Antes de arrancar', title:'¿Qué recordamos del Día 1?', bullets:[
+      'El playbook, los 3 pipelines, y el CRM (GHL)',
+      'Los principios de Filtrar, Setter y Cerrar',
+      { text:'La clasificación oficial que ustedes mismos armaron ayer', emph:true },
+    ]},
+  ],
+  d2_expectativas: [
+    { type:'bullets', eyebrow:'Momento 2', title:'¿Qué esperan del día de hoy?', bullets:[
+      '¿Qué les gustaría dominar antes de que termine el día?',
+      '¿Qué rol sienten que necesitan practicar más — Filtrar, Setter o Cerrar?',
+      { text:'Hoy es 100% práctica: guiones, simuladores y coronaciones', emph:true },
+    ]},
+  ],
+  d2_guion: [
+    { type:'activity', round:1, mins:30, eyebrow:'Ronda 1 · Guión de negociación', title:'Filtrado', body:'Abran el repertorio de preguntas y practiquen en parejas el guión de Filtrar: las 6 preguntas, sus frases puente, y las que el equipo ha ido agregando.', url:REPERTORIO_URL },
+    { type:'activity', round:2, mins:30, eyebrow:'Ronda 2 · Guión de negociación', title:'Setter', body:'Mismo repertorio — ahora en la pestaña Setter. Practiquen el diagnóstico a fondo: los 10 conceptos y sus frases puente.', url:REPERTORIO_URL },
+    { type:'activity', round:3, mins:30, eyebrow:'Ronda 3 · Guión de negociación', title:'Cerrador', body:'Pestaña Cerrar del repertorio — despertar objeciones, prueba de manejo, forma de compra y fecha de decisión.', url:REPERTORIO_URL },
+  ],
+  d2_simulador: [
+    { type:'activity', round:1, mins:20, eyebrow:'Ronda 1 · Simulador', title:'Practica Filtrado con IA', body:'Escaneen el QR, elijan su usuario, el rol Filtrar, un avatar, y midan su nivel de dificultad. La IA detecta en vivo qué conceptos van cubriendo.', url:SIMULADOR_URL },
+    { type:'crown', round:1, mins:5, rankSource:'sim', rankScope:'filtrar', eyebrow:'Ronda 1 · Resultados', title:'¿Quién es el Rey o Reina de Filtrado?', body:'Ranking en vivo, ordenado por promedio, no por total.' },
+    { type:'activity', round:2, mins:15, eyebrow:'Ronda 2 · Simulador', title:'Practica Setter con IA', body:'Mismo simulador — ahora eligen el rol Setter. Su avatar puede repetirse aquí aunque ya lo hayan usado en Filtrado.', url:SIMULADOR_URL },
+    { type:'crown', round:2, mins:5, rankSource:'sim', rankScope:'setter', eyebrow:'Ronda 2 · Resultados', title:'¿Quién es el Rey o Reina de Setter?', body:'Ranking en vivo, ordenado por promedio.' },
+    { type:'activity', round:3, mins:25, eyebrow:'Ronda 3 · Simulador', title:'Practica Cerrar con IA', body:'Última ronda — rol Cerrar. Necesitan lograr 4 conceptos en máximo 7 turnos.', url:SIMULADOR_URL },
+    { type:'crown', round:3, mins:5, rankSource:'sim', rankScope:'cerrar', eyebrow:'Ronda 3 · Resultados', title:'¿Quién es el Rey o Reina de Cierre?', body:'Ranking en vivo, ordenado por promedio.' },
+    { type:'crown', mins:5, rankSource:'sim', eyebrow:'El trono general', title:'Coronación TOTAL', body:'Promedio combinando los 3 roles. No gana quien más practicó, gana quien practicó mejor.' },
+  ],
+  d2_taller_objeciones: [
+    { type:'activity', mins:40, eyebrow:'Taller de objeciones', title:'Teoría + ejercicios + simulador', body:'Un portal con 3 momentos: la fórmula de manejo de objeciones (Validar → Explorar → Explicar → Pregunta A/B), ejercicios rápidos calificados por IA, y un simulador de objeciones con los mismos avatares.', url:OBJECIONES_URL },
+    { type:'crown', mins:5, rankSource:'obj', eyebrow:'Resultados', title:'¿Quién domina las objeciones?', body:'Ranking en vivo del portal de objeciones — su propio trono, separado del simulador general.' },
+  ],
+  d2_wbr: [
+    { type:'bullets', eyebrow:'El ritual semanal', title:'¿Qué es la WBR y cómo se ve?', bullets:[
+      'Weekly Business Review — la reunión semanal que revisa actividad, calidad y resultado del pipeline',
+      'Se revisan los KPIs de los 3 niveles: actividad, calidad y resultado',
+      { text:'Sin esta disciplina, todo lo que construyeron hoy se diluye en unas semanas', emph:true },
+    ]},
+  ],
+  d2_reconocimientos: [
+    { type:'hero', full:true, image: ELAM_COVER_IMG, eyebrow:'Reconocimientos', title:'Gracias por dos días de crecer juntos.', sub:'L.A.E. Ernesto del Blanco' },
+  ],
+  d2_cierre: [
+    { type:'closing', image: TRUCKS_IMG, eyebrow:'Cierre del Día 2', title:'El motor ya está en marcha.', sub:'Gracias por dos días de construcción real, FAW.' },
+  ],
 };
 
 const SLIDE_EYEBROWS = ['Punto 1 de 3','Punto 2 de 3','Punto 3 de 3'];
@@ -1004,6 +1085,7 @@ function renderSlide() {
 
   if (slide) {
     el.innerHTML = buildSlideHTML(slide, presState.theme);
+    if (slide.type === 'crown' && slide.rankSource) loadCrownRanking(slide);
   } else if (presState.theme === 'light') {
     el.innerHTML = `<div class="pres-geo-wrap"><div class="pres-geo-accent"></div><div class="pres-geo-content">
       <div class="pres-geo-eyebrow">${SLIDE_EYEBROWS[presState.slide]}</div>
@@ -1053,7 +1135,9 @@ function buildSlideHTML(s, theme) {
   const light = theme === 'light';
   if (s.type === 'activity') {
     const qrSrc = 'https://api.qrserver.com/v1/create-qr-code/?size=340x340&data=' + encodeURIComponent(s.url||'');
+    const roundBadge = s.round ? `<div class="pres-round-badge">${s.round}</div>` : '';
     return `<div class="pres-geo-wrap" style="text-align:center"><div class="pres-geo-accent"></div><div class="pres-geo-content" style="margin:0 auto">
+      ${roundBadge}
       ${s.eyebrow?`<div class="pres-geo-eyebrow">${s.eyebrow}</div>`:''}
       <div class="pres-geo-title" style="max-width:none">${s.title||''}</div>
       <div class="pres-activity-body">${s.body||''}</div>
@@ -1061,6 +1145,19 @@ function buildSlideHTML(s, theme) {
         <img class="pres-activity-qr" src="${qrSrc}" alt="QR actividad">
         <div class="pres-activity-url">${s.url||''}</div>
       </div>
+    </div></div>`;
+  }
+  if (s.type === 'crown') {
+    const roundBadge = s.round ? `<div class="pres-round-badge">${s.round}</div>` : '';
+    const podium = s.rankSource
+      ? `<div class="pres-podium" id="pres-crown-podium" style="margin-left:auto;margin-right:auto"><div class="pres-crown-loading">Cargando resultados en vivo…</div></div>`
+      : `<div class="pres-crown-emoji">🏆</div>`;
+    return `<div class="pres-geo-wrap" style="text-align:center"><div class="pres-geo-accent"></div><div class="pres-geo-content" style="margin:0 auto">
+      ${roundBadge}
+      ${s.eyebrow?`<div class="pres-geo-eyebrow">${s.eyebrow}</div>`:''}
+      <div class="pres-geo-title" style="max-width:none">${s.title||''}</div>
+      <div class="pres-activity-body">${s.body||''}</div>
+      ${podium}
     </div></div>`;
   }
   if (s.type === 'numbered') {
@@ -1202,14 +1299,63 @@ function renderDots() {
   for (let i=0;i<presState.slideCount;i++) {
     const d = document.createElement('div');
     d.className = 'pres-dot' + (i===0?' active':'');
-    d.onclick = () => { presState.slide = i; renderSlide(); };
+    d.onclick = () => { presState.slide = i; presState.slideStartedAt = Date.now(); renderSlide(); };
     wrap.appendChild(d);
   }
 }
+async function loadCrownRanking(slide) {
+  const podiumEl = document.getElementById('pres-crown-podium');
+  if (!podiumEl) return;
+  try {
+    let historial = [];
+    if (slide.rankSource === 'sim') {
+      const data = await gs('simResults');
+      historial = data.historial || [];
+      if (slide.rankScope) historial = historial.filter(h => h.role === slide.rankScope);
+    } else if (slide.rankSource === 'obj') {
+      const data = await gs('objSimResults');
+      historial = data.historial || [];
+    }
+
+    // Si la diapositiva cambió mientras cargaba, no pintes sobre la diapositiva equivocada
+    if (!document.getElementById('pres-crown-podium')) return;
+
+    const byUser = {};
+    historial.forEach(h => {
+      if (!byUser[h.userName]) byUser[h.userName] = { total:0, count:0 };
+      byUser[h.userName].total += Number(h.score) || 0;
+      byUser[h.userName].count += 1;
+    });
+    const rows = Object.keys(byUser)
+      .map(name => ({ name, avg: Math.round(byUser[name].total / byUser[name].count) }))
+      .sort((a,b) => b.avg - a.avg)
+      .slice(0, 3);
+
+    const podiumElNow = document.getElementById('pres-crown-podium');
+    if (!rows.length) {
+      podiumElNow.innerHTML = '<div class="pres-podium-empty">Todavía no hay resultados registrados.</div>';
+      return;
+    }
+    const medals = ['🥇','🥈','🥉'];
+    podiumElNow.innerHTML = rows.map((r,i) => `
+      <div class="pres-podium-row${i===0?' first':''}">
+        <div class="pres-podium-medal">${medals[i]}</div>
+        <div class="pres-podium-name">${r.name}</div>
+        <div class="pres-podium-score">${r.avg} pts</div>
+      </div>`).join('');
+  } catch (e) {
+    const podiumElNow = document.getElementById('pres-crown-podium');
+    if (podiumElNow) podiumElNow.innerHTML = '<div class="pres-podium-empty">No se pudo cargar el ranking — revisa la conexión.</div>';
+    console.error(e);
+  }
+}
+
 function presSlide(dir) {
   const next = presState.slide + dir;
   if (next < 0 || next > presState.slideCount-1) return;
   presState.slide = next;
+  presState.slideStartedAt = Date.now();
+  document.getElementById('pres-next').innerHTML = 'Siguiente: <strong>' + nextSectionTitle(presState.bid) + '</strong>';
   renderSlide();
 }
 
