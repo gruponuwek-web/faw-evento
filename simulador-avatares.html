@@ -493,15 +493,12 @@ function pickDiff(kind, key) {
 }
 
 // ── SIMULACIÓN ────────────────────────────────────────────────────────────
-function buildSystemPrompt() {
+function buildPersonaSystemPrompt() {
   const avatar = AVATARS.find(a => a.id === session.avatarId);
   const roleInfo = ROLE_META[session.role];
-  const concepts = CONCEPTS[session.role];
   const pronombre = avatar.gender === 'mujer' ? 'ella' : 'él';
-  const conceptList = concepts.map(c => `- ${c.name}${c.forzosa?' (clave)':''}: ${c.gloss}`).join('\n');
-  const touchedList = [...session.touched].join(', ') || 'ninguno todavía';
 
-  return `Eres un actor de roleplay de ventas. Actúas EXCLUSIVAMENTE como el siguiente prospecto de camiones respondiendo a un vendedor de FAW. Nunca reveles que eres una IA ni salgas del personaje. Responde siempre en español, de México, de forma natural y breve (1 a 3 frases salvo que tu nivel de "plática" indique lo contrario).
+  return `Eres un actor de roleplay de ventas. Actúas EXCLUSIVAMENTE como el siguiente prospecto de camiones respondiendo a un vendedor de FAW. Nunca reveles que eres una IA ni salgas del personaje. Responde siempre en español de México, en texto plano y natural, SIN formato JSON, SIN comillas envolventes, SIN markdown — solo lo que dirías en voz, de forma breve (1 a 3 frases salvo que tu nivel de "plática" indique lo contrario).
 
 PERSONAJE:
 - Nombre: ${avatar.name} (pronombre: ${pronombre})
@@ -513,21 +510,25 @@ PERSONAJE:
 - Qué tanto platicas: ${PLATICA_DESC[session.platica]}
 - Qué tanto objetas: ${OBJETA_DESC[session.objeta]}
 
-CONTEXTO DEL EJERCICIO:
-El vendedor está practicando el rol de ${roleInfo.label}. Su objetivo es: ${roleInfo.objetivo}
-No le regales información que no te haya preguntado, solo respóndele lo que te pregunte, en personaje.
+CONTEXTO: El vendedor está practicando el rol de ${roleInfo.label}. No le regales información que no te haya preguntado, solo respóndele lo que te pregunte, en personaje.`;
+}
 
-Conceptos que el vendedor puede intentar cubrir en esta conversación (no se los reveles directamente, solo respóndelos si te los preguntan):
+function buildDetectorPrompt(vendorMsg, prevPersonaMsg) {
+  const concepts = CONCEPTS[session.role];
+  const conceptList = concepts.map(c => `- ${c.name}: ${c.gloss}`).join('\n');
+  const touchedList = [...session.touched].join(', ') || 'ninguno todavía';
+  const system = `Eres un clasificador. No actúas ningún personaje. Tu única tarea es leer el mensaje de un vendedor de camiones y decidir qué conceptos de esta lista abordó:
 ${conceptList}
 
-Conceptos que YA se cubrieron en turnos anteriores (no los vuelvas a marcar si se repiten): ${touchedList}
+Ya se cubrieron antes (no los repitas): ${touchedList}
 
-INSTRUCCIONES DE RESPUESTA — MUY IMPORTANTE:
 Responde ÚNICAMENTE con un JSON válido, sin texto adicional, sin backticks, con este formato exacto:
-{"mensaje": "tu respuesta en personaje", "conceptos_detectados": ["Nombre exacto del concepto"], "puente_usado": true}
+{"conceptos_detectados": ["Nombre exacto del concepto"], "puente_usado": true}
 
-"conceptos_detectados": SOLO los conceptos de la lista de arriba que el ÚLTIMO MENSAJE DEL VENDEDOR haya preguntado o abordado claramente — nunca repitas uno ya cubierto, y nunca inventes conceptos fuera de la lista. Usa el nombre EXACTO tal como aparece en la lista. Si no se tocó ningún concepto nuevo, regresa un arreglo vacío.
-"puente_usado": true si el vendedor usó una frase de transición empática (validando algo que dijiste antes) antes de su pregunta; false si preguntó en seco.`;
+"conceptos_detectados": SOLO conceptos de la lista que el mensaje del vendedor haya preguntado o abordado claramente. Usa el nombre EXACTO tal como aparece en la lista. Si no tocó ninguno nuevo, regresa un arreglo vacío. Nunca inventes conceptos fuera de la lista.
+"puente_usado": true si el vendedor validó o reconoció algo dicho antes (frase empática de transición) antes de preguntar; false si preguntó en seco.`;
+  const userMsg = `Lo que el prospecto acababa de decir: "${prevPersonaMsg || '(inicio de la conversación)'}"\n\nLo que el vendedor respondió/preguntó: "${vendorMsg}"`;
+  return { system, userMsg };
 }
 
 function startSimulation() {
@@ -620,31 +621,44 @@ async function sendMessage() {
   input.value = '';
   document.getElementById('btn-send').disabled = true;
 
+  const prevPersonaMsg = [...session.messages].reverse().find(m => m.role === 'assistant');
+
   addBubble('vendedor', text);
   session.messages.push({ role:'user', content:text });
 
   const thinkingRow = addBubble('avatar', '<span class="msg-bubble thinking">escribiendo…</span>');
 
   try {
-    const res = await fetch(API_BASE + '/api/chat', {
+    // 1) Llamada de personaje — texto plano, nunca JSON, así el historial nunca se corrompe
+    const resPersona = await fetch(API_BASE + '/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ system: buildSystemPrompt(), messages: session.messages, max_tokens: 400 })
+      body: JSON.stringify({ system: buildPersonaSystemPrompt(), messages: session.messages, max_tokens: 300 })
     });
-    const data = await res.json();
-    const raw = (data.content && data.content[0] && data.content[0].text) || '{}';
-    const clean = raw.replace(/```json|```/g, '').trim();
-    let parsed;
-    try { parsed = JSON.parse(clean); } catch(e) { parsed = { mensaje: raw, conceptos_detectados: [], puente_usado:false }; }
+    const dataPersona = await resPersona.json();
+    const personaMsg = ((dataPersona.content && dataPersona.content[0] && dataPersona.content[0].text) || '...').trim();
 
     thinkingRow.remove();
-    addBubble('avatar', parsed.mensaje || '...');
-    session.messages.push({ role:'assistant', content: parsed.mensaje || '' });
+    addBubble('avatar', personaMsg);
+    session.messages.push({ role:'assistant', content: personaMsg });
 
-    // Detectar conceptos nuevos (match tolerante)
+    // 2) Llamada de detector — aislada, sin historial, solo clasifica el último mensaje del vendedor
+    const { system: detSystem, userMsg: detUserMsg } = buildDetectorPrompt(text, prevPersonaMsg ? prevPersonaMsg.content : null);
+    const resDet = await fetch(API_BASE + '/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ system: detSystem, messages: [{role:'user', content:detUserMsg}], max_tokens: 200 })
+    });
+    const dataDet = await resDet.json();
+    const rawDet = (dataDet.content && dataDet.content[0] && dataDet.content[0].text) || '{}';
+    const cleanDet = rawDet.replace(/```json|```/g, '').trim();
+    let parsedDet;
+    try { parsedDet = JSON.parse(cleanDet); } catch(e) { parsedDet = { conceptos_detectados: [], puente_usado:false }; }
+
+    // Match tolerante contra la lista real de conceptos
     const concepts = CONCEPTS[session.role];
     let newFound = 0;
-    (parsed.conceptos_detectados || []).forEach(det => {
+    (parsedDet.conceptos_detectados || []).forEach(det => {
       const detNorm = String(det).toLowerCase().trim();
       const match = concepts.find(c => {
         const cn = c.name.toLowerCase();
